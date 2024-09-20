@@ -88,7 +88,7 @@ public class AppBootstrapper
 		}
 
 		app = appBuilder.Build();
-		Global.App = app;
+		Globals.App = app;
 		logger.LogInformation("WebApplication instance has been created and added to Global.");
 
 		logger.LogInformation("========== [Bootstrapping] Decorating application...");

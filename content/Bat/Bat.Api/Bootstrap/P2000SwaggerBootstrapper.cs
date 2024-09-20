@@ -1,5 +1,4 @@
-﻿using Bat.Api.Helpers;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace Bat.Api.Bootstrap;
@@ -72,7 +71,7 @@ public class SwaggerBootstrapper
 
 	public static void DecorateApp(WebApplication app, ILogger<SwaggerBootstrapper> logger)
 	{
-		var tryParse = bool.TryParse(Environment.GetEnvironmentVariable(Global.ENV_ENABLE_SWAGGER_UI), out var enableSwaggerUi);
+		var tryParse = bool.TryParse(Environment.GetEnvironmentVariable(Globals.ENV_ENABLE_SWAGGER_UI), out var enableSwaggerUi);
 		if (!app.Environment.IsDevelopment() && (!tryParse || !enableSwaggerUi)) return;
 
 		app.UseSwagger();

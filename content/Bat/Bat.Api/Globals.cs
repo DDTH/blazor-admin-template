@@ -1,4 +1,4 @@
-﻿namespace Bat.Api.Helpers;
+﻿namespace Bat.Api;
 
 /// <summary>
 /// An application-wide global variables and repository.
@@ -6,7 +6,7 @@
 /// <remarks>
 ///		Use DI whenever possible. This global repository is meant for items that are needed in context where DI is not optimal.
 /// </remarks>
-public class Global
+public class Globals
 {
 	/// <summary>
 	/// Reference to the WebApplication instance.
