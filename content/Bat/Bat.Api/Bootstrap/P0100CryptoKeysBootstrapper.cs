@@ -1,6 +1,6 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using Bat.Api.Services;
 using System.Security.Cryptography;
-using Bat.Api.Services;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Bat.Api.Bootstrap;
 
@@ -16,6 +16,7 @@ public class CryptoKeysBootstrapper
 	const string KEY_RSA_PFX_FILE = "Keys:RSAPFXFile";
 	const string KEK_RSA_PFX_PASSWORD = "Keys:RSAPFXPassword";
 	const string KEY_RSA_PRIV_KEY_FILE = "Keys:RSAPrivKeyFile";
+	const string KEY_RSA_PRIV_KEY_PASSWORD = "Keys:RSAPrivKeyPassword";
 
 	public static void ConfigureBuilder(WebApplicationBuilder appBuilder, IConfiguration config)
 	{
@@ -37,11 +38,21 @@ public class CryptoKeysBootstrapper
 		}
 		else if (!string.IsNullOrWhiteSpace(rsaPrivKeyFile))
 		{
+			var rsaPrivKeyPassword = config[KEY_RSA_PRIV_KEY_PASSWORD] ?? "";
 			// load RSA private key from PEM file if available
 			logger.LogInformation("Loading RSA private key from file '{PrivateKeyFile}'...", rsaPrivKeyFile);
 			var rsaPrivKeyPem = File.ReadAllText(rsaPrivKeyFile);
 			privKey = RSA.Create();
-			privKey.ImportFromPem(rsaPrivKeyPem);
+			if (!string.IsNullOrWhiteSpace(rsaPrivKeyPassword))
+			{
+				// import encrypted RSA private key
+				privKey.ImportFromEncryptedPem(rsaPrivKeyPem, rsaPrivKeyPassword);
+			}
+			else
+			{
+				// import unencrypted RSA private key
+				privKey.ImportFromPem(rsaPrivKeyPem);
+			}
 		}
 		else
 		{
