@@ -2,8 +2,13 @@
 
 namespace Bat.Shared.Identity;
 
-public sealed class Claims
+public sealed class BuiltinClaims
 {
+	/// <summary>
+	/// Claim to mark a user/role as a global administrator.
+	/// </summary>
+	public static readonly Claim CLAIM_ROLE_GLOBAL_ADMIN = new("role", "global-admin");
+
 	/// <summary>
 	/// Permission to create a new application.
 	/// </summary>

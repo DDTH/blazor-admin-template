@@ -103,6 +103,8 @@ public interface IIdentityRepository
 
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default);
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<string> roleNames, CancellationToken cancellationToken = default);
+	ValueTask<IdentityResult> AddToRoleIfNotExistsAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default);
+	ValueTask<IdentityResult> AddToRoleIfNotExistsAsync(BatUser user, string roleName, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Removes the user from the specified roles.
@@ -136,6 +138,24 @@ public interface IIdentityRepository
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimsAsync(BatUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
+
+	///// <summary>
+	///// Adds a claim to the user.
+	///// </summary>
+	///// <param name="role"></param>
+	///// <param name="claim"></param>
+	///// <param name="cancellationToken"></param>
+	///// <returns></returns>
+	//ValueTask<IdentityResult> AddClaimAsync(BatUser user, Claim claim, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Adds a claim to the user, if it does not exist.
+	/// </summary>
+	/// <param name="user"></param>
+	/// <param name="claim"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> AddClaimIfNotExistsAsync(BatUser user, Claim claim, CancellationToken cancellationToken = default);
 
 	/*----------------------------------------------------------------------*/
 
@@ -178,4 +198,22 @@ public interface IIdentityRepository
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimsAsync(BatRole role, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
+
+	///// <summary>
+	///// Adds a claim to the role.
+	///// </summary>
+	///// <param name="role"></param>
+	///// <param name="claim"></param>
+	///// <param name="cancellationToken"></param>
+	///// <returns></returns>
+	//ValueTask<IdentityResult> AddClaimAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Adds a claim to the role, if it does not exist.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="claim"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> AddClaimIfNotExistsAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default);
 }

@@ -16,6 +16,8 @@ sealed class RoleEntityTypeConfiguration : IEntityTypeConfiguration<BatRole>
 		builder.Property(t => t.Name).HasColumnName("role_name");
 		builder.Property(t => t.NormalizedName).HasColumnName("normalized_name");
 		builder.Property(t => t.ConcurrencyStamp).HasColumnName("concurrency_stamp").IsConcurrencyToken();
+
+		builder.Ignore(t => t.Claims);
 	}
 }
 
