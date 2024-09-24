@@ -3,6 +3,7 @@ using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Claims;
 
 namespace Bat.Shared.EF.Identity;
@@ -40,6 +41,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 		modelBuilder.Ignore<IdentityUserToken<string>>();
 	}
 
+	/*----------------------------------------------------------------------*/
+
 	/// <summary>
 	/// General error when no changes are saved.
 	/// </summary>
@@ -67,7 +70,10 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	private async ValueTask<BatUser?> PostFetchUser(BatUser? user, UserFetchOptions? options = default, CancellationToken cancellationToken = default)
 	{
 		if (user is null || options is null || cancellationToken.IsCancellationRequested) return user;
-		user.Roles = options.IncludeRoles ? await GetRolesAsync(user, cancellationToken) : null;
+		user.Roles = options.IncludeRoles ? await GetRolesAsync(
+			user,
+			roleFetchOptions: options.IncludeRoleClaims ? new RoleFetchOptions { IncludeClaims = true } : null,
+			cancellationToken: cancellationToken) : null;
 		user.Claims = options.IncludeClaims ? await GetClaimsAsync(user, cancellationToken) : null;
 		return user;
 	}
@@ -108,12 +114,12 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 		return result > 0 ? entry.Entity : null;
 	}
 
-	/// <inheritdoc/>
-	public async ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default)
-	{
-		user.SecurityStamp = Guid.NewGuid().ToString("N");
-		return await UpdateAsync(user, cancellationToken);
-	}
+	///// <inheritdoc/>
+	//public async ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default)
+	//{
+	//	user.SecurityStamp = Guid.NewGuid().ToString("N");
+	//	return await UpdateAsync(user, cancellationToken);
+	//}
 
 	/// <inheritdoc/>
 	public async ValueTask<IdentityResult> DeleteAsync(BatUser user, CancellationToken cancellationToken = default)
@@ -124,12 +130,17 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	}
 
 	/// <inheritdoc/>
-	public async ValueTask<IEnumerable<BatRole>> GetRolesAsync(BatUser user, CancellationToken cancellationToken = default)
+	public async ValueTask<IEnumerable<BatRole>> GetRolesAsync(BatUser user, RoleFetchOptions? roleFetchOptions = default, CancellationToken cancellationToken = default)
 	{
-		return await UserRoles
+		var roles = await UserRoles
 			.Where(ur => ur.UserId == user.Id)
 			.Join(Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r)
 			.ToListAsync(cancellationToken) ?? [];
+		foreach (var role in roles)
+		{
+			await PostFetchRole(role, roleFetchOptions, cancellationToken);
+		}
+		return roles;
 	}
 
 	/// <inheritdoc/>
@@ -140,20 +151,20 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 			.ToListAsync(cancellationToken) ?? [];
 	}
 
-	/// <inheritdoc/>
-	public async ValueTask<bool> HasRoleAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default)
-	{
-		var userRoles = await GetRolesAsync(user, cancellationToken);
-		return userRoles.Contains(role);
-	}
+	///// <inheritdoc/>
+	//public async ValueTask<bool> HasRoleAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default)
+	//{
+	//	var userRoles = await GetRolesAsync(user, cancellationToken);
+	//	return userRoles.Contains(role);
+	//}
 
-	/// <inheritdoc/>
-	public async ValueTask<bool> HasRoleAsync(BatUser user, string roleName, CancellationToken cancellationToken = default)
-	{
-		var role = await GetRoleByNameAsync(roleName, cancellationToken: cancellationToken);
-		if (role is null) return false;
-		return await HasRoleAsync(user, role, cancellationToken);
-	}
+	///// <inheritdoc/>
+	//public async ValueTask<bool> HasRoleAsync(BatUser user, string roleName, CancellationToken cancellationToken = default)
+	//{
+	//	var role = await GetRoleByNameAsync(roleName, cancellationToken: cancellationToken);
+	//	if (role is null) return false;
+	//	return await HasRoleAsync(user, role, cancellationToken);
+	//}
 
 	/// <inheritdoc/>
 	public async ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default)
@@ -210,8 +221,34 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 			});
 	}
 
-	public ValueTask<IdentityResult> RemoveFromRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default) => throw new NotImplementedException();
-	public ValueTask<IdentityResult> RemoveFromRolesAsync(BatUser user, IEnumerable<string> roleNames, CancellationToken cancellationToken = default) => throw new NotImplementedException();
+	/// <inheritdoc/>
+	public async ValueTask<IdentityResult> RemoveFromRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default)
+	{
+		var rolesList = roles is not null ? roles.ToList() : []; // Convert to list to avoid multiple enumerations
+		if (rolesList.Count == 0) return IdentityResult.Success;
+		rolesList.ForEach(role => UserRoles.Remove(new IdentityUserRole<string> { UserId = user.Id, RoleId = role.Id }));
+		var result = await SaveChangesAsync(cancellationToken);
+		return result > 0
+			? IdentityResult.Success
+			: NoChangesSaved;
+	}
+
+	public async ValueTask<IdentityResult> RemoveFromRolesAsync(BatUser user, IEnumerable<string> roleNames, CancellationToken cancellationToken = default)
+	{
+		var roles = new List<BatRole>();
+		foreach (var roleName in roleNames)
+		{
+			var role = await GetRoleByNameAsync(roleName, cancellationToken: cancellationToken);
+			if (role is null)
+				return IdentityResult.Failed(new IdentityError()
+				{
+					Code = "RoleNotFound",
+					Description = $"Role '{roleName}' does not exist."
+				});
+			roles.Add(role);
+		}
+		return await RemoveFromRolesAsync(user, roles, cancellationToken: cancellationToken);
+	}
 
 	/// <inheritdoc/>
 	public async ValueTask<IdentityResult> AddClaimsAsync(BatUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default)
@@ -260,8 +297,7 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	private async ValueTask<BatRole?> PostFetchRole(BatRole? role, RoleFetchOptions? options = default, CancellationToken cancellationToken = default)
 	{
 		if (role is null || options is null || cancellationToken.IsCancellationRequested) return role;
-		//user.Roles = options.IncludeRoles ? await GetRolesAsync(user, cancellationToken) : null;
-		//user.Claims = options.IncludeClaims ? await GetClaimsAsync(user, cancellationToken) : null;
+		role.Claims = options.IncludeClaims ? await GetClaimsAsync(role, cancellationToken) : null;
 		return role;
 	}
 
@@ -277,6 +313,26 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var role = await Roles.FirstOrDefaultAsync(r => r.Name == roleName, cancellationToken);
 		return await PostFetchRole(role, options, cancellationToken);
+	}
+
+	/// <inheritdoc/>
+	public IAsyncEnumerable<BatRole> AllRolesAsync() => Roles.AsAsyncEnumerable();
+
+	/// <inheritdoc/>
+	public async ValueTask<BatRole?> UpdateAsync(BatRole role, CancellationToken cancellationToken = default)
+	{
+		var entry = Roles.Update(role);
+		entry.Entity.Touch();
+		var result = await SaveChangesAsync(cancellationToken);
+		return result > 0 ? entry.Entity : null;
+	}
+
+	/// <inheritdoc/>
+	public async ValueTask<IdentityResult> DeleteAsync(BatRole role, CancellationToken cancellationToken = default)
+	{
+		Roles.Remove(role);
+		await SaveChangesAsync(cancellationToken);
+		return IdentityResult.Success;
 	}
 
 	/// <inheritdoc/>
@@ -301,21 +357,6 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 			? IdentityResult.Success
 			: NoChangesSaved;
 	}
-
-	///// <inheritdoc/>
-	//public async ValueTask<IdentityResult> AddClaimAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default)
-	//{
-	//	RoleClaims.Add(new IdentityRoleClaim<string>
-	//	{
-	//		RoleId = role.Id,
-	//		ClaimType = claim.Type,
-	//		ClaimValue = claim.Value
-	//	});
-	//	var result = await SaveChangesAsync(cancellationToken);
-	//	return result > 0
-	//		? IdentityResult.Success
-	//		: NoChangesSaved;
-	//}
 
 	/// <inheritdoc/>
 	public async ValueTask<IdentityResult> AddClaimIfNotExistsAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default)

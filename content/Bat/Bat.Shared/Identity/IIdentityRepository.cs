@@ -9,11 +9,14 @@ public class UserFetchOptions
 
 	public bool IncludeRoles { get; set; } = false;
 	public bool IncludeClaims { get; set; } = false;
+	public bool IncludeRoleClaims { get; set; } = false;
 }
 
 public class RoleFetchOptions
 {
 	public static readonly RoleFetchOptions DEFAULT = new();
+
+	public bool IncludeClaims { get; set; } = false;
 }
 
 public interface IIdentityRepository
@@ -51,17 +54,17 @@ public interface IIdentityRepository
 	///	</remarks>
 	ValueTask<BatUser?> UpdateAsync(BatUser user, CancellationToken cancellationToken = default);
 
-	/// <summary>
-	/// Updates the security stamp of the user.
-	/// </summary>
-	/// <param name="user"></param>
-	/// <param name="cancellationToken"></param>
-	/// <returns>The user with new security stamp</returns>
-	/// <remarks>
-	///		null is returned if the update operated didnot succeed.
-	///		user's concurrency stamp is automatically updated and reflected in the returned instance.
-	///	</remarks>
-	ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default);
+	///// <summary>
+	///// Updates the security stamp of the user.
+	///// </summary>
+	///// <param name="user"></param>
+	///// <param name="cancellationToken"></param>
+	///// <returns>The user with new security stamp</returns>
+	///// <remarks>
+	/////		null is returned if the update operated didnot succeed.
+	/////		user's concurrency stamp is automatically updated and reflected in the returned instance.
+	/////	</remarks>
+	//ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Deletes an existing user.
@@ -78,13 +81,14 @@ public interface IIdentityRepository
 	/// Retrieves the roles of the user.
 	/// </summary>
 	/// <param name="user"></param>
+	/// <param name="roleFetchOptions"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	/// <remarks>
 	///		If the user has no roles, an empty collection is returned.
 	///		If the user does not exist, null is returned.
 	/// </remarks>
-	ValueTask<IEnumerable<BatRole>> GetRolesAsync(BatUser user, CancellationToken cancellationToken = default);
+	ValueTask<IEnumerable<BatRole>> GetRolesAsync(BatUser user, RoleFetchOptions? roleFetchOptions = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Retrieves the claims of the user.
@@ -98,8 +102,8 @@ public interface IIdentityRepository
 	/// </remarks>
 	ValueTask<IEnumerable<IdentityUserClaim<string>>> GetClaimsAsync(BatUser user, CancellationToken cancellationToken = default);
 
-	ValueTask<bool> HasRoleAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default);
-	ValueTask<bool> HasRoleAsync(BatUser user, string roleName, CancellationToken cancellationToken = default);
+	//ValueTask<bool> HasRoleAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default);
+	//ValueTask<bool> HasRoleAsync(BatUser user, string roleName, CancellationToken cancellationToken = default);
 
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default);
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<string> roleNames, CancellationToken cancellationToken = default);
@@ -139,15 +143,6 @@ public interface IIdentityRepository
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimsAsync(BatUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
 
-	///// <summary>
-	///// Adds a claim to the user.
-	///// </summary>
-	///// <param name="role"></param>
-	///// <param name="claim"></param>
-	///// <param name="cancellationToken"></param>
-	///// <returns></returns>
-	//ValueTask<IdentityResult> AddClaimAsync(BatUser user, Claim claim, CancellationToken cancellationToken = default);
-
 	/// <summary>
 	/// Adds a claim to the user, if it does not exist.
 	/// </summary>
@@ -178,6 +173,31 @@ public interface IIdentityRepository
 	ValueTask<BatRole?> GetRoleByIDAsync(string roleId, RoleFetchOptions? options = default, CancellationToken cancellationToken = default);
 	ValueTask<BatRole?> GetRoleByNameAsync(string roleName, RoleFetchOptions? options = default, CancellationToken cancellationToken = default);
 
+	IAsyncEnumerable<BatRole> AllRolesAsync();
+
+	/// <summary>
+	/// Updates the role.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns>The role with updated data.</returns>
+	/// <remarks>
+	///		null is returned if the update operated didnot succeed.
+	///		role's concurrency stamp is automatically updated and reflected in the returned instance.
+	///	</remarks>
+	ValueTask<BatRole?> UpdateAsync(BatRole role, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Deletes an existing role.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	/// <remarks>
+	///		If the role does not exist, the operation is considered successful.
+	/// </remarks>
+	ValueTask<IdentityResult> DeleteAsync(BatRole role, CancellationToken cancellationToken = default);
+
 	/// <summary>
 	/// Retrieves the claims of the role.
 	/// </summary>
@@ -198,15 +218,6 @@ public interface IIdentityRepository
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimsAsync(BatRole role, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
-
-	///// <summary>
-	///// Adds a claim to the role.
-	///// </summary>
-	///// <param name="role"></param>
-	///// <param name="claim"></param>
-	///// <param name="cancellationToken"></param>
-	///// <returns></returns>
-	//ValueTask<IdentityResult> AddClaimAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Adds a claim to the role, if it does not exist.
