@@ -1,0 +1,69 @@
+﻿@namespace Bat.Blazor.Client.Shared
+
+<!--
+Razor component to render CoreUI icons.
+
+Sample usage:
+    Flag: <CIcon icon="cif-vn"/> or <CIcon icon="flag-vn"/>
+    Brand: <CIcon icon="cib-github"/> or <CIcon icon="brand-github"/>
+    Free: <CIcon icon="cil-user"/> or <CIcon icon="user"/>
+
+Custom class & style:
+    <CIcon icon="cil-user" style="font-size: 2rem; color: cornflowerblue;" className="big"/>
+
+List of CoreUI icons (free pack only): https://coreui.io/icons/
+
+Ref: to workaround the issue where icons disappear after switching to client mode https://stackoverflow.com/a/66255451
+-->
+
+<svg class="@IconClass" style="@IconStyle">
+    @IconMarkupString
+</svg>
+
+@code {
+    [Parameter]
+    public string icon { get; set; } = string.Empty;
+
+    [Parameter]
+    public string style { get; set; } = string.Empty;
+
+    [Parameter]
+    public string className { get; set; } = "icon";
+
+    private const string SpriteFree = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/free.svg";
+    private const string SpriteFlag = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/flag.svg";
+    private const string SpriteBrand = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/brand.svg";
+
+    private string IconClass
+    {
+        get => string.IsNullOrWhiteSpace(className) ? "icon" : className;
+    }
+
+    private string? IconStyle
+    {
+        get => string.IsNullOrWhiteSpace(style) ? null : style;
+    }
+
+    private string IconSprite
+    {
+        get => icon.StartsWith("cib-") || icon.StartsWith("brand-")
+            ? SpriteBrand
+            : icon.StartsWith("cif-") || icon.StartsWith("flag-")
+                ? SpriteFlag
+                : SpriteFree;
+    }
+
+    private string IconId
+    {
+        get => icon.StartsWith("cib-") || icon.StartsWith("brand-")
+            ? "cib-"+icon.Replace("cib-", "").Replace("brand-", "")
+            : icon.StartsWith("cif-") || icon.StartsWith("flag-")
+                ? "cif-"+icon.Replace("cif-", "").Replace("flag-", "")
+                : "cil-"+icon.Replace("cil-", "");
+    }
+
+    private MarkupString IconMarkupString
+    {
+        get => new MarkupString($"<use xlink:href=\"{IconSprite}#{IconId}\"></use>");
+    }
+}

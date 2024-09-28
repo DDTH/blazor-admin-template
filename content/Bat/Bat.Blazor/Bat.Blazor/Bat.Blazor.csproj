@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
-	<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
-	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
     <ProjectReference Include="..\..\Bat.Api\Bat.Api.csproj" />
   </ItemGroup>
