@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Bat.Shared.Bootstrap;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 namespace Bat.Api.Bootstrap;

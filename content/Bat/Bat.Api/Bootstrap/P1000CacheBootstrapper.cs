@@ -1,4 +1,5 @@
 ﻿using Bat.Api.Helpers;
+using Bat.Shared.Bootstrap;
 using Bat.Shared.Cache;
 using Bat.Shared.Identity;
 using Bat.Shared.Models;

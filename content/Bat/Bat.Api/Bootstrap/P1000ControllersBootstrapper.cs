@@ -1,4 +1,5 @@
 ﻿using Bat.Api.Controllers;
+using Bat.Shared.Bootstrap;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bat.Api.Bootstrap;

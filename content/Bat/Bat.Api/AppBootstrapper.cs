@@ -1,10 +1,14 @@
-﻿using Bat.Api.Bootstrap;
-using Bat.Api.Helpers;
+﻿using Bat.Api.Helpers;
+using Bat.Shared.Bootstrap;
+using Bat.Shared.Helpers;
 using System.Reflection;
 
 namespace Bat.Api;
 
-public class AppBootstrapper
+/// <summary>
+/// Utility class to bootstrap WebAPI and Blazor Server applications.
+/// </summary>
+public sealed class AppBootstrapper
 {
 	private static readonly ILogger<AppBootstrapper> logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<AppBootstrapper>();
 
@@ -12,9 +16,6 @@ public class AppBootstrapper
 	private static readonly string[] methodNameConfigureBuilderAsync = { "ConfigureBuilderAsync", "ConfiguresBuilderAsync" };
 	private static readonly string[] methodNameDecorateApp = { "DecorateApp", "DecoratesApp", "DecorateApplication", "DecoratesApplication" };
 	private static readonly string[] methodNameDecorateAppAsync = { "DecorateAppAsync", "DecoratesAppAsync", "DecorateApplicationAsync", "DecoratesApplicationAsync" };
-
-	private static bool IsAsyncMethod(MethodInfo method) => method.ReturnType == typeof(Task)
-		|| method.ReturnType.IsGenericType && method.ReturnType.GetGenericTypeDefinition() == typeof(Task<>);
 
 	public static ICollection<Task> Bootstrap(WebApplicationBuilder appBuilder, out WebApplication app)
 	{
@@ -26,6 +27,7 @@ public class AppBootstrapper
 		.ToList()
 		.ForEach(t =>
 		{
+			logger.LogInformation("Found bootstrapper: {name}.", t.FullName);
 			var methodConfigureBuilder = t.GetMethods().FirstOrDefault(m => m.IsPublic && methodNameConfigureBuilder.Contains(m.Name));
 			var methodConfigureBuilderAsync = t.GetMethods().FirstOrDefault(m => m.IsPublic && methodNameConfigureBuilderAsync.Contains(m.Name));
 			var methodDecorateApp = t.GetMethods().FirstOrDefault(m => m.IsPublic && methodNameDecorateApp.Contains(m.Name));
@@ -36,12 +38,12 @@ public class AppBootstrapper
 					t.FullName, methodNameConfigureBuilder, methodNameConfigureBuilderAsync, methodNameDecorateApp, methodNameDecorateAppAsync);
 				return;
 			}
-			if (methodConfigureBuilderAsync != null && !IsAsyncMethod(methodConfigureBuilderAsync))
+			if (methodConfigureBuilderAsync != null && !AsyncHelper.IsAsyncMethod(methodConfigureBuilderAsync))
 			{
 				logger.LogWarning("{name}...found method {ConfigureBuilderAsync} but it is not async.", t.FullName, methodConfigureBuilderAsync.Name);
 				return;
 			}
-			if (methodDecorateAppAsync != null && !IsAsyncMethod(methodDecorateAppAsync))
+			if (methodDecorateAppAsync != null && !AsyncHelper.IsAsyncMethod(methodDecorateAppAsync))
 			{
 				logger.LogWarning("{name}...found method {DecorateAppAsync} but it is not async.", t.FullName, methodDecorateAppAsync.Name);
 				return;
@@ -76,20 +78,18 @@ public class AppBootstrapper
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureBuilderAsync.Name);
 
 				// async method takes priority
-				var task = ReflectionHelper.InvokeAsyncMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilderAsync);
+				var task = WebReflectionHelper.InvokeAsyncMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilderAsync);
 				backgroundBootstrappingTasks.Append(task);
 			}
 			else
 			{
 				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureBuilder!.Name);
-				ReflectionHelper.InvokeMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilder);
+				WebReflectionHelper.InvokeMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilder);
 			}
 		}
 
 		app = appBuilder.Build();
-		Globals.App = app;
-		logger.LogInformation("WebApplication instance has been created and added to Global.");
 
 		logger.LogInformation("========== [Bootstrapping] Decorating application...");
 		foreach (var bootstrapper in bootstrappersInfo)
@@ -104,43 +104,17 @@ public class AppBootstrapper
 				logger.LogInformation("[{priority}] Invoking async method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodDecorateAppAsync.Name);
 				// async method takes priority
-				var task = ReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodDecorateAppAsync);
+				var task = WebReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodDecorateAppAsync);
 				backgroundBootstrappingTasks.Append(task);
 			}
 			else
 			{
 				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodDecorateApp!.Name);
-				ReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodDecorateApp);
+				WebReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodDecorateApp);
 			}
 		}
 
 		return backgroundBootstrappingTasks;
 	}
-
-	public static async void WaitForBackgroundTasks(ICollection<Task> tasks)
-	{
-		while (tasks.Count > 0)
-		{
-			var finishedTask = await Task.WhenAny(tasks);
-			try { await finishedTask; }
-			catch (Exception e)
-			{
-				logger.LogError(e, "Error executing bootstrapper task.");
-			}
-			tasks.Remove(finishedTask);
-		}
-	}
-
-	private readonly struct BootstrapperStruct(Type _type,
-		MethodInfo? _methodConfigureBuilder, MethodInfo? _methodConfigureBuilderAsync,
-		MethodInfo? _methodDecorateApp, MethodInfo? _methodDecorateAppAsync, int _priority = 1000)
-	{
-		public readonly Type type = _type;
-		public readonly int priority = _priority;
-		public readonly MethodInfo? methodConfigureBuilder = _methodConfigureBuilder;
-		public readonly MethodInfo? methodConfigureBuilderAsync = _methodConfigureBuilderAsync;
-		public readonly MethodInfo? methodDecorateApp = _methodDecorateApp;
-		public readonly MethodInfo? methodDecorateAppAsync = _methodDecorateAppAsync;
-	};
 }

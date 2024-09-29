@@ -6,12 +6,12 @@
 /// <remarks>
 ///		Use DI whenever possible. This global repository is meant for items that are needed in context where DI is not optimal.
 /// </remarks>
-public class Globals
+public sealed class Globals
 {
-	/// <summary>
-	/// Reference to the WebApplication instance.
-	/// </summary>
-	public static WebApplication? App { get; set; }
+	///// <summary>
+	///// Reference to the WebApplication instance.
+	///// </summary>
+	//public static WebApplication? App { get; set; }
 
 	/// <summary>
 	/// Set to true when the server is ready to handle requests.

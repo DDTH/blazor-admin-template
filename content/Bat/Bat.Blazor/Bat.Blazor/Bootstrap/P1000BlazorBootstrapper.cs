@@ -1,4 +1,4 @@
-﻿using Bat.Api.Bootstrap;
+﻿using Bat.Shared.Bootstrap;
 
 namespace Bat.Blazor.Bootstrap;
 

@@ -1,4 +1,5 @@
 ﻿using Bat.Api.Services;
+using Bat.Shared.Bootstrap;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 

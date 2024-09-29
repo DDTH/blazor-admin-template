@@ -1,4 +1,4 @@
-﻿namespace Bat.Api.Bootstrap;
+﻿namespace Bat.Shared.Bootstrap;
 
 /// <summary>
 /// Class-level attribute to mark a class as a bootstrapper.

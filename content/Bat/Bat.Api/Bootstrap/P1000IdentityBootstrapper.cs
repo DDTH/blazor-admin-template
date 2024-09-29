@@ -1,4 +1,5 @@
 ﻿using Bat.Api.Helpers;
+using Bat.Shared.Bootstrap;
 using Bat.Shared.EF.Identity;
 using Bat.Shared.Identity;
 using Ddth.Utilities;
