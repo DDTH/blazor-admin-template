@@ -1,7 +1,12 @@
 ﻿@inherits LayoutComponentBase
+@inject HttpClient httpClient
 
 @Body
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+	{
+		Console.WriteLine($"Empty Layout Initialized {httpClient}");
+		await Task.CompletedTask;
+	}
 }

@@ -8,6 +8,7 @@ public class HttpClientBootstrapper
 {
 	public static void ConfigureWasmBuilder(WebAssemblyHostBuilder wasmAppBuilder)
 	{
-		wasmAppBuilder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(wasmAppBuilder.HostEnvironment.BaseAddress) });
+		wasmAppBuilder.Services.AddHttpClient();
+		//wasmAppBuilder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(wasmAppBuilder.HostEnvironment.BaseAddress) });
 	}
 }
