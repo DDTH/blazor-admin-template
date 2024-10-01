@@ -2,6 +2,9 @@
 
 namespace Bat.Blazor.Bootstrap;
 
+/// <summary>
+/// Bootstrapper that registers HttpClient to the service registry.
+/// </summary>
 [Bootstrapper]
 public class HttpClientBootstrapper
 {

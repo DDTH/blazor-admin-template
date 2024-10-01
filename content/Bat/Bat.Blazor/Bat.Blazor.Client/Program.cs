@@ -1,10 +1,10 @@
 ﻿using Bat.Blazor.Client;
 using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using System.Text.Json;
 
 var wasmAppBuilder = WebAssemblyHostBuilder.CreateDefault(args);
-Globals.ApiBaseUrl = wasmAppBuilder.HostEnvironment.BaseAddress;
-Console.WriteLine($"API base URL: {Globals.ApiBaseUrl}");
+Globals.ApiBaseUrl = wasmAppBuilder.HostEnvironment.BaseAddress.TrimEnd('/');
 var tasks = WasmAppBootstrapper.Bootstrap(wasmAppBuilder, out var app);
 
 var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
@@ -15,9 +15,5 @@ await Task.Run(() =>
 	Globals.Ready = true; // application is ready
 	logger.LogInformation("Background bootstrapping completed.");
 });
-
-var httpClient = app.Services.GetRequiredService<HttpClient>();
-httpClient.BaseAddress = new Uri(Globals.ApiBaseUrl);
-logger.LogInformation("Base address set to {addr}", httpClient.BaseAddress);
 
 await app.RunAsync();

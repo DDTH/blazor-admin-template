@@ -1,12 +1,11 @@
-﻿@inherits LayoutComponentBase
-@inject HttpClient httpClient
+﻿@using Bat.Blazor.Client.Services
+@inherits BaseLayout
+@inject ILogger<Empty> logger
+@inject IServiceProvider ServiceProvider
+
+<h1>Hello, @IsBrowser!</h1>
 
 @Body
 
 @code {
-    protected override async Task OnInitializedAsync()
-	{
-		Console.WriteLine($"Empty Layout Initialized {httpClient}");
-		await Task.CompletedTask;
-	}
 }

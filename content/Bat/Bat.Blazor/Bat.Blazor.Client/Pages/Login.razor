@@ -1,9 +1,8 @@
 ﻿@using Bat.Blazor.Client.Shared;
 
-@using static Microsoft.AspNetCore.Components.Web.RenderMode
-
 @page "/login"
 @layout Layout.Empty
+@inherits BaseComponent
 
 <!--
 * CoreUI - Free Bootstrap Admin Template
@@ -13,14 +12,13 @@
 * Licensed under MIT (https://github.com/coreui/coreui-free-bootstrap-admin-template/blob/main/LICENSE)
 -->
 
+<PageTitle>Login | @AppInfo?.Name</PageTitle>
+
+<!--
 <HeadContent>
-    <title>Login | BAT</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="CoreUI - Free Bootstrap Admin Template" />
-    <meta name="author" content="Łukasz Holeczek" />
-    <meta name="keywords" content="CoreUI, Bootstrap, Admin, Template, Theme, Responsive, Fluid"/>
+    <title>Login | @AppInfo?.Name</title>
 </HeadContent>
+-->
 
 <div class="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
     <div class="container">

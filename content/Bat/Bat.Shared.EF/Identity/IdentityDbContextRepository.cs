@@ -114,12 +114,12 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 		return result > 0 ? entry.Entity : null;
 	}
 
-	///// <inheritdoc/>
-	//public async ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default)
-	//{
-	//	user.SecurityStamp = Guid.NewGuid().ToString("N");
-	//	return await UpdateAsync(user, cancellationToken);
-	//}
+	/// <inheritdoc/>
+	public async ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default)
+	{
+		user.SecurityStamp = Guid.NewGuid().ToString("N");
+		return await UpdateAsync(user, cancellationToken);
+	}
 
 	/// <inheritdoc/>
 	public async ValueTask<IdentityResult> DeleteAsync(BatUser user, CancellationToken cancellationToken = default)

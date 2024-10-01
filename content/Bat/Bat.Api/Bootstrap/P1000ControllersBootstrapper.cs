@@ -1,9 +1,12 @@
-﻿using Bat.Api.Controllers;
+﻿using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bat.Api.Bootstrap;
 
+/// <summary>
+/// Built-in bootstrapper that adds and maps controllers.
+/// </summary>
 [Bootstrapper]
 public class ControllersBootstrapper
 {

@@ -54,17 +54,17 @@ public interface IIdentityRepository
 	///	</remarks>
 	ValueTask<BatUser?> UpdateAsync(BatUser user, CancellationToken cancellationToken = default);
 
-	///// <summary>
-	///// Updates the security stamp of the user.
-	///// </summary>
-	///// <param name="user"></param>
-	///// <param name="cancellationToken"></param>
-	///// <returns>The user with new security stamp</returns>
-	///// <remarks>
-	/////		null is returned if the update operated didnot succeed.
-	/////		user's concurrency stamp is automatically updated and reflected in the returned instance.
-	/////	</remarks>
-	//ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default);
+	/// <summary>
+	/// Updates the security stamp of the user.
+	/// </summary>
+	/// <param name="user"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns>The user with new security stamp</returns>
+	/// <remarks>
+	///		null is returned if the update operated didnot succeed.
+	///		user's concurrency stamp is automatically updated and reflected in the returned instance.
+	///	</remarks>
+	ValueTask<BatUser?> UpdateSecurityStampAsync(BatUser user, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Deletes an existing user.

@@ -10,6 +10,9 @@ using Microsoft.Extensions.Options;
 
 namespace Bat.Api.Bootstrap;
 
+/// <summary>
+/// Built-in bootstrapper that initializes and registers cache services.
+/// </summary>
 [Bootstrapper]
 public class CacheBootstrapper
 {

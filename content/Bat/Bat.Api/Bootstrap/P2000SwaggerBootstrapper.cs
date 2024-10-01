@@ -8,7 +8,7 @@ namespace Bat.Api.Bootstrap;
 /// Built-in bootstrapper that initializes Swagger/OpenAPI services and UI.
 /// </summary>
 /// <remarks>
-///		This bootstrapper must be invoked after the ControllersBootstrapper to ensure that all controllers are registered before Swagger scans them.
+///		This bootstrapper must be invoked after the <see cref="ControllersBootstrapper"/> to ensure that all controllers are registered before Swagger scans them.
 /// </remarks>
 [Bootstrapper(Priority = 2000)]
 public class SwaggerBootstrapper

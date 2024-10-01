@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bat.Blazor", "Bat.Blazor", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Blazor", "Bat.Blazor\Bat.Blazor\Bat.Blazor.csproj", "{AF40532F-5258-459D-83C6-D8F82380F3CB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Blazor.App", "Bat.Blazor\Bat.Blazor.App\Bat.Blazor.App.csproj", "{A5056D14-BBF2-47E6-B918-92F86A42A85F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Blazor.Client", "Bat.Blazor\Bat.Blazor.Client\Bat.Blazor.Client.csproj", "{EA2C17B3-4A80-4505-A1D0-6E25257BE895}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Shared", "Bat.Shared\Bat.Shared.csproj", "{BC276144-D586-4EBC-9A12-DCDC123FA0C4}"
@@ -27,10 +25,6 @@ Global
 		{AF40532F-5258-459D-83C6-D8F82380F3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF40532F-5258-459D-83C6-D8F82380F3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF40532F-5258-459D-83C6-D8F82380F3CB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A5056D14-BBF2-47E6-B918-92F86A42A85F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5056D14-BBF2-47E6-B918-92F86A42A85F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5056D14-BBF2-47E6-B918-92F86A42A85F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5056D14-BBF2-47E6-B918-92F86A42A85F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EA2C17B3-4A80-4505-A1D0-6E25257BE895}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EA2C17B3-4A80-4505-A1D0-6E25257BE895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA2C17B3-4A80-4505-A1D0-6E25257BE895}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,7 +47,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AF40532F-5258-459D-83C6-D8F82380F3CB} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
-		{A5056D14-BBF2-47E6-B918-92F86A42A85F} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
 		{EA2C17B3-4A80-4505-A1D0-6E25257BE895} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

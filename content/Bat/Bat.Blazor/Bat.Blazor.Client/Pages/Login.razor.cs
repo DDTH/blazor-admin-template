@@ -1,8 +1,10 @@
-﻿namespace Bat.Blazor.Client.Pages;
+﻿using Bat.Blazor.Client.Shared;
 
-public partial class Login
+namespace Bat.Blazor.Client.Pages;
+
+public partial class Login : BaseComponent
 {
-	private void ButtonClick()
+	private static void ButtonClick()
 	{
 		Console.WriteLine($"Button clicked");
 	}

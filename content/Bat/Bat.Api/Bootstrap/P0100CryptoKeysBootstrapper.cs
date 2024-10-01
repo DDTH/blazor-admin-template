@@ -6,10 +6,10 @@ using System.Security.Cryptography.X509Certificates;
 namespace Bat.Api.Bootstrap;
 
 /// <summary>
-/// Built-in bootstrapper that initializes Cryptography keys. This bootstrapper initializes the RSA keypair for JWT signing.
+/// Built-in bootstrapper that initializes cryptography keys. This bootstrapper initializes the RSA keypair for JWT signing.
 /// </summary>
 /// <remarks>
-///		The keypair is then stored in the service container as IOption&lt;CryptoOptions&gt; for later use via dependency injection.
+///		The keypair is then stored in the service container as IOption&lt;<see cref="CryptoOptions"/>&gt; for later use via dependency injection.
 /// </remarks>
 [Bootstrapper(Priority = 100)]
 public class CryptoKeysBootstrapper

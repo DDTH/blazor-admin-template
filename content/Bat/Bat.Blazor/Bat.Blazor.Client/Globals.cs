@@ -1,4 +1,6 @@
-﻿namespace Bat.Blazor.Client;
+﻿using Bat.Shared.Api;
+
+namespace Bat.Blazor.Client;
 
 public sealed class Globals
 {
@@ -11,4 +13,6 @@ public sealed class Globals
 	/// Base URL for the API server, default to (WebAssemblyHostBuilder).HostEnvironment.BaseAddress
 	/// </summary>
 	public static string ApiBaseUrl { get; set; } = string.Empty;
+
+	public static AppInfo? AppInfo { get; set; } = default;
 }
