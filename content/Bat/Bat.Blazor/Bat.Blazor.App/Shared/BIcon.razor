@@ -1,0 +1,36 @@
+﻿@namespace Bat.Blazor.App.Shared
+
+<!--
+Razor component to render Bootstrap icons.
+
+Sample usage:
+    <BIcon icon="bi-alarm"/> or <BIcon icon="alarm"/>
+
+Custom class & style:
+    <BIcon icon="bi-alarm" style="font-size: 2rem; color: cornflowerblue;" extraClassName="big"/>
+
+List of Bootstrap icons: https://icons.getbootstrap.com/
+-->
+
+<i class="@IconClass" style="@IconStyle"></i>
+
+@code {
+    [Parameter]
+    public string icon { get; set; } = string.Empty;
+
+    [Parameter]
+    public string style { get; set; } = string.Empty;
+
+    [Parameter]
+    public string extraClassName { get; set; } = string.Empty;
+
+    private string IconClass
+    {
+        get => $"bi bi-{icon.Replace("bi-", "")} {extraClassName}";
+    }
+
+    private string? IconStyle
+    {
+        get => string.IsNullOrWhiteSpace(style) ? null : style;
+    }
+}

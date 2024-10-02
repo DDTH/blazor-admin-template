@@ -31,6 +31,6 @@ public class BlazorBootstrapper
 		app.MapRazorComponents<Components.App>()
 			.AddInteractiveServerRenderMode()
 			.AddInteractiveWebAssemblyRenderMode()
-			.AddAdditionalAssemblies(typeof(Client._Imports).Assembly);
+			.AddAdditionalAssemblies(typeof(Client._Imports).Assembly, typeof(App._Imports).Assembly);
 	}
 }

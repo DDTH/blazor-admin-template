@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\..\Bat.Api\Bat.Api.csproj" />
+    <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
   </ItemGroup>
 
 </Project>

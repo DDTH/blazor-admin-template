@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Shared.EF", "Bat.Shared
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Api", "Bat.Api\Bat.Api.csproj", "{315306DC-DFB8-45E4-BDF8-E7B8A39DF56F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bat.Blazor.App", "Bat.Blazor\Bat.Blazor.App\Bat.Blazor.App.csproj", "{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{315306DC-DFB8-45E4-BDF8-E7B8A39DF56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{315306DC-DFB8-45E4-BDF8-E7B8A39DF56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{315306DC-DFB8-45E4-BDF8-E7B8A39DF56F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +54,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{AF40532F-5258-459D-83C6-D8F82380F3CB} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
 		{EA2C17B3-4A80-4505-A1D0-6E25257BE895} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
+		{DB2CC8C7-4538-4C28-B711-E3F9FAAD6937} = {B50AB068-3C6E-465A-8214-37BF86AB5951}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {550AECC4-79E6-4C55-BC16-C1F5B875A87F}

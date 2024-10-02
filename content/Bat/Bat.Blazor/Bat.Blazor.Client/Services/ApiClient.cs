@@ -1,4 +1,5 @@
-﻿using Bat.Shared.Api;
+﻿using Bat.Blazor.App;
+using Bat.Shared.Api;
 using System.Net.Http.Json;
 
 namespace Bat.Blazor.Client.Services;
