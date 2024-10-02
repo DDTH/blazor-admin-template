@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Bat.Blazor.App\**" />
+    <Content Remove="Bat.Blazor.App\**" />
+    <EmbeddedResource Remove="Bat.Blazor.App\**" />
+    <None Remove="Bat.Blazor.App\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
   </ItemGroup>
 
