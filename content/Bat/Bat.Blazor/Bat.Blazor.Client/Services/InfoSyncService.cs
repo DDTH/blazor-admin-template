@@ -12,11 +12,14 @@ public sealed class InfoSyncService : IDisposable
 	private readonly ILogger<InfoSyncService> logger;
 	private readonly Timer timer;
 
+	private readonly TimeSpan initialDelay = TimeSpan.Zero; // TimeSpan.Zero means start immediately
+	private readonly TimeSpan interval = TimeSpan.FromMinutes(15);
+
 	public InfoSyncService(IServiceProvider serviceProvider)
 	{
 		this.serviceProvider = serviceProvider;
 		logger = serviceProvider.GetRequiredService<ILogger<InfoSyncService>>();
-		timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+		timer = new Timer(DoWork, null, initialDelay, interval);
 		logger.LogInformation("{service} initialized.", nameof(InfoSyncService));
 	}
 
@@ -36,6 +39,9 @@ public sealed class InfoSyncService : IDisposable
 		else
 		{
 			Globals.AppInfo = infoResp.Data?.App;
+			Globals.ServerInfo = infoResp.Data?.Server;
+			Globals.CryptoInfo = infoResp.Data?.Crypto;
+			Globals.Ready = true;
 		}
 	}
 }

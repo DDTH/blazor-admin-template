@@ -1,6 +1,5 @@
 ﻿using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
-using System.Text.Json;
 
 namespace Bat.Blazor.Client.Shared;
 
@@ -8,6 +7,9 @@ public abstract class BaseComponent : ComponentBase
 {
 	[Inject]
 	protected virtual IServiceProvider ServiceProvider { get; init; } = default!;
+
+	[Inject]
+	protected virtual NavigationManager NavigationManager { get; init; } = default!;
 
 	/// <summary>
 	/// Check if the component is rendered in WASM mode.
@@ -30,7 +32,6 @@ public abstract class BaseComponent : ComponentBase
 			return _appInfo ?? Globals.AppInfo;
 		}
 	}
-
 
 	protected override async Task OnInitializedAsync()
 	{

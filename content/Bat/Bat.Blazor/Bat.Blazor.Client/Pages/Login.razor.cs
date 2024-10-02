@@ -4,8 +4,18 @@ namespace Bat.Blazor.Client.Pages;
 
 public partial class Login : BaseComponent
 {
-	private static void ButtonClick()
+	private CModal ModalDialog { get; set; } = default!;
+
+	private void ShowModalNotImplemented()
 	{
-		Console.WriteLine($"Button clicked");
+		ModalDialog.Open();
+	}
+
+	private string Email { get; set; } = string.Empty;
+	private string Password { get; set; } = string.Empty;
+
+	private void ButtonClick()
+	{
+		Console.WriteLine($"Button clicked: {Email} / {Password}");
 	}
 }

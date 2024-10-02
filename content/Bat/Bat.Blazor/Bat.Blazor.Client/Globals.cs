@@ -5,7 +5,7 @@ namespace Bat.Blazor.Client;
 public sealed class Globals
 {
 	/// <summary>
-	/// Set to true when the application is ready.
+	/// Set to true when the server is ready to handle requests.
 	/// </summary>
 	public static bool Ready { get; set; } = false;
 
@@ -15,4 +15,8 @@ public sealed class Globals
 	public static string ApiBaseUrl { get; set; } = string.Empty;
 
 	public static AppInfo? AppInfo { get; set; } = default;
+
+	public static ServerInfo? ServerInfo { get; set; } = default;
+
+	public static CryptoInfo? CryptoInfo { get; set; } = default;
 }
