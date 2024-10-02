@@ -30,9 +30,9 @@ Ref: to workaround the issue where icons disappear after switching to client mod
     [Parameter]
     public string className { get; set; } = "icon";
 
-    private const string SpriteFree = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/free.svg";
-    private const string SpriteFlag = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/flag.svg";
-    private const string SpriteBrand = UIGlobals.COREUI_BASE + "/vendors/@coreui/icons/svg/brand.svg";
+    private static readonly string SpriteFree = $"{UIGlobals.COREUI_BASE }/vendors/@coreui/icons/svg/free.svg";
+    private static readonly string SpriteFlag = $"{UIGlobals.COREUI_BASE}/vendors/@coreui/icons/svg/flag.svg";
+    private static readonly string SpriteBrand = $"{UIGlobals.COREUI_BASE}/vendors/@coreui/icons/svg/brand.svg";
 
     private string IconClass
     {

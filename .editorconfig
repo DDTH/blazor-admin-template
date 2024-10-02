@@ -17,7 +17,7 @@ charset = utf-8-bom
 end_of_line = lf
 
 # Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx,vb,vbx,razor}]
 insert_final_newline = true
 charset = utf-8-bom
 end_of_line = lf
