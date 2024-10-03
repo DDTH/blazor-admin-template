@@ -1,0 +1,30 @@
+﻿@using Bat.Blazor.App.Shared
+@inherits BaseLayout
+
+<AuthorizeView>
+    <Authorized>
+        <p>Claims:</p>
+        <ul>
+            @foreach (var claim in UserClaims)
+            {
+                <li><b>@claim.Type:</b> @claim.Value</li>
+            }
+        </ul>
+        @Body
+    </Authorized>
+    <NotAuthorized>
+        <CAlert type="warning">
+            <span>You are not authorized to access this page. Please <a href="@loginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
+        </CAlert>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string loginUrl
+    {
+        get
+        {
+            return "/login?returnUrl=/" + System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+        }
+    }
+}

@@ -1,9 +1,23 @@
 ﻿@namespace Bat.Blazor.App.Shared
 
 <!--
-Razor component to render models in CoreUI style.
+Razor component to render models in CoreUI style. Ref: https://coreui.io/bootstrap/docs/components/modal/
 
-CoreUI model documentation: https://coreui.io/bootstrap/docs/components/modal/
+Sample usage:
+    <CModal title="Modal title" centered="true" type="info">
+        <p>Modal body text goes here.</p>
+    </CModal>
+
+Modal dialog with a button to close:
+    <CModal @ref="@ModalDialog" title="Model title" centered="false" type="warning">
+        <div class="text-center">
+            <p>Modal body text goes here.</p>
+            <button type="button" class="btn btn-primary" @onclick="() => ModalDialog.Close()"><CIcon icon="x-circle" /> Close</button>
+        </div>
+    </CModal>
+    @code {
+        private CModal ModalDialog { get; set; } = default!;
+    }
 -->
 
 <div class="modal fade @cssClassShow" role="dialog"
@@ -39,7 +53,7 @@ CoreUI model documentation: https://coreui.io/bootstrap/docs/components/modal/
     public bool centered { get; set; } = true;
 
     /// <summary>
-    /// Dialog type, one of "info", "warning", "danger", "success". Default is "info".
+    /// Dialog type, one of "info", "warning", "danger", "success", "primary", "secondary". Default is "info".
     /// The dialog will display an icon corresponding to the type. The icon is taken from Bootstrap Icons.
     /// </summary>
     [Parameter]
@@ -72,6 +86,8 @@ CoreUI model documentation: https://coreui.io/bootstrap/docs/components/modal/
             "warning" => "text-warning",
             "danger" => "text-danger",
             "success" => "text-success",
+            "primary" => "text-primary",
+            "secondary" => "text-secondary",
             _ => "text-info"
         };
     }

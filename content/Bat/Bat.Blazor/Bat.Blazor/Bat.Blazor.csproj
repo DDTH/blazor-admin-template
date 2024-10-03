@@ -6,20 +6,22 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <!--
   <ItemGroup>
     <Compile Remove="Bat.Blazor.App\**" />
     <Content Remove="Bat.Blazor.App\**" />
     <EmbeddedResource Remove="Bat.Blazor.App\**" />
     <None Remove="Bat.Blazor.App\**" />
   </ItemGroup>
+  -->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\..\Bat.Api\Bat.Api.csproj" />
+    <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
   </ItemGroup>
 

@@ -1,8 +1,7 @@
-﻿using Bat.Blazor.App;
-using Bat.Shared.Api;
+﻿using Bat.Shared.Api;
 using System.Net.Http.Json;
 
-namespace Bat.Blazor.Client.Services;
+namespace Bat.Blazor.App.Services;
 
 public class ApiClient(HttpClient httpClient) : IApiClient
 {

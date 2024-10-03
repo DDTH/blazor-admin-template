@@ -1,4 +1,4 @@
-﻿using Bat.Blazor.Client.Services;
+﻿using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -8,10 +8,10 @@ using Microsoft.Extensions.Http;
 namespace Bat.Blazor.Client.Bootstrap;
 
 /// <summary>
-/// Bootstrapper that registers services used by Blazor client.
+/// Bootstrapper that registers client-services used by Blazor client.
 /// </summary>
 /// <remarks>
-///		Bootstrappers in Blazor.Client project are invoked only in WebAssembly mode.
+///		Bootstrappers for Blazor server and Blazor client should be separated in different projects.
 /// </remarks>
 [Bootstrapper]
 public class ClientBootstrapper
