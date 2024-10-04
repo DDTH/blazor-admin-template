@@ -94,3 +94,68 @@ public sealed class AppInfo
 	[JsonPropertyName("description")]
 	public string? Description { get; set; }
 }
+
+/*----------------------------------------------------------------------*/
+
+/// <summary>
+/// Response to the <c>/auth</c> API call.
+/// </summary>
+public class AuthResp
+{
+	public static readonly AuthResp AuthFailed = new() { Status = 403, Error = "Authentication failed." };
+	public static readonly AuthResp TokenExpired = new() { Status = 401, Error = "Token expired." };
+
+	/// <summary>
+	/// Convenience method to create a new AuthResp instance.
+	/// </summary>
+	/// <param name="status"></param>
+	/// <param name="error"></param>
+	/// <returns></returns>
+	public static AuthResp New(int status, string error)
+	{
+		return new AuthResp { Status = status, Error = error ?? "" };
+	}
+
+	/// <summary>
+	/// Convenience method to create a new AuthResp instance.
+	/// </summary>
+	/// <param name="status"></param>
+	/// <param name="token"></param>
+	/// <param name="expiry"></param>
+	/// <returns></returns>
+	public static AuthResp New(int status, string token, DateTime? expiry)
+	{
+		return new AuthResp { Status = status, Token = token ?? "", Expiry = expiry };
+	}
+
+	//private int _status;
+	//private string? _error;
+	//private string? _token;
+	//private DateTime? _expiry;
+
+	/// <summary>
+	/// Authentication status.
+	/// </summary>
+	/// <value>200: success</value>
+	[JsonIgnore]
+	public int Status { get; set; }
+
+	/// <summary>
+	/// Additional error information, if any.
+	/// </summary>
+	[JsonPropertyName("error")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+	public string? Error { get; set; }
+
+	/// <summary>
+	/// Authentication token, if successful.
+	/// </summary>
+	[JsonPropertyName("token")]
+	public string? Token { get; set; }
+
+	/// <summary>
+	/// When the token expires.
+	/// </summary>
+	[JsonPropertyName("expiry")]
+	public DateTime? Expiry { get; set; }
+}

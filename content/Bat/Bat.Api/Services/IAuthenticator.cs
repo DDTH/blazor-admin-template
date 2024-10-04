@@ -1,4 +1,6 @@
-﻿namespace Bat.Api.Services;
+﻿using Bat.Shared.Api;
+
+namespace Bat.Api.Services;
 
 public interface IAuthenticator
 {

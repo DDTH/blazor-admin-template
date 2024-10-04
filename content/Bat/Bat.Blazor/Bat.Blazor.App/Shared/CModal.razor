@@ -92,6 +92,20 @@ Modal dialog with a button to close:
         };
     }
 
+    // public CModal SetTitle(string title)
+    // {
+    //     SetParametersAsync(ParameterView.FromDictionary(new Dictionary<string, object?> { ["title"] = title })).Wait();
+    //     this.title = title;
+    //     base.StateHasChanged();
+    //     return this;
+    // }
+
+    // public CModal SetContent(RenderFragment content)
+    // {
+    //     ChildContent = content;
+    //     return this;
+    // }
+
     public void Open()
     {
         cssClassShow = "show";

@@ -29,6 +29,12 @@
                         <div class="card-body">
                             <h1>Login</h1>
                             <p class="text-body-secondary">Sign In to your account</p>
+                            @if (!string.IsNullOrEmpty(AlertMessage))
+                            {
+                                <CAlert type="@AlertType">
+                                    @AlertMessage
+                                </CAlert>
+                            }
                             <div class="input-group mb-3">
                                 <span class="input-group-text">
                                     <CIcon icon="cil-user"/>
@@ -43,7 +49,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <button class="btn btn-primary px-4" type="button" @onclick="ButtonClick">Login</button>
+                                    <button class="btn btn-primary px-4" type="button" @onclick="BtnClickLogin">Login</button>
                                 </div>
                                 <div class="col-6 text-end">
                                     <button class="btn btn-link px-0" type="button" @onclick="ShowModalNotImplemented">Forgot password?</button>

@@ -17,5 +17,8 @@ public class AuthBootstrapper
 
 		// register the custom state provider
 		appBuilder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+
+		// https://stackoverflow.com/questions/70133682/hide-console-authorization-logs-in-blazor-webassembly
+		appBuilder.Logging.AddFilter("Microsoft.AspNetCore.Authorization.*", LogLevel.Warning);
 	}
 }

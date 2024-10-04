@@ -1,6 +1,8 @@
 ﻿using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http;
 
 namespace Bat.Blazor.Bootstrap;
 
@@ -17,5 +19,8 @@ public class ClientBootstrapper
 	{
 		appBuilder.Services.AddHttpClient();
 		appBuilder.Services.AddSingleton<IApiClient, ApiClient>();
+
+		// https://stackoverflow.com/questions/52889827/remove-http-client-logging-handler-in-asp-net-core
+		appBuilder.Services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
 	}
 }

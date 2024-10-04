@@ -95,4 +95,28 @@ public class BuiltinController : ApiBaseController
 		};
 		return ResponseOk(data);
 	}
+
+	/// <summary>
+	/// Authenticates the client.
+	/// </summary>
+	/// <response code="200">Authentication was succesful.</response>
+	/// <response code="403">Authentication failed.</response>
+	/// <response code="500">No authenticator defined or error while authenticating.</response>
+	[ProducesResponseType(StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(ApiResp<AuthResp>), StatusCodes.Status403Forbidden)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+	[HttpPost("/auth")]
+	public async Task<ActionResult<ApiResp<AuthResp>>> Authenticate([FromBody] AuthReq authReq)
+	{
+		ArgumentNullException.ThrowIfNull(authReq, nameof(authReq));
+
+		var resp = _authenticatorAsync != null
+			? await _authenticatorAsync.AuthenticateAsync(authReq)
+			: _authenticator?.Authenticate(authReq);
+		return resp == null
+			? ResponseNoData(500, "Error while authenticating.")
+			: resp.Status == 200
+				? ResponseOk(resp)
+				: ResponseNoData(resp.Status, resp.Error);
+	}
 }

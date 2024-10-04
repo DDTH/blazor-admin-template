@@ -12,7 +12,7 @@ public sealed class Globals
 	/// <summary>
 	/// Base URL for the API server, default to (WebAssemblyHostBuilder).HostEnvironment.BaseAddress
 	/// </summary>
-	public static string ApiBaseUrl { get; set; } = string.Empty;
+	public static string? ApiBaseUrl { get; set; }
 
 	public static AppInfo? AppInfo { get; set; } = default;
 
