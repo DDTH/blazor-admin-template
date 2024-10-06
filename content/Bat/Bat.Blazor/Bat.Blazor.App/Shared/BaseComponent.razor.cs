@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Api;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,9 @@ public abstract class BaseComponent : ComponentBase
 
 	[Inject]
 	protected virtual NavigationManager NavigationManager { get; init; } = default!;
+
+	[Inject]
+	protected virtual ILocalStorageService LocalStorage { get; init; } = default!;
 
 	/// <summary>
 	/// Check if the component is rendered in WASM mode.

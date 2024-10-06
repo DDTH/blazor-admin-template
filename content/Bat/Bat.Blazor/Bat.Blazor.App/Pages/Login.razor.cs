@@ -1,5 +1,6 @@
 ﻿using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
 
 namespace Bat.Blazor.App.Pages;
@@ -53,11 +54,16 @@ public partial class Login : BaseComponent
 			Password = Password
 		};
 		var resp = await ApiClient.LoginAsync(req, ApiBaseUrl);
-		Console.WriteLine($"Login response: {JsonSerializer.Serialize(resp)}");
 		if (resp.Status != 200)
 		{
 			ShowAlert("danger", resp.Message!);
 			return;
 		}
+
+		ShowAlert("success", "Authenticated successfully, logging in...");
+		var returnUrl = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query)
+			.TryGetValue("returnUrl", out var returnUrlValue) ? returnUrlValue.FirstOrDefault("/") : "/";
+		await LocalStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, resp.Data!.Token);
+		NavigationManager.NavigateTo(returnUrl ?? "/");
 	}
 }

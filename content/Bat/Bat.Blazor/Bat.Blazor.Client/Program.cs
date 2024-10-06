@@ -2,13 +2,14 @@
 using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
+var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+	.Append(typeof(Bat.Blazor.App.Globals).Assembly); // Bat.Blazor.App is shared between Blazor Server and WebAssembly, add its assembly to the list
 var wasmAppBuilder = WebAssemblyHostBuilder.CreateDefault(args);
 Bat.Blazor.App.Globals.ApiBaseUrl = wasmAppBuilder.HostEnvironment.BaseAddress;
-var tasks = WasmAppBootstrapper.Bootstrap(wasmAppBuilder, out var app);
-
-var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
+var tasks = WasmAppBootstrapper.Bootstrap(out var app, wasmAppBuilder, assemblies);
 await Task.Run(() =>
 {
+	var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
 	logger.LogInformation("Waiting for background bootstrapping tasks...");
 	AsyncHelper.WaitForBackgroundTasks(tasks, logger);
 	logger.LogInformation("Background bootstrapping completed.");

@@ -4,6 +4,8 @@ namespace Bat.Blazor.App;
 
 public sealed class Globals
 {
+	public const string LOCAL_STORAGE_KEY_AUTH_TOKEN = "auth_token";
+
 	/// <summary>
 	/// Set to true when the server is ready to handle requests.
 	/// </summary>

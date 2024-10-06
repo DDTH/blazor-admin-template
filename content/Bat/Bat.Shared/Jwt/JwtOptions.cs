@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Bat.Api.Services;
+namespace Bat.Shared.Jwt;
 
 public class JwtOptions
 {

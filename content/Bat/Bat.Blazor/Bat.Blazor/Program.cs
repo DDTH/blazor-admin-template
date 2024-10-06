@@ -1,14 +1,16 @@
-﻿using Bat.Api;
-using Bat.Shared.Helpers;
+﻿using Bat.Shared.Helpers;
 
+var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+	.Append(typeof(Bat.Api.Globals).Assembly) // Bat.Api is used in Blazor Server, add its assembly to the list
+	.Append(typeof(Bat.Blazor.App.Globals).Assembly); // Bat.Blazor.App is shared between Blazor Server and WebAssembly, add its assembly to the list
 var appBuilder = WebApplication.CreateBuilder(args);
-var tasks = AppBootstrapper.Bootstrap(appBuilder, out var app);
+var tasks = Bat.Api.AppBootstrapper.Bootstrap(out var app, appBuilder, assemblies);
 await Task.Run(() =>
 {
-	var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger("Program");
+	var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
 	logger.LogInformation("Waiting for background bootstrapping tasks...");
 	AsyncHelper.WaitForBackgroundTasks(tasks, logger);
-	Globals.Ready = true; // server is ready to handle requests
+	Bat.Api.Globals.Ready = true; // server is ready to handle requests
 	logger.LogInformation("Background bootstrapping completed.");
 });
 app.Run();

@@ -18,13 +18,3 @@
         </CAlert>
     </NotAuthorized>
 </AuthorizeView>
-
-@code {
-    private string loginUrl
-    {
-        get
-        {
-            return "/login?returnUrl=/" + System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
-        }
-    }
-}

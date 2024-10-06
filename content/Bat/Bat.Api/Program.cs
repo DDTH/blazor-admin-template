@@ -1,11 +1,12 @@
 ﻿using Bat.Api;
 using Bat.Shared.Helpers;
 
+var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 var appBuilder = WebApplication.CreateBuilder(args);
-var tasks = AppBootstrapper.Bootstrap(appBuilder, out var app);
+var tasks = AppBootstrapper.Bootstrap(out var app, appBuilder, assemblies);
 await Task.Run(() =>
 {
-	var logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger("Program");
+	var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Program");
 	logger.LogInformation("Waiting for background bootstrapping tasks...");
 	AsyncHelper.WaitForBackgroundTasks(tasks, logger);
 	Globals.Ready = true; // server is ready to handle requests

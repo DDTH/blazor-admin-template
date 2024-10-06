@@ -10,7 +10,7 @@ public class WebReflectionHelper : Shared.Helpers.ReflectionHelper
 		// services being created which might result in incorrect application behavior.
 		// Proposed workaround/fix: special treat for IOptions<T>, ILoggerFactory and ILogger<T>?
 		var serviceProvider = appBuilder.Services.BuildServiceProvider();
-		await InvokeAsyncMethod(serviceProvider, [appBuilder], typeInfo, methodInfo);
+		await InvokeAsyncMethod(serviceProvider, [appBuilder, appBuilder.Services], typeInfo, methodInfo);
 	}
 
 	public static void InvokeMethod(WebApplicationBuilder appBuilder, Type typeInfo, MethodInfo methodInfo)
@@ -19,7 +19,7 @@ public class WebReflectionHelper : Shared.Helpers.ReflectionHelper
 		// services being created which might result in incorrect application behavior.
 		// Proposed workaround/fix: special treat for IOptions<T>, ILoggerFactory and ILogger<T>?
 		var serviceProvider = appBuilder.Services.BuildServiceProvider();
-		InvokeMethod(serviceProvider, [appBuilder], typeInfo, methodInfo);
+		InvokeMethod(serviceProvider, [appBuilder, appBuilder.Services], typeInfo, methodInfo);
 	}
 
 	public static async Task InvokeAsyncMethod(WebApplication app, Type typeInfo, MethodInfo methodInfo)

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Bat.Api.Services;
+namespace Bat.Shared.Jwt;
 
 public class JwtService : IJwtService
 {

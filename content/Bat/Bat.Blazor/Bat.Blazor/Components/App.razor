@@ -35,7 +35,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="@UIGlobals.COREUI_BASE/assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="@UIGlobals.COREUI_BASE/assets/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="@UIGlobals.COREUI_BASE/assets/favicon/favicon-16x16.png">
-    <link rel="manifest" href="@UIGlobals.COREUI_BASE/assets/favicon/manifest.json">
+    <!--<link rel="manifest" href="@UIGlobals.COREUI_BASE/assets/favicon/manifest.json">-->
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="@UIGlobals.BOOTSTRAP_ICONS_BASE/font/bootstrap-icons.min.css">
@@ -52,11 +52,11 @@
 
     <script src="@UIGlobals.COREUI_BASE/js/config.js"></script>
 
-    <HeadOutlet @rendermode="InteractiveAuto" />
+    <HeadOutlet @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveAuto" />
+    <Routes @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
 
     <!-- CoreUI and necessary plugins-->

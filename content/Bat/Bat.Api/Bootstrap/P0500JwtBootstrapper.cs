@@ -1,5 +1,6 @@
 ﻿using Bat.Api.Services;
 using Bat.Shared.Bootstrap;
+using Bat.Shared.Jwt;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

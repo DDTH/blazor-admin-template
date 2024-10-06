@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
-namespace Bat.Api.Services;
+namespace Bat.Shared.Jwt;
 
 public interface IJwtService
 {

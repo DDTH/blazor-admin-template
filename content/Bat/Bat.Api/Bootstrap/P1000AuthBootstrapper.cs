@@ -2,6 +2,7 @@
 using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
 using Bat.Shared.Identity;
+using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;

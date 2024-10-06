@@ -1,5 +1,6 @@
 ﻿using Bat.Shared.Api;
 using Bat.Shared.Identity;
+using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

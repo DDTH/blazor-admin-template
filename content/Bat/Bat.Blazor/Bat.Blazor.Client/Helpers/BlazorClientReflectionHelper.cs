@@ -11,7 +11,7 @@ public class BlazorClientReflectionHelper : Bat.Shared.Helpers.ReflectionHelper
 		// services being created which might result in incorrect application behavior.
 		// Proposed workaround/fix: special treat for IOptions<T>, ILoggerFactory and ILogger<T>?
 		var serviceProvider = wasmAppBuilder.Services.BuildServiceProvider();
-		await InvokeAsyncMethod(serviceProvider, [wasmAppBuilder], typeInfo, methodInfo);
+		await InvokeAsyncMethod(serviceProvider, [wasmAppBuilder, wasmAppBuilder.Services], typeInfo, methodInfo);
 	}
 
 	public static void InvokeMethod(WebAssemblyHostBuilder wasmAppBuilder, Type typeInfo, MethodInfo methodInfo)
@@ -20,7 +20,7 @@ public class BlazorClientReflectionHelper : Bat.Shared.Helpers.ReflectionHelper
 		// services being created which might result in incorrect application behavior.
 		// Proposed workaround/fix: special treat for IOptions<T>, ILoggerFactory and ILogger<T>?
 		var serviceProvider = wasmAppBuilder.Services.BuildServiceProvider();
-		InvokeMethod(serviceProvider, [wasmAppBuilder], typeInfo, methodInfo);
+		InvokeMethod(serviceProvider, [wasmAppBuilder, wasmAppBuilder.Services], typeInfo, methodInfo);
 	}
 
 	public static async Task InvokeAsyncMethod(WebAssemblyHost wasmApp, Type typeInfo, MethodInfo methodInfo)
