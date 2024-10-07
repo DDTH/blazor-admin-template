@@ -3,6 +3,7 @@ using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Bat.Blazor.App.Services;
 
@@ -25,7 +26,11 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 				var principles = jwtService.ValidateToken(authToken, out _);
 				if (principles != null)
 				{
-					return new(new ClaimsPrincipal(principles));
+					//foreach (var claim in principles.Claims)
+					//{
+					//	Console.WriteLine($"[DEBUG] - {isBrowser} / {claim.Type} = {claim.Value}");
+					//}
+					return new(principles);
 				}
 			}
 			return new(Unauthenticated);

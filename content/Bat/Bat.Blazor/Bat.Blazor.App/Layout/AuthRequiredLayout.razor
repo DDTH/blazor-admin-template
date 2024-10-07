@@ -3,6 +3,7 @@
 
 <AuthorizeView>
     <Authorized>
+        @Body
         <p>Claims:</p>
         <ul>
             @foreach (var claim in UserClaims)
@@ -10,7 +11,6 @@
                 <li><b>@claim.Type:</b> @claim.Value</li>
             }
         </ul>
-        @Body
     </Authorized>
     <NotAuthorized>
         <CAlert type="warning">

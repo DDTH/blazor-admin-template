@@ -26,7 +26,7 @@ public partial class AuthRequiredLayout : BaseLayout
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (firstRender && AuthState != null)
+		if (AuthState != null)
 		{
 			Console.WriteLine($"[DEBUG] - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...");
 			var authState = await AuthState;

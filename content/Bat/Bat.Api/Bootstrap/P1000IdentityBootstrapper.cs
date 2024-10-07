@@ -23,10 +23,10 @@ sealed class Defaults
 
 	public static ClaimsIdentityOptions claimsIdentityOptions = new()
 	{
-		EmailClaimType = "email",
-		RoleClaimType = "role",
+		EmailClaimType = "ema",
+		RoleClaimType = "rol",
 		UserIdClaimType = "uid",
-		UserNameClaimType = "uname",
+		UserNameClaimType = "una",
 		SecurityStampClaimType = "sec",
 	};
 }
