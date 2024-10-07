@@ -47,9 +47,8 @@
     <!-- Main styles for this application-->
     <link href="@UIGlobals.COREUI_BASE/css/style.css" rel="stylesheet">
 
-    <script src="@UIGlobals.COREUI_BASE/js/config.js"></script>
-    <script src="@UIGlobals.COREUI_BASE/js/color-modes.js"></script>
-    <link href="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/css/coreui-chartjs.css" rel="stylesheet">
+    <!-- Plugins and styles required by this view-->
+    <!--<link href="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/css/coreui-chartjs.css" rel="stylesheet">-->
 
     <HeadOutlet @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
 </head>
@@ -57,25 +56,6 @@
 <body>
     <Routes @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
-
-    <!-- CoreUI and necessary plugins-->
-    <script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/coreui/js/coreui.bundle.min.js"></script>
-    <script src="@UIGlobals.COREUI_BASE/vendors/simplebar/js/simplebar.min.js"></script>
-    <script>
-        const header = document.querySelector('header.header');
-        document.addEventListener('scroll', () => {
-          if (header) {
-            header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
-          }
-        });
-    </script>
-    <!-- Plugins and scripts required by this view-->
-    <script src="@UIGlobals.COREUI_BASE/vendors/chart.js/js/chart.umd.js"></script>
-    <script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/js/coreui-chartjs.js"></script>
-    <script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/utils/js/index.js"></script>
-    <!--<script src="@UIGlobals.COREUI_BASE/js/main.js"></script>-->
-    <script>
-    </script>
 </body>
 
 </html>

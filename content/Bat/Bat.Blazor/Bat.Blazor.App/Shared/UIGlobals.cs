@@ -6,4 +6,8 @@ public class UIGlobals
 	public static readonly string ASSET_ROOT = $"/_content/{PackageId}";
 	public static readonly string COREUI_BASE = $"{ASSET_ROOT}/coreui-free-bootstrap-v5.1.0";
 	public static readonly string BOOTSTRAP_ICONS_BASE = $"{ASSET_ROOT}/bootstrap-icons-1.11.3";
+
+	public const string ROUTE_HOME = "/";
+	public const string ROUTE_LOGIN = "/login";
+	public const string ROUTE_LOGOUT = "/logout";
 }

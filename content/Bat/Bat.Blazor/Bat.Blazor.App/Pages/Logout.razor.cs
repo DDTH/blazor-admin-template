@@ -9,6 +9,6 @@ public partial class Logout : BaseComponent
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await LocalStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		NavigationManager.NavigateTo("/", forceLoad: true);
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_HOME, forceLoad: true);
 	}
 }

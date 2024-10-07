@@ -2,8 +2,8 @@
 using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace Bat.Blazor.App.Services;
 
@@ -22,15 +22,20 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 			Console.WriteLine($"[DEBUG] - {isBrowser} / authToken: {authToken}");
 			if (!string.IsNullOrEmpty(authToken))
 			{
-				var jwtService = scope.ServiceProvider.GetRequiredService<IJwtService>();
-				var principles = jwtService.ValidateToken(authToken, out _);
-				if (principles != null)
+				try
 				{
-					//foreach (var claim in principles.Claims)
-					//{
-					//	Console.WriteLine($"[DEBUG] - {isBrowser} / {claim.Type} = {claim.Value}");
-					//}
-					return new(principles);
+					var jwtService = scope.ServiceProvider.GetRequiredService<IJwtService>();
+					var principles = jwtService.ValidateToken(authToken, out _);
+					if (principles != null)
+					{
+						//foreach (var claim in principles.Claims)
+						//{
+						//	Console.WriteLine($"[DEBUG] - {isBrowser} / {claim.Type} = {claim.Value}");
+						//}
+						return new(principles);
+					}
+				} catch (Exception ex) when (ex is SecurityTokenException)
+				{
 				}
 			}
 			return new(Unauthenticated);

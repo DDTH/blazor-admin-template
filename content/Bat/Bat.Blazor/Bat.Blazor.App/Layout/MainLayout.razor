@@ -8,7 +8,10 @@
 <div class="wrapper d-flex flex-column min-vh-100">
     <header class="header header-sticky p-0 mb-4">
         <div class="container-fluid border-bottom px-4">
-            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
+            <!--
+                //TODO: temporarily switch from getInstance to getOrCreateInstance to workaround the 'null' issue.
+            -->
+            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getOrCreateInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
                 <CIcon icon="cil-menu" className="icon icon-lg" />
             </button>
             <ul class="header-nav d-none d-lg-flex">
@@ -110,11 +113,80 @@
         </div>
     </header>
 
+    <div class="body flex-grow-1">
+        <div class="container-lg px-4">
+            <div class="card mb-4">
+                <div class="card-header"> Theme colors</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-primary theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Primary Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-secondary theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Secondary Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-success theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Success Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-danger theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Danger Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-warning theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Warning Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-info theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Info Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-light theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Light Color</h6>
+                        </div>
+                        <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+                            <div class="bg-dark theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
+                            <h6>Brand Dark Color</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer px-4">
         <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io/product/free-bootstrap-admin-template/">Bootstrap Admin Template</a> © 2024 creativeLabs.</div>
         <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div>
     </footer>
 </div>
+
+<!-- CoreUI and necessary plugins-->
+<script src="@UIGlobals.COREUI_BASE/js/config.js"></script>
+<script src="@UIGlobals.COREUI_BASE/js/color-modes.js"></script>
+
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/coreui/js/coreui.bundle.min.js"></script>
+<script src="@UIGlobals.COREUI_BASE/vendors/simplebar/js/simplebar.min.js"></script>
+<script>
+    const header = document.querySelector('header.header');
+    document.addEventListener('scroll', () => {
+        if (header) {
+            header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+        }
+    });
+</script>
+<!-- Plugins and scripts required by this view-->
+<!--
+<script src="@UIGlobals.COREUI_BASE/vendors/chart.js/js/chart.umd.js"></script>
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/js/coreui-chartjs.js"></script>
+-->
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/utils/js/index.js"></script>
+<!--<script src="@UIGlobals.COREUI_BASE/js/colors.js"></script>-->
+<!--<script src="@UIGlobals.COREUI_BASE/js/main.js"></script>-->
+<script>
+</script>
 
 <!--@Body-->
 

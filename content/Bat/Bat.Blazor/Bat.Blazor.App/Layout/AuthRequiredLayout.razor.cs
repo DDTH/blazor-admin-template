@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Bat.Blazor.App.Shared;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
@@ -10,11 +11,11 @@ public partial class AuthRequiredLayout : BaseLayout
 
 	protected virtual IEnumerable<Claim> UserClaims { get; set; } = [];
 
-	private string loginUrl
+	private string LoginUrl
 	{
 		get
 		{
-			return "/login?returnUrl=/" + System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri));
+			return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
 		}
 	}
 

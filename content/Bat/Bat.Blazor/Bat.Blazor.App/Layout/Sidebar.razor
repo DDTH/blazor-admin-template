@@ -14,7 +14,10 @@
             </svg>
             -->
         </div>
-        <button class="btn-close d-lg-none" type="button" data-coreui-dismiss="offcanvas" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector(&quot;#sidebar&quot;)).toggle()"></button>
+        <!--
+            //TODO: temporarily switch from getInstance to getOrCreateInstance to workaround the 'null' issue.
+        -->
+        <button class="btn-close d-lg-none" type="button" data-coreui-dismiss="offcanvas" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getOrCreateInstance(document.querySelector('#sidebar')).toggle()"></button>
     </div>
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
         <li class="nav-item">
