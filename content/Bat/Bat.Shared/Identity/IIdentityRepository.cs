@@ -7,6 +7,48 @@ public class UserFetchOptions
 {
 	public static readonly UserFetchOptions DEFAULT = new();
 
+	/// <summary>
+	/// Fetches the roles along with the user.
+	/// </summary>
+	/// <returns>New options instance with <see cref="IncludeRoles"/> set to true.</returns>
+	public UserFetchOptions FetchRoles()
+	{
+		return IncludeRoles ? this : new UserFetchOptions
+		{
+			IncludeRoles = true,
+			IncludeClaims = this.IncludeClaims,
+			IncludeRoleClaims = this.IncludeRoleClaims,
+		};
+	}
+
+	/// <summary>
+	/// Fetches the claims along with the user.
+	/// </summary>
+	/// <returns>New options instance with <see cref="IncludeClaims"/> set to true.</returns>
+	public UserFetchOptions FetchClaims()
+	{
+		return IncludeClaims ? this : new UserFetchOptions
+		{
+			IncludeRoles = this.IncludeRoles,
+			IncludeClaims = true,
+			IncludeRoleClaims = this.IncludeRoleClaims,
+		};
+	}
+
+	/// <summary>
+	/// Fetches the role claims along with the user.
+	/// </summary>
+	/// <returns>New options instance with <see cref="IncludeRoleClaims"/> set to true.</returns>
+	public UserFetchOptions FetchRoleClaims()
+	{
+		return IncludeRoleClaims ? this : new UserFetchOptions
+		{
+			IncludeRoles = this.IncludeRoles,
+			IncludeClaims = this.IncludeClaims,
+			IncludeRoleClaims = true,
+		};
+	}
+
 	public bool IncludeRoles { get; set; } = false;
 	public bool IncludeClaims { get; set; } = false;
 	public bool IncludeRoleClaims { get; set; } = false;
@@ -15,6 +57,18 @@ public class UserFetchOptions
 public class RoleFetchOptions
 {
 	public static readonly RoleFetchOptions DEFAULT = new();
+
+	/// <summary>
+	/// Fetches the claims along with the role.
+	/// </summary>
+	/// <returns>New options instance with <see cref="IncludeClaims"/> set to true.</returns>
+	public RoleFetchOptions FetchClaims()
+	{
+		return IncludeClaims ? this : new RoleFetchOptions
+		{
+			IncludeClaims = true
+		};
+	}
 
 	public bool IncludeClaims { get; set; } = false;
 }

@@ -39,14 +39,16 @@ public interface IJwtService
 	/// Validates a JWT token using the default validation parameters.
 	/// </summary>
 	/// <param name="token"></param>
+	/// <param name="validatedToken"></param>
 	/// <returns></returns>
-	public ClaimsPrincipal ValidateToken(string token);
+	public ClaimsPrincipal ValidateToken(string token, out SecurityToken validatedToken);
 
 	/// <summary>
 	/// Validates a JWT token using the specified validation parameters.
 	/// </summary>
 	/// <param name="token"></param>
 	/// <param name="validationParameters"></param>
+	/// <param name="validatedToken"></param>
 	/// <returns></returns>
-	public ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters);
+	public ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken);
 }

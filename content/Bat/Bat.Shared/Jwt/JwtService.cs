@@ -48,15 +48,15 @@ public class JwtService : IJwtService
 	}
 
 	/// <inheritdoc />
-	public ClaimsPrincipal ValidateToken(string token)
+	public ClaimsPrincipal ValidateToken(string token, out SecurityToken validatedToken)
 	{
-		return ValidateToken(token, _options.TokenValidationParameters);
+		return ValidateToken(token, _options.TokenValidationParameters, out validatedToken);
 	}
 
 	/// <inheritdoc />
-	public ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters)
+	public ClaimsPrincipal ValidateToken(string token, TokenValidationParameters validationParameters, out SecurityToken validatedToken)
 	{
 		var tokenHandler = new JwtSecurityTokenHandler();
-		return tokenHandler.ValidateToken(token, validationParameters, out _);
+		return tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
 	}
 }

@@ -43,6 +43,9 @@ public sealed class SampleJwtAuthenticator(
 		var userRoles = await identityRepo.GetRolesAsync(user);
 		authClaims.AddRange(userRoles.Select(role => new Claim(claimTypeRole, role.Name!)));
 
+		// add claims
+		// TODO
+
 		// Add more claims as needed
 
 		return jwtService.GenerateToken([.. authClaims], expiry);
@@ -102,7 +105,7 @@ public sealed class SampleJwtAuthenticator(
 	{
 		try
 		{
-			var principal = jwtService.ValidateToken(jwtToken);
+			var principal = jwtService.ValidateToken(jwtToken, out _);
 			var claimUserId = principal.Claims.FirstOrDefault(c => c.Type == claimTypeUserId)?.Value;
 			var claimUserName = principal.Claims.FirstOrDefault(c => c.Type == claimTypeUserName)?.Value;
 			var claimUserEmail = principal.Claims.FirstOrDefault(c => c.Type == claimTypeEmail)?.Value;
@@ -147,7 +150,7 @@ public sealed class SampleJwtAuthenticator(
 	{
 		try
 		{
-			var principal = jwtService.ValidateToken(jwtToken);
+			var principal = jwtService.ValidateToken(jwtToken, out _);
 			var claimUserId = principal.Claims.FirstOrDefault(c => c.Type == claimTypeUserId)?.Value;
 			var claimUserName = principal.Claims.FirstOrDefault(c => c.Type == claimTypeUserName)?.Value;
 			var claimUserEmail = principal.Claims.FirstOrDefault(c => c.Type == claimTypeEmail)?.Value;

@@ -1,4 +1,5 @@
-﻿using Blazored.LocalStorage;
+﻿using Bat.Blazor.App.Helpers;
+using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
@@ -15,10 +16,18 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 		using (var scope = serviceProvider.CreateScope())
 		{
 			var isBrowser = OperatingSystem.IsBrowser();
-			var localStorage = scope.ServiceProvider.GetRequiredService<ILocalStorageService>();
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			Console.WriteLine($"[{isBrowser}]-JwtAuthenticationStateProvider.GetAuthenticationStateAsync: {authToken}");
-			await Task.CompletedTask;
+			Console.WriteLine($"[DEBUG] - {isBrowser} / authToken: {authToken}");
+			if (!string.IsNullOrEmpty(authToken))
+			{
+				var jwtService = scope.ServiceProvider.GetRequiredService<IJwtService>();
+				var principles = jwtService.ValidateToken(authToken, out _);
+				if (principles != null)
+				{
+					return new(new ClaimsPrincipal(principles));
+				}
+			}
 			return new(Unauthenticated);
 		}
 	}

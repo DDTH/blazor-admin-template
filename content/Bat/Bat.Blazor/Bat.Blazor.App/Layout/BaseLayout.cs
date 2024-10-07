@@ -12,9 +12,6 @@ namespace Bat.Blazor.App.Layout;
 /// </summary>
 public abstract class BaseLayout : LayoutComponentBase
 {
-	//[CascadingParameter]
-	//protected virtual Task<AuthenticationState>? AuthState { get; set; }
-
 	/// <summary>
 	/// Check if the component is rendered in WASM mode.
 	/// </summary>
@@ -29,8 +26,6 @@ public abstract class BaseLayout : LayoutComponentBase
 	[Inject]
 	protected virtual ILocalStorageService LocalStorage { get; init; } = default!;
 
-	//protected virtual IEnumerable<Claim> UserClaims { get; set; } = [];
-
 	protected virtual IApiClient ApiClient
 	{
 		get
@@ -42,12 +37,6 @@ public abstract class BaseLayout : LayoutComponentBase
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		//if (AuthState == null)
-		//{
-		//	return;
-		//}
-		//var authState = await AuthState;
-		//UserClaims = authState.User.Claims;
 		// Add your logic here
 	}
 
