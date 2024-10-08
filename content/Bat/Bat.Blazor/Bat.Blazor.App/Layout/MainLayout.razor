@@ -8,10 +8,7 @@
 <div class="wrapper d-flex flex-column min-vh-100">
     <header class="header header-sticky p-0 mb-4">
         <div class="container-fluid border-bottom px-4">
-            <!--
-                //TODO: temporarily switch from getInstance to getOrCreateInstance to workaround the 'null' issue.
-            -->
-            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getOrCreateInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
+            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
                 <CIcon icon="cil-menu" className="icon icon-lg" />
             </button>
             <ul class="header-nav d-none d-lg-flex">
@@ -186,6 +183,18 @@
 <!--<script src="@UIGlobals.COREUI_BASE/js/colors.js"></script>-->
 <!--<script src="@UIGlobals.COREUI_BASE/js/main.js"></script>-->
 <script>
+    // FIX the bug where coreui is not properly initialized with Blazor.
+    function CoreUIFix() {
+        if (typeof (coreui) === 'undefined') {
+            setTimeout(CoreUIFix, 10);
+        } else {
+            let element = document.querySelector('#sidebar');
+            if (!coreui.Sidebar.getInstance(element)) {
+                coreui.Sidebar.getOrCreateInstance(element);
+            }
+        }
+    }
+    CoreUIFix();
 </script>
 
 <!--@Body-->
