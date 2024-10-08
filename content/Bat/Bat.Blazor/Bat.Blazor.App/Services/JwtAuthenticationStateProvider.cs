@@ -28,10 +28,6 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 					var principles = jwtService.ValidateToken(authToken, out _);
 					if (principles != null)
 					{
-						//foreach (var claim in principles.Claims)
-						//{
-						//	Console.WriteLine($"[DEBUG] - {isBrowser} / {claim.Type} = {claim.Value}");
-						//}
 						return new(principles);
 					}
 				} catch (Exception ex) when (ex is SecurityTokenException)

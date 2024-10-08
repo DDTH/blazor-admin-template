@@ -22,42 +22,62 @@
 
 <div class="container-lg px-4">
     <div class="card mb-4">
-        <div class="card-header"> Theme colors</div>
+        <div class="card-header">
+            <h4 class="card-title">Welcome to the @AppInfo?.Name dashboard</h4>
+        </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-primary theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Primary Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-secondary theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Secondary Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-success theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Success Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-danger theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Danger Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-warning theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Warning Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-info theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Info Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-light theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Light Color</h6>
-                </div>
-                <div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
-                    <div class="bg-dark theme-color w-75 rounded mb-2" style="padding-top:75%"></div>
-                    <h6>Brand Dark Color</h6>
-                </div>
-            </div>
+            <p class="card-text">
+                Blazor Admin Template (BAT) is a template designed for rapidly building admin dashboard projects using .NET Blazor.
+            </p>
+            <h5>Features:</h5>
+            <ul>
+                <li>
+                    Rapid generation of a .NET solution, including:
+                    <ul>
+                        <li>
+                            A RESTful API project that can function independently to build an API server.
+                        </li>
+                        <li>
+                            Blazor Server and Blazor WebAssembly (WASM) projects configured with <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/render-modes" target="_blank">interactive auto-rendering mode</a>.
+                        </li>
+                        <li>
+                            Shared projects for common code and resources.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    UI components and layouts built on <a href="https://coreui.io/product/free-bootstrap-admin-template/" target="_blank">CoreUI Free Bootstrap Admin Template</a>.
+                </li>
+                <li>
+                    Authentication and authorization using JWT and <a href="https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity" target="_blank">ASP.NET Core Identity</a>.
+                </li>
+                <li>
+                    Sample database access implementation with <a href="https://learn.microsoft.com/en-us/ef/core/" target="_blank">Entity Framework</a>.
+                </li>
+                <li>
+                    GitHub Actions workflows:
+                    <ul>
+                        <li>
+                            <code>dependabot.yaml</code>, <code>automerge-dependabot.yaml</code>: Automatically update dependencies and merge PRs from Dependabot.
+                        </li>
+                        <li>
+                            <code>ci.yaml</code>: Automate builds, tests, and code coverage reporting.
+                        </li>
+                        <li>
+                            <code>release.yaml</code>: Automatically create new releases.
+                        </li>
+                        <li>
+                            <code>codeql.yaml</code>: Perform automated CodeQL security analysis.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Sample <a href="https://docs.docker.com/get-started/overview/" target="_blank">Dockerfiles</a> to build Docker images for both Linux and Windows environments.
+                </li>
+                <li>
+                    Sample files included: README, LICENSE, RELEASE-NOTES and <code>.gitignore</code>.
+                </li>
+            </ul>
         </div>
     </div>
 </div>

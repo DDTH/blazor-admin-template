@@ -35,26 +35,29 @@
                                     @AlertMessage
                                 </CAlert>
                             }
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">
-                                    <CIcon icon="cil-user"/>
-                               </span>
-                                <input class="form-control" type="text" placeholder="Username" @bind="@Email">
-                            </div>
-                            <div class="input-group mb-4">
-                                <span class="input-group-text">
-                                    <CIcon icon="cil-lock-locked"/>
-                                </span>
-                                <input class="form-control" type="password" placeholder="Password" @bind="@Password">
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <button class="btn btn-primary px-4" type="button" @onclick="BtnClickLogin">Login</button>
+                            @if (!HideLoginForm)
+                            {
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">
+                                        <CIcon icon="cil-user" />
+                                    </span>
+                                    <input class="form-control" type="text" placeholder="Username" @bind="@Email">
                                 </div>
-                                <div class="col-6 text-end">
-                                    <button class="btn btn-link px-0" type="button" @onclick="ShowModalNotImplemented">Forgot password?</button>
+                                <div class="input-group mb-4">
+                                    <span class="input-group-text">
+                                        <CIcon icon="cil-lock-locked" />
+                                    </span>
+                                    <input class="form-control" type="password" placeholder="Password" @bind="@Password">
                                 </div>
-                            </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-primary px-4" type="button" @onclick="BtnClickLogin">Login</button>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <button class="btn btn-link px-0" type="button" @onclick="ShowModalNotImplemented">Forgot password?</button>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div class="card col-md-5 text-white bg-primary py-5">

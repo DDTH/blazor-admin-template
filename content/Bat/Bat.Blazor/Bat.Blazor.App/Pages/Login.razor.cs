@@ -18,6 +18,7 @@ public partial class Login : BaseComponent
 
 	private string AlertType { get; set; } = "info";
 	private string AlertMessage { get; set; } = string.Empty;
+	private bool HideLoginForm { get; set; } = false;
 
 	private void CloseAlert()
 	{
@@ -46,6 +47,8 @@ public partial class Login : BaseComponent
 			ShowAlert("warning", "Please enter Email and Password to login.");
 			return;
 		}
+
+		HideLoginForm = true;
 		ShowAlert("info", "Authenticating, please wait...");
 		var req = new LoginReq()
 		{
@@ -55,6 +58,7 @@ public partial class Login : BaseComponent
 		var resp = await ApiClient.LoginAsync(req, ApiBaseUrl);
 		if (resp.Status != 200)
 		{
+			HideLoginForm = false;
 			ShowAlert("danger", resp.Message!);
 			return;
 		}
