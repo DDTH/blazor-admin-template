@@ -1,6 +1,5 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Shared.Api;
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

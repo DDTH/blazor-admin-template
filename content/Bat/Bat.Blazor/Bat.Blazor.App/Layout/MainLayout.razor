@@ -112,10 +112,12 @@
     <div class="body flex-grow-1">
         @Body
     </div>
-
     <footer class="footer px-4">
-        <div><a href="https://coreui.io">CoreUI </a><a href="https://coreui.io/product/free-bootstrap-admin-template/">Bootstrap Admin Template</a> © 2024 creativeLabs.</div>
-        <div class="ms-auto">Powered by&nbsp;<a href="https://coreui.io/docs/">CoreUI UI Components</a></div>
+        <div>@AppInfo?.Name v@(AppInfo?.Version)</div>
+        <div class="ms-auto">
+            Powered by <a href="https://github.com/DDTH/blazor-admin-template/">Blazor Admin Template</a>.
+            Templated by CoreUI <a href="https://coreui.io/product/free-bootstrap-admin-template/" target="_blank">Bootstrap Admin Template</a>.
+        </div>
     </footer>
 </div>
 
@@ -209,11 +211,3 @@
 @code {
     internal static object Breadcrumb = new();
 }
-
-<!--
-<div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
-</div>
--->

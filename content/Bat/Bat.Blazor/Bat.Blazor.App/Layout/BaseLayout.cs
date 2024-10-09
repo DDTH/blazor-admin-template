@@ -1,9 +1,8 @@
 ﻿using Bat.Shared.Api;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Claims;
 
 namespace Bat.Blazor.App.Layout;
 
@@ -26,6 +25,15 @@ public abstract class BaseLayout : LayoutComponentBase
 	[Inject]
 	protected virtual ILocalStorageService LocalStorage { get; init; } = default!;
 
+	private AppInfo? _appInfo;
+	protected virtual AppInfo? AppInfo
+	{
+		get
+		{
+			return _appInfo ?? Globals.AppInfo;
+		}
+	}
+
 	protected virtual IApiClient ApiClient
 	{
 		get
@@ -37,6 +45,13 @@ public abstract class BaseLayout : LayoutComponentBase
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if (!IsBrowser)
+		{
+			// Get the app info from the configuration if in Blazor Server mode
+			// In WASM mode, the app info is automatically fetched from the server and stored in <see cref="Globals.AppInfo"/>
+			var conf = ServiceProvider.GetRequiredService<IConfiguration>();
+			_appInfo = conf.GetSection("App").Get<AppInfo>();
+		}
 		// Add your logic here
 	}
 
