@@ -18,10 +18,30 @@
     </div>
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
         <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="@UIGlobals.ROUTE_HOME">
                 <CIcon icon="cil-speedometer" className="nav-icon"/> Dashboard<span class="badge badge-sm bg-info ms-auto">NEW</span>
             </a>
         </li>
+        <li class="nav-title">Identity</li>
+        <li class="nav-item">
+            <a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_USERS">
+                <CIcon icon="cil-user" className="nav-icon" /> Users
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_ROLES">
+                <CIcon icon="cil-group" className="nav-icon" /> Roles
+            </a>
+        </li>
+
+        <li class="nav-title">Applications</li>
+        <li class="nav-item">
+            <a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_ROLES">
+                <CIcon icon="cil-apps" className="nav-icon" /> Applications
+            </a>
+        </li>
+
+        <!--
         <li class="nav-title">Theme</li>
         <li class="nav-item">
             <a class="nav-link" href="colors.html">
@@ -150,6 +170,7 @@
                 <CIcon icon="cil-layers" className="nav-icon" /> Try CoreUI PRO
             </a>
         </li>
+        -->
     </ul>
     <div class="sidebar-footer border-top d-none d-md-flex">
         <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>

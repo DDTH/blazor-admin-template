@@ -10,4 +10,10 @@ public class UIGlobals
 	public const string ROUTE_HOME = "/";
 	public const string ROUTE_LOGIN = "/login";
 	public const string ROUTE_LOGOUT = "/logout";
+	public const string ROUTE_PROFILE = "/profile";
+
+	public const string ROUTE_IDENTITY_USERS = "/admin/users";
+	public const string ROUTE_IDENTITY_ROLES = "/admin/roles";
+
+	public const string ROUTE_APPLICATIONS_LIST = "/admin/applications";
 }

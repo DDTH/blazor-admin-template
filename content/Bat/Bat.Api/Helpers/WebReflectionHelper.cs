@@ -24,11 +24,11 @@ public class WebReflectionHelper : Shared.Helpers.ReflectionHelper
 
 	public static async Task InvokeAsyncMethod(WebApplication app, Type typeInfo, MethodInfo methodInfo)
 	{
-		await InvokeAsyncMethod(app.Services, [app], typeInfo, methodInfo);
+		await InvokeAsyncMethod(app.Services, [app, app.Services], typeInfo, methodInfo);
 	}
 
 	public static void InvokeMethod(WebApplication app, Type typeInfo, MethodInfo methodInfo)
 	{
-		InvokeMethod(app.Services, [app], typeInfo, methodInfo);
+		InvokeMethod(app.Services, [app, app.Services], typeInfo, methodInfo);
 	}
 }

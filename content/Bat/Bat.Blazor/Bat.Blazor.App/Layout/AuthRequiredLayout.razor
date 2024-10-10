@@ -1,20 +1,27 @@
 ﻿@using Bat.Blazor.App.Shared
 @inherits BaseLayout
 
-<AuthorizeView>
-    <Authorized>
-        @Body
-        <p>Claims:</p>
-        <ul>
-            @foreach (var claim in UserClaims)
-            {
-                <li><b>@claim.Type:</b> @claim.Value</li>
-            }
-        </ul>
-    </Authorized>
-    <NotAuthorized>
-        <CAlert type="warning">
-            <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
-        </CAlert>
-    </NotAuthorized>
-</AuthorizeView>
+<!-- cascading the layout instance down to components -->
+<!--
+    Components can utilize shared properties defined in the layout.
+-->
+<CascadingValue Value="this" Name="Layout">
+    <AuthorizeView>
+        <Authorized>
+            @Body
+            <p>Claims:</p>
+            <ul>
+                @foreach (var claim in UserClaims)
+                {
+                    <li><b>@claim.Type:</b> @claim.Value</li>
+                }
+            </ul>
+        </Authorized>
+        <NotAuthorized>
+            <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Not Authorized</PageTitle>
+            <CAlert type="warning">
+                <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
+            </CAlert>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingValue>

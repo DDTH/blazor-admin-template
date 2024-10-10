@@ -10,19 +10,29 @@ public sealed class BuiltinClaims
 	public static readonly Claim CLAIM_ROLE_GLOBAL_ADMIN = new("role", "global-admin");
 
 	/// <summary>
+	/// Claim to mark a user/role as an user manager.
+	/// </summary>
+	public static readonly Claim CLAIM_ROLE_USER_MANAGER = new("role", "user-manager");
+
+	/// <summary>
+	/// Claim to mark a user/role as an application manager.
+	/// </summary>
+	public static readonly Claim CLAIM_ROLE_APPLICATION_MANAGER = new("role", "application-manager");
+
+	/// <summary>
 	/// Permission to create a new application.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_CREATE_APPLICATION = new("perm", "create-applicaiton");
+	public static readonly Claim CLAIM_PERM_CREATE_APPLICATION = new("perm", "create-application");
 
 	/// <summary>
 	/// Permission to delete an application.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_DELETE_APPLICATION = new("perm", "delete-applicaiton");
+	public static readonly Claim CLAIM_PERM_DELETE_APPLICATION = new("perm", "delete-application");
 
 	/// <summary>
 	/// Permission to modify an application.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_MODIFY_APPLICATION = new("perm", "modify-applicaiton");
+	public static readonly Claim CLAIM_PERM_MODIFY_APPLICATION = new("perm", "modify-application");
 
 	/// <summary>
 	/// Permission to create a new user account.

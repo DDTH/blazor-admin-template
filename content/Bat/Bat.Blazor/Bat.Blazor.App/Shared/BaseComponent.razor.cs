@@ -1,4 +1,5 @@
 ﻿using Bat.Blazor.App.Helpers;
+using Bat.Blazor.App.Layout;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
@@ -20,25 +21,16 @@ public abstract class BaseComponent : ComponentBase
 	[Inject]
 	protected virtual LocalStorageHelper LocalStorage { get; init; } = default!;
 
-	/// <summary>
-	/// Check if the component is rendered in WASM mode.
-	/// </summary>
-	protected virtual bool IsBrowser { get => OperatingSystem.IsBrowser(); }
+	[CascadingParameter(Name = "Layout")]
+	protected virtual BaseLayout Layout { get; init; } = default!;
+
+	protected virtual AppInfo? AppInfo => Layout.AppInfo;
 
 	protected virtual IApiClient ApiClient
 	{
 		get
 		{
 			return ServiceProvider.GetRequiredService<IApiClient>();
-		}
-	}
-
-	private AppInfo? _appInfo;
-	protected virtual AppInfo? AppInfo
-	{
-		get
-		{
-			return _appInfo ?? Globals.AppInfo;
 		}
 	}
 
@@ -56,13 +48,7 @@ public abstract class BaseComponent : ComponentBase
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		if (!IsBrowser)
-		{
-			// Get the app info from the configuration if in Blazor Server mode
-			// In WASM mode, the app info is automatically fetched from the server and stored in <see cref="Globals.AppInfo"/>
-			var conf = ServiceProvider.GetRequiredService<IConfiguration>();
-			_appInfo = conf.GetSection("App").Get<AppInfo>();
-		}
+		// Add your logic here
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

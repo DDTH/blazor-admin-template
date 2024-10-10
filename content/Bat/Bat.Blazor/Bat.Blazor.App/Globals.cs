@@ -7,6 +7,11 @@ public sealed class Globals
 	public const string LOCAL_STORAGE_KEY_AUTH_TOKEN = "auth_token";
 
 	/// <summary>
+	/// In WASM mode, this is the unique instance ID for the client.
+	/// </summary>
+	public static readonly string INSTANCE_ID = Guid.NewGuid().ToString();
+
+	/// <summary>
 	/// Set to true when the server is ready to handle requests.
 	/// </summary>
 	public static bool Ready { get; set; } = false;

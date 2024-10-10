@@ -7,6 +7,9 @@ public sealed partial class BatUser : IdentityUser
 	public IEnumerable<BatRole>? Roles { get; set; } = default!;
 	public IEnumerable<IdentityUserClaim<string>>? Claims { get; set; } = default!;
 
+	public string? GivenName { get; set; } = default!;
+	public string? LastName { get; set; } = default!;
+
 	/// <summary>
 	/// Touches the entity, updating the <see cref="ConcurrencyStamp"/> property.
 	/// </summary>

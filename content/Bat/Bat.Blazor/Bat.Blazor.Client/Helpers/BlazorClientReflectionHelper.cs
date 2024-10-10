@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Bat.Blazor.Client.Helpers;
 
-public class BlazorClientReflectionHelper : Bat.Shared.Helpers.ReflectionHelper
+public class BlazorClientReflectionHelper : Shared.Helpers.ReflectionHelper
 {
 	public static async Task InvokeAsyncMethod(WebAssemblyHostBuilder wasmAppBuilder, Type typeInfo, MethodInfo methodInfo)
 	{
@@ -25,11 +25,11 @@ public class BlazorClientReflectionHelper : Bat.Shared.Helpers.ReflectionHelper
 
 	public static async Task InvokeAsyncMethod(WebAssemblyHost wasmApp, Type typeInfo, MethodInfo methodInfo)
 	{
-		await InvokeAsyncMethod(wasmApp.Services, [wasmApp], typeInfo, methodInfo);
+		await InvokeAsyncMethod(wasmApp.Services, [wasmApp, wasmApp.Services], typeInfo, methodInfo);
 	}
 
 	public static void InvokeMethod(WebAssemblyHost wasmApp, Type typeInfo, MethodInfo methodInfo)
 	{
-		InvokeMethod(wasmApp.Services, [wasmApp], typeInfo, methodInfo);
+		InvokeMethod(wasmApp.Services, [wasmApp, wasmApp.Services], typeInfo, methodInfo);
 	}
 }

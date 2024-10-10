@@ -1,0 +1,33 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+
+@attribute [Route(UIGlobals.ROUTE_PROFILE)]
+@inherits BaseComponent
+
+<PageTitle>Profile | @AppInfo?.Name</PageTitle>
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>Profile</span>
+    </li>
+</SectionContent>
+
+<div class="container-lg px-4">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="card-title">Profile</h4>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                Blazor Admin Template (BAT) is a template designed for rapidly building admin dashboard projects using .NET Blazor.
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

@@ -45,6 +45,12 @@ public partial class BatRole
 			new IdentityRoleClaim<string>()
 			{
 				RoleId=ROLE_ID_ACCOUNT_ADMIN,
+				ClaimType=BuiltinClaims.CLAIM_ROLE_USER_MANAGER.Type,
+				ClaimValue=BuiltinClaims.CLAIM_ROLE_USER_MANAGER.Value,
+			},
+			new IdentityRoleClaim<string>()
+			{
+				RoleId=ROLE_ID_ACCOUNT_ADMIN,
 				ClaimType=BuiltinClaims.CLAIM_PERM_CREATE_USER.Type,
 				ClaimValue=BuiltinClaims.CLAIM_PERM_CREATE_USER.Value,
 			},
@@ -68,6 +74,12 @@ public partial class BatRole
 		Name = ROLE_NAME_APPLICATION_ADMIN,
 		Claims =
 		[
+			new IdentityRoleClaim<string>()
+			{
+				RoleId=ROLE_ID_APPLICATION_ADMIN,
+				ClaimType=BuiltinClaims.CLAIM_ROLE_APPLICATION_MANAGER.Type,
+				ClaimValue=BuiltinClaims.CLAIM_ROLE_APPLICATION_MANAGER.Value,
+			},
 			new IdentityRoleClaim<string>()
 			{
 				RoleId=ROLE_ID_APPLICATION_ADMIN,

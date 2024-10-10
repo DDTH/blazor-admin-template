@@ -26,12 +26,18 @@ sealed class IdentityRoleClaimEntityTypeConfiguration : IEntityTypeConfiguration
 	public void Configure(EntityTypeBuilder<IdentityRoleClaim<string>> builder)
 	{
 		builder.ToTable($"{Globals.TABLE_PREFIX}role_claims");
-		builder.Property(t => t.Id).HasColumnName("rc_id");
+		//builder.Property(t => t.Id).HasColumnName("rc_id");
 		builder.Property(t => t.RoleId).HasColumnName("role_id");
 		builder.Property(t => t.ClaimType).HasColumnName("claim_type");
 		builder.Property(t => t.ClaimValue).HasColumnName("claim_value");
 
-		builder.HasIndex(t => new { t.RoleId, t.ClaimType, t.ClaimValue }).IsUnique();
+		// {RoleId, ClaimType, ClaimValue} should be unique
+		builder.HasKey(t => new { t.RoleId, t.ClaimType, t.ClaimValue });
+		//builder.HasIndex(t => new { t.RoleId, t.ClaimType, t.ClaimValue }).IsUnique();
+
+		builder.
+			Ignore(t => t.Id)
+			;
 	}
 }
 
@@ -55,11 +61,14 @@ sealed class IdentityUserEntityTypeConfiguration : IEntityTypeConfiguration<BatU
 		//builder.Property(t => t.LockoutEnd).HasColumnName("lockout_end");
 		//builder.Property(t => t.LockoutEnabled).HasColumnName("lockout_enabled");
 		//builder.Property(t => t.AccessFailedCount).HasColumnName("access_failed_count");
+		builder.Property(t => t.GivenName).HasColumnName("given_name");
+		builder.Property(t => t.LastName).HasColumnName("last_name");
 
 		// username and email should be unique
 		builder.HasIndex(t => t.NormalizedUserName).IsUnique();
 		builder.HasIndex(t => t.NormalizedEmail).IsUnique();
 
+		// ignore these properties, we are not using them
 		builder
 			.Ignore(t => t.EmailConfirmed)
 			.Ignore(t => t.PhoneNumber)
@@ -79,12 +88,18 @@ sealed class IdentityUserClaimEntityTypeConfiguration : IEntityTypeConfiguration
 	public void Configure(EntityTypeBuilder<IdentityUserClaim<string>> builder)
 	{
 		builder.ToTable($"{Globals.TABLE_PREFIX}user_claims");
-		builder.Property(t => t.Id).HasColumnName("uc_id");
+		//builder.Property(t => t.Id).HasColumnName("uc_id");
 		builder.Property(t => t.UserId).HasColumnName("user_id");
 		builder.Property(t => t.ClaimType).HasColumnName("claim_type");
 		builder.Property(t => t.ClaimValue).HasColumnName("claim_value");
 
-		builder.HasIndex(t => new { t.UserId, t.ClaimType, t.ClaimValue }).IsUnique();
+		// {UserId, ClaimType, ClaimValue} should be unique
+		builder.HasKey(t => new { t.UserId, t.ClaimType, t.ClaimValue });
+		//builder.HasIndex(t => new { t.UserId, t.ClaimType, t.ClaimValue }).IsUnique();
+
+		builder.
+			Ignore(t => t.Id)
+			;
 	}
 }
 

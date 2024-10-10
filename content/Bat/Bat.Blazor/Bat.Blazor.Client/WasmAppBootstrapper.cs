@@ -1,9 +1,6 @@
 ﻿using Bat.Blazor.Client.Helpers;
 using Bat.Shared.Bootstrap;
-using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Logging;
-using System.Linq;
 using System.Reflection;
 
 namespace Bat.Blazor.Client;
@@ -17,6 +14,8 @@ public sealed class WasmAppBootstrapper
 	private static readonly string[] methodNamesConfigureServicesAsync = { "ConfigureServicesAsync", "ConfiguresServicesAsync", "ConfigureServiceAsync", "ConfiguresServiceAsync" };
 	private static readonly string[] methodNamesConfigureBuilder = { "ConfigureWasmBuilder", "ConfiguresWasmBuilder" };
 	private static readonly string[] methodNamesConfigureBuilderAsync = { "ConfigureWasmBuilderAsync", "ConfiguresWasmBuilderAsync" };
+	private static readonly string[] methodNamesInitializeServices = { "InitializeServices", "InitializesServices", "InitializeService", "InitializesService" };
+	private static readonly string[] methodNamesInitializeServicesAsync = { "InitializeServicesAsync", "InitializesServicesAsync", "InitializeServiceAsync", "InitializesServiceAsync" };
 	private static readonly string[] methodNamesDecorateApp = { "DecorateWasmApp", "DecoratesWasmApp", "DecorateWasmApplication", "DecoratesWasmApplication" };
 	private static readonly string[] methodNamesDecorateAppAsync = { "DecorateWasmAppAsync", "DecoratesWasmAppAsync", "DecorateWasmApplicationAsync", "DecoratesWasmApplicationAsync" };
 
@@ -33,17 +32,22 @@ public sealed class WasmAppBootstrapper
 			var lookupMethodConfigureServices = new MethodLookup { MethodNamesToFind = methodNamesConfigureServices };
 			var lookupMethodConfigureBuilderAsync = new MethodLookup { MethodNamesToFind = methodNamesConfigureBuilderAsync };
 			var lookupMethodConfigureBuilder = new MethodLookup { MethodNamesToFind = methodNamesConfigureBuilder };
+			var lookupMethodInitializeServicesAsync = new MethodLookup { MethodNamesToFind = methodNamesInitializeServicesAsync };
+			var lookupMethodInitializeServices = new MethodLookup { MethodNamesToFind = methodNamesInitializeServices };
 			var lookupMethodDecorateAppAsync = new MethodLookup { MethodNamesToFind = methodNamesDecorateAppAsync };
 			var lookupMethodDecorateApp = new MethodLookup { MethodNamesToFind = methodNamesDecorateApp };
 			BootstrapHelper.FindMethods(t, [ lookupMethodConfigureServicesAsync, lookupMethodConfigureServices,
 				lookupMethodConfigureBuilderAsync, lookupMethodConfigureBuilder,
+				lookupMethodInitializeServicesAsync,lookupMethodInitializeServices,
 				lookupMethodDecorateAppAsync, lookupMethodDecorateApp ]);
 			if (lookupMethodConfigureServicesAsync.MethodInfo == null && lookupMethodConfigureServices.MethodInfo == null
 				&& lookupMethodConfigureBuilderAsync.MethodInfo == null && lookupMethodConfigureBuilder.MethodInfo == null
+				&& lookupMethodInitializeServicesAsync.MethodInfo == null && lookupMethodInitializeServices.MethodInfo == null
 				&& lookupMethodDecorateAppAsync.MethodInfo == null && lookupMethodDecorateApp.MethodInfo == null)
 			{
 				var allMethods = string.Join(", ", Array.Empty<string>().Concat(methodNamesConfigureServicesAsync).Concat(methodNamesConfigureServices)
 					.Concat(methodNamesConfigureBuilderAsync).Concat(methodNamesConfigureBuilder)
+					.Concat(methodNamesInitializeServicesAsync).Concat(methodNamesInitializeServices)
 					.Concat(methodNamesDecorateAppAsync).Concat(methodNamesDecorateApp));
 				Console.WriteLine($"[WARN] {t.FullName}...couldnot find any public method: {allMethods}.");
 				return;
@@ -52,6 +56,7 @@ public sealed class WasmAppBootstrapper
 			{
 				lookupMethodConfigureServicesAsync.MethodInfo,
 				lookupMethodConfigureBuilderAsync.MethodInfo,
+				lookupMethodInitializeServicesAsync.MethodInfo,
 				lookupMethodDecorateAppAsync.MethodInfo
 			};
 			var invalidAsyncMethod = BootstrapHelper.VerifyAsyncMethods(asyncMethods);
@@ -65,6 +70,7 @@ public sealed class WasmAppBootstrapper
 			var bootstrapper = new BootstrapperStruct(t, priority: priority,
 				methodConfigureServices: lookupMethodConfigureServices.MethodInfo, methodConfigureServicesAsync: lookupMethodConfigureServicesAsync.MethodInfo,
 				methodConfigureBuilder: lookupMethodConfigureBuilder.MethodInfo, methodConfigureBuilderAsync: lookupMethodConfigureBuilderAsync.MethodInfo,
+				methodInitializeServices: lookupMethodInitializeServices.MethodInfo, methodInitializeServicesAsync: lookupMethodInitializeServicesAsync.MethodInfo,
 				methodDecorateApp: lookupMethodDecorateApp.MethodInfo, methodDecorateAppAsync: lookupMethodDecorateAppAsync.MethodInfo);
 			bootstrappersInfo.Add(bootstrapper);
 
@@ -73,6 +79,8 @@ public sealed class WasmAppBootstrapper
 			if (lookupMethodConfigureServices.MethodInfo != null) foundMethods.Add(lookupMethodConfigureServices.MethodInfo.Name);
 			if (lookupMethodConfigureBuilderAsync.MethodInfo != null) foundMethods.Add(lookupMethodConfigureBuilderAsync.MethodInfo.Name);
 			if (lookupMethodConfigureBuilder.MethodInfo != null) foundMethods.Add(lookupMethodConfigureBuilder.MethodInfo.Name);
+			if (lookupMethodInitializeServicesAsync.MethodInfo != null) foundMethods.Add(lookupMethodInitializeServicesAsync.MethodInfo.Name);
+			if (lookupMethodInitializeServices.MethodInfo != null) foundMethods.Add(lookupMethodInitializeServices.MethodInfo.Name);
 			if (lookupMethodDecorateAppAsync.MethodInfo != null) foundMethods.Add(lookupMethodDecorateAppAsync.MethodInfo.Name);
 			if (lookupMethodDecorateApp.MethodInfo != null) foundMethods.Add(lookupMethodDecorateApp.MethodInfo.Name);
 			Console.WriteLine($"[INFO] {t.FullName}...found methods: {string.Join(", ", foundMethods)}.");
@@ -128,6 +136,28 @@ public sealed class WasmAppBootstrapper
 		}
 
 		app = wasmAppBuilder.Build();
+
+		Console.WriteLine("[INFO] ========== [Bootstrapping] Initializing services...");
+		foreach (var bootstrapper in bootstrappersInfo)
+		{
+			if (bootstrapper.methodInitializeServicesAsync == null && bootstrapper.methodInitializeServices == null)
+			{
+				continue;
+			}
+
+			if (bootstrapper.methodInitializeServicesAsync != null)
+			{
+				Console.WriteLine($"[{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServicesAsync.Name}...");
+				// async method takes priority
+				var task = BlazorClientReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodInitializeServicesAsync);
+				backgroundBootstrappingTasks.Append(task);
+			}
+			else
+			{
+				Console.WriteLine($"[{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServices!.Name}...");
+				BlazorClientReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodInitializeServices);
+			}
+		}
 
 		Console.WriteLine("[INFO] ========== [Bootstrapping] Decorating application...");
 		foreach (var bootstrapper in bootstrappersInfo)

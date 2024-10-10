@@ -4,7 +4,13 @@
 
 @inherits BaseLayout
 
-@Body
+<!-- cascading the layout instance down to components -->
+<!--
+    Components can utilize shared properties defined in the layout.
+-->
+<CascadingValue Value="this" Name="Layout">
+    @Body
+</CascadingValue>
 
 @code {
 }

@@ -1,5 +1,6 @@
 ﻿using Bat.Api.Services;
 using Bat.Shared.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -53,8 +54,8 @@ public class BuiltinController : ApiBaseController
 	/// Checks if the server is running.
 	/// </summary>
 	/// <response code="200">Server is running.</response>
-	[HttpGet("/health")]
-	[HttpGet("/healthz")]
+	[HttpGet(IApiClient.API_ENDPOINT_HEALTH)]
+	[HttpGet(IApiClient.API_ENDPOINT_HEALTHZ)]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResp))]
 	public ActionResult<ApiResp> Health() => ResponseOk();
 
@@ -63,7 +64,7 @@ public class BuiltinController : ApiBaseController
 	/// </summary>
 	/// <response code="200">Server is ready to handle requests.</response>
 	/// <response code="503">Server is running but NOT yet ready to handle requests.</response>
-	[HttpGet("/ready")]
+	[HttpGet(IApiClient.API_ENDPOINT_READY)]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResp<bool>))]
 	[ProducesResponseType(StatusCodes.Status503ServiceUnavailable, Type = typeof(ApiResp))]
 	public ActionResult<ApiResp<bool>> Ready()
@@ -78,7 +79,7 @@ public class BuiltinController : ApiBaseController
 	/// Returns service's information.
 	/// </summary>
 	/// <response code="200">Server's information.</response>
-	[HttpGet("/info")]
+	[HttpGet(IApiClient.API_ENDPOINT_INFO)]
 	[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResp<InfoResp>))]
 	public ActionResult<ApiResp<InfoResp>> Info()
 	{
@@ -105,7 +106,8 @@ public class BuiltinController : ApiBaseController
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(typeof(ApiResp<AuthResp>), StatusCodes.Status403Forbidden)]
 	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-	[HttpPost("/auth")]
+	[HttpPost(IApiClient.API_ENDPOINT_AUTH_SIGNIN)]
+	[HttpPost(IApiClient.API_ENDPOINT_AUTH_LOGIN)]
 	public async Task<ActionResult<ApiResp<AuthResp>>> Authenticate([FromBody] AuthReq authReq)
 	{
 		ArgumentNullException.ThrowIfNull(authReq, nameof(authReq));
@@ -115,6 +117,33 @@ public class BuiltinController : ApiBaseController
 			: _authenticator?.Authenticate(authReq);
 		return resp == null
 			? ResponseNoData(500, "Error while authenticating.")
+			: resp.Status == 200
+				? ResponseOk(resp)
+				: ResponseNoData(resp.Status, resp.Error);
+	}
+
+	/// <summary>
+	/// Refreshes the client's authentication token.
+	/// </summary>
+	/// <returns></returns>
+	/// <response code="200">Authentication token was refreshed succesfully.</response>
+	/// <response code="401">No authentication token found.</response>
+	/// <response code="403">Invalid authentication token.</response>
+	/// <response code="500">No authenticator defined or error while refreshing the token.</response>
+	[HttpPost(IApiClient.API_ENDPOINT_AUTH_REFRESH)]
+	[Authorize]
+	public async Task<ActionResult<ApiResp<AuthResp>>> RefreshAuthToken()
+	{
+		var token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+		if (string.IsNullOrEmpty(token))
+		{
+			return ResponseNoData(401, "No auth token found.");
+		}
+		var resp = _authenticatorAsync != null
+			? await _authenticatorAsync.RefreshAsync(token)
+			: _authenticator?.Refresh(token);
+		return resp == null
+			? ResponseNoData(500, "Error while refreshing auth token.")
 			: resp.Status == 200
 				? ResponseOk(resp)
 				: ResponseNoData(resp.Status, resp.Error);
