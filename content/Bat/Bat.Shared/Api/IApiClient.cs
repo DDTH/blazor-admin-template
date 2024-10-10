@@ -13,6 +13,8 @@ public interface IApiClient
 	public const string API_ENDPOINT_AUTH_LOGIN = "/auth/login";
 	public const string API_ENDPOINT_AUTH_REFRESH = "/auth/refresh";
 
+	public const string API_ENDPOINT_USERS_ME = "/api/users/-me";
+
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_INFO"/>.
 	/// </summary>
@@ -41,6 +43,16 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<AuthResp>> RefreshAsync(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_USERS_ME"/>.
+	/// </summary>
+	/// <param name="authToken">The authentication token to authenticate current user.</param>
+	/// <param name="baseUrl">The base URL of the API, optional.</param>
+	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<UserResp>> GetMyInfo(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }
 
 /// <summary>

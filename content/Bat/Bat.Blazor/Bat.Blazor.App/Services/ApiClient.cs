@@ -35,6 +35,8 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		return req;
 	}
 
+	/*----------------------------------------------------------------------*/
+
 	/// <inheritdoc/>
 	public async Task<ApiResp<InfoResp>> InfoAsync(string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
@@ -44,6 +46,8 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		var result = await usingHttpClient.GetFromJsonAsync<ApiResp<InfoResp>>(apiUri, cancellationToken);
 		return result ?? new ApiResp<InfoResp> { Status = 500, Message = "Invalid response from server." };
 	}
+
+	/*----------------------------------------------------------------------*/
 
 	/// <inheritdoc/>
 	public async Task<ApiResp<AuthResp>> LoginAsync(LoginReq req, string? baseUrl = null, HttpClient? requestHttpClient = null, CancellationToken cancellationToken = default)
@@ -65,5 +69,18 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		var httpResult = await usingHttpClient.SendAsync(httpReq, cancellationToken);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AuthResp>>(cancellationToken);
 		return result ?? new ApiResp<AuthResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/*----------------------------------------------------------------------*/
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> GetMyInfo(string authToken, string? baseUrl = null, HttpClient? requestHttpClient = null, CancellationToken cancellationToken = default)
+	{
+		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
+		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_USERS_ME);
+		var httpReq = BuildRequest(HttpMethod.Get, apiUri, authToken);
+		var httpResult = await usingHttpClient.SendAsync(httpReq, cancellationToken);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
 	}
 }

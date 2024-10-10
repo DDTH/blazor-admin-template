@@ -10,7 +10,7 @@ public partial class BatUser
 		Email = $"{USER_ID_ADMIN}@local",
 		Roles = [BatRole.GLOBAL_ADMIN],
 		GivenName = "Administrator",
-		LastName = "Local",
+		FamilyName = "Local",
 	};
 
 	public static readonly IEnumerable<BatUser> ALL_BUILTIN_USERS = [ADMIN];

@@ -62,7 +62,7 @@ sealed class IdentityUserEntityTypeConfiguration : IEntityTypeConfiguration<BatU
 		//builder.Property(t => t.LockoutEnabled).HasColumnName("lockout_enabled");
 		//builder.Property(t => t.AccessFailedCount).HasColumnName("access_failed_count");
 		builder.Property(t => t.GivenName).HasColumnName("given_name");
-		builder.Property(t => t.LastName).HasColumnName("last_name");
+		builder.Property(t => t.FamilyName).HasColumnName("family_name");
 
 		// username and email should be unique
 		builder.HasIndex(t => t.NormalizedUserName).IsUnique();

@@ -16,7 +16,7 @@ CREATE UNIQUE INDEX [RoleNameIndex] ON [bat_roles] ([normalized_name]) WHERE [no
 CREATE TABLE [bat_users] (
     [uid] nvarchar(48) NOT NULL,
     [given_name] nvarchar(128) NULL,
-    [last_name] nvarchar(128) NULL,
+    [family_name] nvarchar(128) NULL,
     [uname] nvarchar(48) NULL,
     [normalized_name] nvarchar(48) NULL,
     [uemail] nvarchar(100) NULL,

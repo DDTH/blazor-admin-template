@@ -52,7 +52,7 @@ public class ApiResp<T> : ApiResp
 /*----------------------------------------------------------------------*/
 
 /// <summary>
-/// Response to the <c>/info</c> API call.
+/// Response to the <<c>/info</c>> API call.
 /// </summary>
 public sealed class InfoResp
 {
@@ -98,7 +98,7 @@ public sealed class AppInfo
 /*----------------------------------------------------------------------*/
 
 /// <summary>
-/// Response to the <c>/auth</c> API call.
+/// Response to the <c>/auth/signin</c>, <c>/auth/login</c> or <c>/auth/refresh</c> API call.
 /// </summary>
 public class AuthResp
 {
@@ -158,4 +158,24 @@ public class AuthResp
 	/// </summary>
 	[JsonPropertyName("expiry")]
 	public DateTime? Expiry { get; set; }
+}
+
+/*----------------------------------------------------------------------*/
+
+public class UserResp
+{
+	public string Id { get; set; } = default!;
+	public string Username { get; set; } = default!;
+	public string Email { get; set; } = default!;
+
+	[JsonPropertyName("given_name")]
+	public string? GivenName { get; set; }
+	[JsonPropertyName("family_name")]
+	public string? FamilyName { get; set; }
+
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<string>? Roles { get; set; }
+
+	//[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	//public IEnumerable<string>? Claims { get; set; }
 }
