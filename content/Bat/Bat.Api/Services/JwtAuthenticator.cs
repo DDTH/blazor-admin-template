@@ -1,4 +1,5 @@
-﻿using Bat.Shared.Api;
+﻿using Bat.Api.Controllers;
+using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Identity;
@@ -83,7 +84,7 @@ public sealed class SampleJwtAuthenticator(
 				return AuthResp.AuthFailed;
 			}
 			var pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<BatUser>>();
-			var pwdHashResult = pwdHasher.VerifyHashedPassword(user, user.PasswordHash!, req?.Secret ?? req?.Password ?? string.Empty);
+			var pwdHashResult = pwdHasher.VerifyHashedPassword(user, user.PasswordHash!, req.Secret ?? req.Password ?? string.Empty);
 			if (pwdHashResult != PasswordVerificationResult.Success && pwdHashResult != PasswordVerificationResult.SuccessRehashNeeded)
 			{
 				logger.LogError("Authentication failed: password verification failed.");

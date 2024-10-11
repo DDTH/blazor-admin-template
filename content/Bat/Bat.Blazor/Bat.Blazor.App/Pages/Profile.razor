@@ -22,6 +22,12 @@
         </div>
         <div class="card-body">
             <form>
+                @if (!string.IsNullOrEmpty(ProfileAlertMessage))
+                {
+                    <CAlert type="@ProfileAlertType">
+                        @ProfileAlertMessage
+                    </CAlert>
+                }
                 <div class="row mb-2">
                     <label for="inputId" class="col-sm-2 col-form-label">Id</label>
                     <div class="col-sm-10">
@@ -44,7 +50,7 @@
                         <input type="text" class="form-control" id="inputGivenName" @bind="@GivenName">
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary"><BIcon icon="bi-floppy"/> Save</button>
+                <button type="button" class="btn @(DisableUpdateProfile?"btn-secondary":"btn-primary")" disabled="@(DisableUpdateProfile)" @onclick="BtnClickedSaveProfile"><BIcon icon="bi-floppy" /> Save</button>
             </form>
         </div>
     </div>
@@ -54,6 +60,9 @@
         </div>
         <div class="card-body">
             <form>
+                <CAlert type="primary">
+                    Email is used to login.
+                </CAlert>
                 <div class="row mb-2">
                     <label for="inputNewEmail" class="col-sm-2 col-form-label">New Email</label>
                     <div class="col-sm-10">
@@ -70,6 +79,9 @@
         </div>
         <div class="card-body">
             <form>
+                <CAlert type="warning">
+                    AlertMessage
+                </CAlert>
                 <div class="row mb-2">
                     <label for="inputPwd" class="col-sm-2 col-form-label">Current Password</label>
                     <div class="col-sm-10">

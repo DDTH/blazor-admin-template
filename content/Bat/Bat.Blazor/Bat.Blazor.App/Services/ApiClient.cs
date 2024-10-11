@@ -1,5 +1,6 @@
 ﻿using Bat.Shared.Api;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Bat.Blazor.App.Services;
 
@@ -79,6 +80,17 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_USERS_ME);
 		var httpReq = BuildRequest(HttpMethod.Get, apiUri, authToken);
+		var httpResult = await usingHttpClient.SendAsync(httpReq, cancellationToken);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> UpdateMyProfile(UpdateUserProfileReq req, string authToken, string? baseUrl = null, HttpClient? requestHttpClient = null, CancellationToken cancellationToken = default)
+	{
+		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
+		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_USERS_ME_UPDATE_PROFILE);
+		var httpReq = BuildRequest(HttpMethod.Post, apiUri, authToken, req);
 		var httpResult = await usingHttpClient.SendAsync(httpReq, cancellationToken);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
 		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };

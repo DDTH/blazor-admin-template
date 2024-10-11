@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Bat.Shared.Identity;
+using System.Text.Json.Serialization;
 
 namespace Bat.Shared.Api;
 
@@ -164,6 +165,19 @@ public class AuthResp
 
 public class UserResp
 {
+	public static UserResp BuildFromUser(BatUser user)
+	{
+		return new UserResp
+		{
+			Id = user.Id,
+			Username = user.UserName!,
+			Email = user.Email!,
+			GivenName = user.GivenName,
+			FamilyName = user.FamilyName,
+			Roles = user.Roles?.Select(r => r.Name!)
+		};
+	}
+
 	public string Id { get; set; } = default!;
 	public string Username { get; set; } = default!;
 	public string Email { get; set; } = default!;

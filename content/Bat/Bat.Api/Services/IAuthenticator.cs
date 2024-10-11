@@ -1,4 +1,5 @@
-﻿using Bat.Shared.Api;
+﻿using Bat.Api.Controllers;
+using Bat.Shared.Api;
 
 namespace Bat.Api.Services;
 
