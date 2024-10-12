@@ -2,7 +2,6 @@
 using Bat.Blazor.App.Layout;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Shared;

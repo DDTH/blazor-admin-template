@@ -15,6 +15,7 @@ public interface IApiClient
 
 	public const string API_ENDPOINT_USERS_ME = "/api/users/-me";
 	public const string API_ENDPOINT_USERS_ME_UPDATE_PROFILE = "/api/users/-me/profile";
+	public const string API_ENDPOINT_USERS_ME_CHANGE_PASSWORD = "/api/users/-me/password";
 
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_INFO"/> to get the backend information.
@@ -65,6 +66,17 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<UserResp>> UpdateMyProfile(UpdateUserProfileReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_USERS_ME_CHANGE_PASSWORD"/> to change current user's password.
+	/// </summary>
+	/// <param name="req"></param>
+	/// <param name="authToken"></param>
+	/// <param name="baseUrl"></param>
+	/// <param name="httpClient"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<ChangePasswordResp>> ChangeMyPassword(ChangePasswordReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -89,4 +101,16 @@ public struct UpdateUserProfileReq
 
 	[JsonPropertyName("family_name")]
 	public string? FamilyName { get; set; }
+}
+
+/// <summary>
+/// Request info for the <see cref="IApiClient.ChangeMyPassword(ChangePasswordReq, string, string?, HttpClient?)"/> API call.
+/// </summary>
+public struct ChangePasswordReq
+{
+	[JsonPropertyName("current_password")]
+	public string CurrentPassword { get; set; }
+
+	[JsonPropertyName("new_password")]
+	public string NewPassword { get; set; }
 }

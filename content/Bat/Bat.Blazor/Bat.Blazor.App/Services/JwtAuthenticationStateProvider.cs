@@ -19,7 +19,7 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 			var isBrowser = OperatingSystem.IsBrowser();
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			Console.WriteLine($"[DEBUG] - {isBrowser} / authToken: {authToken}");
+			Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync - {isBrowser} / authToken: {authToken}");
 			if (!string.IsNullOrEmpty(authToken))
 			{
 				try

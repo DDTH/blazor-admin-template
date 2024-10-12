@@ -101,7 +101,7 @@ public sealed class AppInfo
 /// <summary>
 /// Response to the <c>/auth/signin</c>, <c>/auth/login</c> or <c>/auth/refresh</c> API call.
 /// </summary>
-public class AuthResp
+public struct AuthResp
 {
 	public static readonly AuthResp AuthFailed = new() { Status = 403, Error = "Authentication failed." };
 	public static readonly AuthResp TokenExpired = new() { Status = 401, Error = "Token expired." };
@@ -192,4 +192,14 @@ public class UserResp
 
 	//[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	//public IEnumerable<string>? Claims { get; set; }
+}
+
+/*----------------------------------------------------------------------*/
+
+public struct ChangePasswordResp
+{
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Message { get; set; }
+
+	public string Token { get; set; }
 }

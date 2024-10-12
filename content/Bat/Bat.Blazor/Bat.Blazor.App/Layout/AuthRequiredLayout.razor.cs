@@ -29,13 +29,13 @@ public partial class AuthRequiredLayout : BaseLayout
 	{
 		if (AuthState != null)
 		{
-			Console.WriteLine($"[DEBUG] - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...");
+			Console.WriteLine($"[DEBUG] AuthRequiredLayout/OnAfterRenderAsync - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...");
 			var authState = await AuthState;
 			if (authState?.User?.Identity?.IsAuthenticated ?? false)
 			{
 				UserClaims = authState.User.Claims;
 			}
-			Console.WriteLine($"[DEBUG] - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...DONE.");
+			Console.WriteLine($"[DEBUG] AuthRequiredLayout/OnAfterRenderAsync - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...DONE.");
 		}
 		await base.OnAfterRenderAsync(firstRender);
 		// Add your logic here

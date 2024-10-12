@@ -114,10 +114,8 @@ public class BuiltinController : ApiBaseController
 
 		var resp = _authenticatorAsync != null
 			? await _authenticatorAsync.AuthenticateAsync(authReq)
-			: _authenticator?.Authenticate(authReq);
-		return resp == null
-			? ResponseNoData(500, "Error while authenticating.")
-			: resp.Status == 200
+			: _authenticator!.Authenticate(authReq);
+		return resp.Status == 200
 				? ResponseOk(resp)
 				: ResponseNoData(resp.Status, resp.Error);
 	}
@@ -141,10 +139,8 @@ public class BuiltinController : ApiBaseController
 		}
 		var resp = _authenticatorAsync != null
 			? await _authenticatorAsync.RefreshAsync(token)
-			: _authenticator?.Refresh(token);
-		return resp == null
-			? ResponseNoData(500, "Error while refreshing auth token.")
-			: resp.Status == 200
+			: _authenticator!.Refresh(token);
+		return resp.Status == 200
 				? ResponseOk(resp)
 				: ResponseNoData(resp.Status, resp.Error);
 	}

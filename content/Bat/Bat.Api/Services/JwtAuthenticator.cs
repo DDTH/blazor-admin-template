@@ -57,7 +57,7 @@ public sealed class SampleJwtAuthenticator(
 		// fetch user account in order: user-id, user-name, then user-email
 		// feel free to change the order as needed
 		return !string.IsNullOrEmpty(id)
-			? await identityRepo.GetUserByUserNameAsync(id)
+			? await identityRepo.GetUserByIDAsync(id)
 			: !string.IsNullOrEmpty(name)
 				? await identityRepo.GetUserByUserNameAsync(name)
 				: !string.IsNullOrEmpty(email)
