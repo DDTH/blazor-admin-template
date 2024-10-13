@@ -100,7 +100,7 @@ public partial class Profile
 
 	private async void BtnClickedChangeEmail()
 	{
-		DisableUpdateProfile = true;
+		DisableChangeEmail = true;
 		ShowAlert("email", "info", "Updating email, please wait...");
 		var req = new UpdateUserProfileReq
 		{

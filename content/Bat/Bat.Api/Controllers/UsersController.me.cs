@@ -43,6 +43,7 @@ public partial class UsersController
 	/// <param name="req"></param>
 	/// <param name="identityOptions"></param>
 	/// <param name="identityRepository"></param>
+	/// <param name="lookupNormalizer"></param>
 	/// <param name="authenticator"></param>
 	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
