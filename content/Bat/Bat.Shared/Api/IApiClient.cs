@@ -101,6 +101,9 @@ public struct UpdateUserProfileReq
 
 	[JsonPropertyName("family_name")]
 	public string? FamilyName { get; set; }
+
+	[JsonPropertyName("email")]
+	public string? Email { get; set; }
 }
 
 /// <summary>

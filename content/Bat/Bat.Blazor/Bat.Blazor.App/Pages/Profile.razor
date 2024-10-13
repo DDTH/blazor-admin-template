@@ -72,7 +72,7 @@
                         <input type="email" class="form-control" id="inputNewEmail" @bind="@NewEmail" />
                     </div>
                 </div>
-                <button type="button" class="btn btn-warning"><BIcon icon="bi-floppy" /> Save</button>
+                <button type="button" class="btn @(DisableChangeEmail?"btn-secondary":"btn-warning")" disabled="@(DisableChangeEmail)" @onclick="BtnClickedChangeEmail"><BIcon icon="bi-floppy" /> Save</button>
             </form>
         </div>
     </div>

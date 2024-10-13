@@ -15,6 +15,10 @@ public struct UpdateUserProfileReq
 	[BindProperty(Name = "family_name")]
 	[JsonPropertyName("family_name")]
 	public string? FamilyName { get; set; }
+
+	[BindProperty(Name = "email")]
+	[JsonPropertyName("email")]
+	public string? Email { get; set; }
 }
 
 /// <summary>

@@ -52,6 +52,7 @@ public partial class UsersController
 		[FromBody] UpdateUserProfileReq req,
 		IOptions<IdentityOptions> identityOptions,
 		IIdentityRepository identityRepository,
+		ILookupNormalizer lookupNormalizer,
 		IAuthenticator? authenticator, IAuthenticatorAsync? authenticatorAsync)
 	{
 		var (vAuthTokenResult, currentUser) = await VerifyAuthTokenAndCurrentUser(
@@ -63,8 +64,18 @@ public partial class UsersController
 			// current auth token and signed-in user should all be valid
 			return vAuthTokenResult;
 		}
-		currentUser.GivenName = req.GivenName ?? currentUser.GivenName;
-		currentUser.FamilyName = req.FamilyName ?? currentUser.FamilyName;
+		if (!string.IsNullOrWhiteSpace(req.Email))
+		{
+			var existingUser = await identityRepository.GetUserByEmailAsync(req.Email);
+			if (existingUser != null && existingUser.Id != currentUser.Id)
+			{
+				return ResponseNoData(400, "Email is being used by another user.");
+			}
+			currentUser.Email = req.Email.ToLower().Trim();
+			currentUser.NormalizedEmail = lookupNormalizer.NormalizeEmail(currentUser.Email);
+		}
+		currentUser.GivenName = (req.GivenName ?? currentUser.GivenName)?.Trim();
+		currentUser.FamilyName = (req.FamilyName ?? currentUser.FamilyName)?.Trim();
 		var user = await identityRepository.UpdateAsync(currentUser);
 		if (user == null)
 		{

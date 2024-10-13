@@ -98,6 +98,33 @@ public partial class Profile
 		}
 	}
 
+	private async void BtnClickedChangeEmail()
+	{
+		DisableUpdateProfile = true;
+		ShowAlert("email", "info", "Updating email, please wait...");
+		var req = new UpdateUserProfileReq
+		{
+			Email = NewEmail,
+		};
+		using (var scope = ServiceProvider.CreateScope())
+		{
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
+			var resp = await ApiClient.UpdateMyProfile(req, authToken, NavigationManager.BaseUri);
+			DisableChangeEmail = false;
+			if (resp.Status != 200)
+			{
+				ShowAlert("email", "danger", resp.Message!);
+				return;
+			}
+			User = resp.Data;
+			GivenName = User?.GivenName ?? string.Empty;
+			FamilyName = User?.FamilyName ?? string.Empty;
+			NewEmail = User?.Email ?? string.Empty;
+			ShowAlert("email", "success", "Email updated successfully.");
+		}
+	}
+
 	private async void BtnClickedChangePassword()
 	{
 		CloseAlert();
@@ -116,7 +143,8 @@ public partial class Profile
 		}
 		DisableChangePassword = true;
 		ShowAlert("password", "info", "Updating password, please wait...");
-		using (var scope = ServiceProvider.CreateScope()) {
+		using (var scope = ServiceProvider.CreateScope())
+		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
 			var req = new ChangePasswordReq
@@ -132,6 +160,7 @@ public partial class Profile
 				return;
 			}
 			CurrentPwd = NewPwd = ConfirmPwd = string.Empty;
+			await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, resp.Data.Token);
 			ShowAlert("password", "success", "Password updated successfully.");
 		}
 	}
