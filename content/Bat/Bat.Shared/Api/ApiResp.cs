@@ -203,3 +203,25 @@ public struct ChangePasswordResp
 
 	public string Token { get; set; }
 }
+
+/*----------------------------------------------------------------------*/
+
+public struct AppResp
+{
+	[JsonPropertyName("id")]
+	public string Id { get; set; }
+
+	[JsonPropertyName("display_name")]
+	public string DisplayName { get; set; }
+
+	[JsonPropertyName("public_key_pem")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? PublicKeyPEM { get; set; }
+
+	[JsonPropertyName("created_at")]
+	public DateTimeOffset CreatedAt { get; set; }
+
+	[JsonPropertyName("updated_at")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public DateTimeOffset? UpdatedAt { get; set; }
+}
