@@ -1,7 +1,15 @@
 ﻿﻿<CascadingAuthenticationState>
     <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Bat.Blazor.App._Imports).Assembly }">
         <Found Context="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)" />
+            <!--<RouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)" />-->
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)">
+                <NotAuthorized>
+                    <PageTitle>Not authorized</PageTitle>
+                    <LayoutView Layout="typeof(Bat.Blazor.App.Layout.MainLayout)">
+                        <p role="alert">You are not authorized to access this page.</p>
+                    </LayoutView>
+                </NotAuthorized>
+            </AuthorizeRouteView>
             <!--<FocusOnNavigate RouteData="routeData" Selector="h1" />-->
         </Found>
         <NotFound>

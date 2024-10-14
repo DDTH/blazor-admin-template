@@ -19,6 +19,9 @@ public class AuthBootstrapper
 		// set up authorization
 		services.AddAuthorizationCore();
 
+		/* this has been done in Routes.razor with <CascadingAuthenticationState> tag */
+		//services.AddCascadingAuthenticationState();
+
 		// register the custom state provider
 		services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 

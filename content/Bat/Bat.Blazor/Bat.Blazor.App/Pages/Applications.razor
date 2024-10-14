@@ -1,0 +1,37 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using Bat.Shared.Identity
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_LIST)]
+@attribute [Authorize]
+@inherits BaseComponent
+
+<PageTitle>Applications | @AppInfo?.Name</PageTitle>
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>Applications</span>
+    </li>
+</SectionContent>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="container-lg px-4">
+            <div class="card border-top-3 mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">Applications</h4>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Not Authorized</PageTitle>
+        <CAlert type="warning">
+            <span>You are not authorized to access this page.</span>
+        </CAlert>
+    </NotAuthorized>
+</AuthorizeView>

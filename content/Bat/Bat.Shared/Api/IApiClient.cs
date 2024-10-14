@@ -17,6 +17,8 @@ public interface IApiClient
 	public const string API_ENDPOINT_USERS_ME_UPDATE_PROFILE = "/api/users/-me/profile";
 	public const string API_ENDPOINT_USERS_ME_CHANGE_PASSWORD = "/api/users/-me/password";
 
+	public const string API_ENDPOINT_APPS_GET_ALL = "/api/apps";
+
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_INFO"/> to get the backend information.
 	/// </summary>

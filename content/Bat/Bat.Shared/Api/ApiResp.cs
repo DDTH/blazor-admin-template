@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Identity;
+using Bat.Shared.Models;
 using System.Text.Json.Serialization;
 
 namespace Bat.Shared.Api;
@@ -163,7 +164,7 @@ public struct AuthResp
 
 /*----------------------------------------------------------------------*/
 
-public class UserResp
+public struct UserResp
 {
 	public static UserResp BuildFromUser(BatUser user)
 	{
@@ -178,9 +179,9 @@ public class UserResp
 		};
 	}
 
-	public string Id { get; set; } = default!;
-	public string Username { get; set; } = default!;
-	public string Email { get; set; } = default!;
+	public string Id { get; set; }
+	public string Username { get; set; }
+	public string Email { get; set; }
 
 	[JsonPropertyName("given_name")]
 	public string? GivenName { get; set; }
@@ -208,6 +209,18 @@ public struct ChangePasswordResp
 
 public struct AppResp
 {
+	public static AppResp BuildFromApp(Application app)
+	{
+		return new AppResp
+		{
+			Id = app.Id,
+			DisplayName = app.DisplayName,
+			PublicKeyPEM = app.PublicKeyPEM,
+			CreatedAt = app.CreatedAt,
+			UpdatedAt = app.UpdatedAt
+		};
+	}
+
 	[JsonPropertyName("id")]
 	public string Id { get; set; }
 

@@ -1,5 +1,8 @@
-﻿using Bat.Blazor.App.Shared;
+﻿using Bat.Blazor.App.Services;
+using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace Bat.Blazor.App.Pages;
@@ -19,6 +22,9 @@ public partial class Login : BaseComponent
 	private string AlertType { get; set; } = "info";
 	private string AlertMessage { get; set; } = string.Empty;
 	private bool HideLoginForm { get; set; } = false;
+
+	[Inject]
+	private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
 	private void CloseAlert()
 	{
@@ -66,7 +72,7 @@ public partial class Login : BaseComponent
 		ShowAlert("success", "Authenticated successfully, logging in...");
 		var returnUrl = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query)
 			.TryGetValue("returnUrl", out var returnUrlValue) ? returnUrlValue.FirstOrDefault("/") : "/";
-		await LocalStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, resp.Data!.Token);
-		NavigationManager.NavigateTo(returnUrl ?? "/", forceLoad: true);
+		await ((JwtAuthenticationStateProvider)AuthenticationStateProvider).Login(resp.Data.Token!);
+		NavigationManager.NavigateTo(returnUrl ?? "/", forceLoad: false);
 	}
 }

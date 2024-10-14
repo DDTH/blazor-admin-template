@@ -28,6 +28,7 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 					var principles = jwtService.ValidateToken(authToken, out _);
 					if (principles != null)
 					{
+						principles.Claims.ToList().ForEach(c => Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync/User claim: {c.Type} = {c.Value}"));
 						return new(principles);
 					}
 				} catch (Exception ex) when (ex is SecurityTokenException)
@@ -36,5 +37,31 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 			}
 			return new(Unauthenticated);
 		}
+	}
+
+	public async Task Login(string authToken)
+	{
+		using (var scope = serviceProvider.CreateScope())
+		{
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, authToken);
+		}
+		NotifyStageChanged();
+	}
+
+	public async Task Logout()
+	{
+		using (var scope = serviceProvider.CreateScope())
+		{
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+		}
+		NotifyStageChanged();
+	}
+
+	public void NotifyStageChanged()
+	{
+		var task = GetAuthenticationStateAsync();
+		NotifyAuthenticationStateChanged(task);
 	}
 }

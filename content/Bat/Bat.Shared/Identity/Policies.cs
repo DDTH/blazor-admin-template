@@ -9,6 +9,8 @@ public sealed class BuiltinPolicies
 		.RequireAuthenticatedUser()
 		.RequireAssertion(context =>
 		{
+			context.User.Claims.ToList().ForEach(c => Console.WriteLine($"User claim: {c.Type} = {c.Value}"));
+
 			var hasAdminRole = context.User.HasClaim(BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Type, BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Value);
 			var hasUserManagerRole = context.User.HasClaim(BuiltinClaims.CLAIM_ROLE_USER_MANAGER.Type, BuiltinClaims.CLAIM_ROLE_USER_MANAGER.Value);
 			return hasAdminRole || hasUserManagerRole;
