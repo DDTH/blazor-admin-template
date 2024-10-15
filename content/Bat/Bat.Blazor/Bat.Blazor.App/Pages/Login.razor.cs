@@ -1,9 +1,11 @@
-﻿using Bat.Blazor.App.Services;
+﻿using Bat.Blazor.App.Helpers;
+using Bat.Blazor.App.Services;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -72,7 +74,11 @@ public partial class Login : BaseComponent
 		ShowAlert("success", "Authenticated successfully, logging in...");
 		var returnUrl = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query)
 			.TryGetValue("returnUrl", out var returnUrlValue) ? returnUrlValue.FirstOrDefault("/") : "/";
-		await ((JwtAuthenticationStateProvider)AuthenticationStateProvider).Login(resp.Data.Token!);
+
+		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
+		await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, resp.Data.Token!);
+		((JwtAuthenticationStateProvider)AuthenticationStateProvider).NotifyStageChanged();
+
 		NavigationManager.NavigateTo(returnUrl ?? "/", forceLoad: false);
 	}
 }

@@ -24,13 +24,25 @@ public class LocalStorageHelper(ILocalStorageService localStorageService)
 	{
 		var jdata = JsonSerializer.Serialize(data);
 		Entries.AddOrUpdate(key, jdata, (_, _) => jdata);
-		await localStorageService.SetItemAsync(key, data, cancellationToken);
+		try
+		{
+			await localStorageService.SetItemAsync(key, data, cancellationToken);
+		}
+		catch (InvalidOperationException)
+		{
+		}
 	}
 
 	public async ValueTask RemoveItemAsync(string key, CancellationToken cancellationToken = default)
 	{
 		Entries.TryRemove(key, out _);
-		await localStorageService.RemoveItemAsync(key, cancellationToken);
+		try
+		{
+			await localStorageService.RemoveItemAsync(key, cancellationToken);
+		}
+		catch (InvalidOperationException)
+		{
+		}
 	}
 
 	public async ValueTask RemoveItemsAsync(IEnumerable<string> keys, CancellationToken cancellationToken = default)
@@ -39,6 +51,12 @@ public class LocalStorageHelper(ILocalStorageService localStorageService)
 		{
 			Entries.TryRemove(key, out _);
 		}
-		await localStorageService.RemoveItemsAsync(keys, cancellationToken);
+		try
+		{
+			await localStorageService.RemoveItemsAsync(keys, cancellationToken);
+		}
+		catch (InvalidOperationException)
+		{
+		}
 	}
 }

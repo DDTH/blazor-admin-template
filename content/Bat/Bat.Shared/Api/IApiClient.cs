@@ -85,11 +85,12 @@ public interface IApiClient
 	/// <summary>
 	/// Alls the API <see cref="API_ENDPOINT_ROLES"/> to get all roles.
 	/// </summary>
+	/// <param name="authToken"></param>
 	/// <param name="baseUrl"></param>
 	/// <param name="httpClient"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }
 
 /// <summary>

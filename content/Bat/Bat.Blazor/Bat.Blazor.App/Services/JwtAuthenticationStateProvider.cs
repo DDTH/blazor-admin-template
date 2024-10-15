@@ -39,25 +39,33 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 		}
 	}
 
-	public async Task Login(string authToken)
-	{
-		using (var scope = serviceProvider.CreateScope())
-		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, authToken);
-		}
-		NotifyStageChanged();
-	}
+	//public async Task Login(string authToken)
+	//{
+	//	using (var scope = serviceProvider.CreateScope())
+	//	{
+	//		var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+	//		await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, authToken);
 
-	public async Task Logout()
-	{
-		using (var scope = serviceProvider.CreateScope())
-		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		}
-		NotifyStageChanged();
-	}
+	//		var check = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+	//		if (!string.Equals(check, authToken, StringComparison.InvariantCulture))
+	//		{
+	//			Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/Login - authToken mismatch: {check} != {authToken}");
+	//			await Login(authToken);
+	//			return;
+	//		}
+	//	}
+	//	NotifyStageChanged();
+	//}
+
+	//public async Task Logout()
+	//{
+	//	using (var scope = serviceProvider.CreateScope())
+	//	{
+	//		var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+	//		await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+	//	}
+	//	NotifyStageChanged();
+	//}
 
 	public void NotifyStageChanged()
 	{

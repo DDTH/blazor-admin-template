@@ -109,11 +109,11 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	/*----------------------------------------------------------------------*/
 
 	/// <inheritdoc/>
-	public async Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	public async Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_ROLES);
-		var httpReq = BuildRequest(HttpMethod.Get, apiUri, null);
+		var httpReq = BuildRequest(HttpMethod.Get, apiUri, authToken);
 		var httpResult = await usingHttpClient.SendAsync(httpReq, cancellationToken);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<RoleResp>>>(cancellationToken);
 		return result ?? new ApiResp<IEnumerable<RoleResp>> { Status = 500, Message = "Invalid response from server." };

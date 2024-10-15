@@ -1,4 +1,6 @@
-﻿using Bat.Shared.Api;
+﻿using Bat.Blazor.App.Helpers;
+using Bat.Shared.Api;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -11,7 +13,9 @@ public partial class Roles
 	{
 		if (firstRender)
 		{
-			var result = await ApiClient.GetAllRolesAsync();
+			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+			var result = await ApiClient.GetAllRolesAsync(authToken ?? "", NavigationManager.BaseUri);
 			if (result.Status == 200)
 			{
 				RoleList = result.Data;
