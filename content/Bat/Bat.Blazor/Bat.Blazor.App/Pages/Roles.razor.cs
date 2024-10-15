@@ -6,11 +6,13 @@ namespace Bat.Blazor.App.Pages;
 
 public partial class Roles
 {
+	private int RoleIndex = 0;
 	private IEnumerable<RoleResp>? RoleList { get; set; }
 	private string ErrorMessage { get; set; } = string.Empty;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		RoleIndex = 0;
 		if (firstRender)
 		{
 			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();

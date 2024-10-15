@@ -15,7 +15,7 @@
     </li>
 </SectionContent>
 
-<AuthorizeView>
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER">
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
@@ -37,15 +37,28 @@
                     }
                     else
                     {
-                        <table class="table table-sm">
+                        <table class="table table-sm table-bordered border-primary table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Name</th>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col" class="text-center">Id</th>
+                                    <th scope="col" class="text-center">Name</th>
                                     <th scope="col">Description</th>
+                                    <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                @foreach (var item in RoleList)
+                                {
+                                    <tr>
+                                        <th scope="row" class="text-center">@(++RoleIndex)</th>
+                                        <td>@item.Id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td>&nbdp;</td>
+                                    </tr>
+                                }
+                            </tbody>
                         </table>
                     }
                 </div>

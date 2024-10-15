@@ -204,7 +204,8 @@ public struct RoleResp
 		return new RoleResp
 		{
 			Id = role.Id,
-			Name = role.Name!
+			Name = role.Name ?? string.Empty,
+			Description = role.Description ?? string.Empty,
 		};
 	}
 
@@ -213,6 +214,9 @@ public struct RoleResp
 
 	[JsonPropertyName("name")]
 	public string Name { get; set; }
+
+	[JsonPropertyName("description")]
+	public string Description { get; set; }
 }
 
 /*----------------------------------------------------------------------*/

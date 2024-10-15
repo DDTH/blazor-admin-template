@@ -32,16 +32,17 @@ public class AuthBootstrapper
 		appBuilder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, SampleAuthorizationMiddlewareResultHandler>();
 
 		// Configurate authorization policies
-		appBuilder.Services.AddAuthorizationBuilder()
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_USER_MANAGER)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_APPLICATION_MANAGER)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_CREATE_USER_PERM)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_MODIFY_USER_PERM)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_DELETE_USER_PERM)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_CREATE_APP_PERM)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_MODIFY_APP_PERM)
-			.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_DELETE_APP_PERM)
-			;
+		appBuilder.Services.AddAuthorization(c =>
+		{
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_USER_MANAGER);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_APPLICATION_MANAGER);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_CREATE_USER_PERM);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_MODIFY_USER_PERM);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_USER_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_DELETE_USER_PERM);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_CREATE_APP_PERM);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_MODIFY_APP_PERM);
+			c.AddPolicy(BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_APP_PERM, BuiltinPolicies.POLICY_ADMIN_ROLE_OR_DELETE_APP_PERM);
+		});
 
 		// setup IAuthenticator/IAuthenticatorAsync services
 		appBuilder.Services.AddSingleton<SampleJwtAuthenticator>()
