@@ -47,10 +47,24 @@
     <!-- Main styles for this application-->
     <link href="@UIGlobals.COREUI_BASE/css/style.css" rel="stylesheet">
 
+    <!--
+        Docs: https://learn.microsoft.com/en-us/aspnet/core/blazor/components/render-modes
+        - Recommend to turn off prerender (prerender: false)
+        - new InteractiveServerRenderMode(...) to use interactive SSR.
+        - new InteractiveWebAssemblyRenderMode(...) to use interactive CSR.
+        - new InteractiveAutoRenderMode(...) to use "auto" mode.
+    -->
     <HeadOutlet @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
 </head>
 
 <body>
+    <!--
+        Docs: https://learn.microsoft.com/en-us/aspnet/core/blazor/components/render-modes
+        - Recommend to turn off prerender (prerender: false)
+        - new InteractiveServerRenderMode(...) to use interactive SSR.
+        - new InteractiveWebAssemblyRenderMode(...) to use interactive CSR.
+        - new InteractiveAutoRenderMode(...) to use "auto" mode.
+    -->
     <Routes @rendermode="new InteractiveAutoRenderMode(prerender: false)" />
     <script src="_framework/blazor.web.js"></script>
 </body>

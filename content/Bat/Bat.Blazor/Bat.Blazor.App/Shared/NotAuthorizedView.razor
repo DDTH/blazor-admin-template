@@ -1,0 +1,9 @@
+﻿<PageTitle>@PageTitle</PageTitle>
+<CAlert type="warning">
+    <span>You are not authorized to access this page.</span>
+</CAlert>
+
+@code {
+    [Parameter]
+    public string PageTitle { get; set; } = "Not Authorized";
+}

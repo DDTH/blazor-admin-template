@@ -1,27 +1,38 @@
 ﻿@using Bat.Blazor.App.Shared
 @inherits BaseLayout
 
-<!-- cascading the layout instance down to components -->
 <!--
-    Components can utilize shared properties defined in the layout.
+    Utility layout used for pages that require authentication/authorization.
+    To maximize flexibility and UX experience, we use <AuthorizeView> instead of the [Authorize] attribute.
+-->
+
+<!--
+    Cascading the layout instance down to components so that components can utilize shared properties defined in the layout.
 -->
 <CascadingValue Value="this" Name="Layout">
     <AuthorizeView>
+        <Authorizing>
+            <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Authorizing</PageTitle>
+            <div class="wrapper d-flex align-items-center min-vh-100">
+                <div class="container">
+                    <CAlert type="info">
+                        <span>Please wait...</span>
+                    </CAlert>
+                </div>
+            </div>
+        </Authorizing>
         <Authorized>
             @Body
-            <p>Claims:</p>
-            <ul>
-                @foreach (var claim in UserClaims)
-                {
-                    <li><b>@claim.Type:</b> @claim.Value</li>
-                }
-            </ul>
         </Authorized>
         <NotAuthorized>
             <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Not Authorized</PageTitle>
-            <CAlert type="warning">
-                <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
-            </CAlert>
+            <div class="wrapper d-flex align-items-center min-vh-100">
+                <div class="container">
+                    <CAlert type="warning">
+                        <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
+                    </CAlert>
+                </div>
+            </div>
         </NotAuthorized>
     </AuthorizeView>
 </CascadingValue>

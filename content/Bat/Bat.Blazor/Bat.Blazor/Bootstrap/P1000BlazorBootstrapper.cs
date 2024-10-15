@@ -26,6 +26,7 @@ public class BlazorBootstrapper
 		}
 
 		app.UseStaticFiles();
+		//app.UseRouting();
 		app.UseAntiforgery();
 
 		app.MapRazorComponents<Components.App>()

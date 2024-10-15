@@ -51,6 +51,21 @@ public class BuiltinController : ApiBaseController
 	}
 
 	/// <summary>
+	/// Catch-all route for 404 errors.
+	/// </summary>
+	/// <returns></returns>
+	[HttpGet("/api/{**slug}")]
+	[HttpPost("/api/{**slug}")]
+	[HttpPut("/api/{**slug}")]
+	[HttpDelete("/api/{**slug}")]
+	[HttpPatch("/api/{**slug}")]
+	[ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ApiResp))]
+	public ActionResult<ApiResp> _404()
+	{
+		return _respNotFound;
+	}
+
+	/// <summary>
 	/// Checks if the server is running.
 	/// </summary>
 	/// <response code="200">Server is running.</response>
