@@ -47,7 +47,7 @@ public partial class UsersController
 	/// <param name="authenticator"></param>
 	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
-	[HttpPost(IApiClient.API_ENDPOINT_USERS_ME_UPDATE_PROFILE)]
+	[HttpPost(IApiClient.API_ENDPOINT_USERS_ME_PROFILE)]
 	[Authorize]
 	public async Task<ActionResult<ApiResp<UserResp>>> UpdateMyProfile(
 		[FromBody] UpdateUserProfileReq req,
@@ -97,7 +97,7 @@ public partial class UsersController
 	/// <param name="authenticatorAsync"></param>
 	/// <param name="userManager"></param>
 	/// <returns></returns>
-	[HttpPost(IApiClient.API_ENDPOINT_USERS_ME_CHANGE_PASSWORD)]
+	[HttpPost(IApiClient.API_ENDPOINT_USERS_ME_PASSWORD)]
 	[Authorize]
 	public async Task<ActionResult<ApiResp<ChangePasswordResp>>> ChangeMyPassword(
 		[FromBody] ChangePasswordReq req,

@@ -26,6 +26,7 @@ public partial class BatRole
 	{
 		Id = ROLE_ID_GLOBAL_ADMIN,
 		Name = ROLE_NAME_GLOBAL_ADMIN,
+		Description = "Global Administrator with full access to all features and settings.",
 		Claims =
 		[
 			new IdentityRoleClaim<string>()
@@ -40,6 +41,7 @@ public partial class BatRole
 	{
 		Id = ROLE_ID_ACCOUNT_ADMIN,
 		Name = ROLE_NAME_ACCOUNT_ADMIN,
+		Description = "Account Administrator with permissions to manage users and roles.",
 		Claims =
 		[
 			new IdentityRoleClaim<string>()
@@ -72,6 +74,7 @@ public partial class BatRole
 	{
 		Id = ROLE_ID_APPLICATION_ADMIN,
 		Name = ROLE_NAME_APPLICATION_ADMIN,
+		Description = "Application Administrator with permissions to manage applications.",
 		Claims =
 		[
 			new IdentityRoleClaim<string>()

@@ -8,6 +8,7 @@ CREATE TABLE [bat_roles] (
     [role_id] nvarchar(48) NOT NULL,
     [role_name] nvarchar(64) NULL,
     [normalized_name] nvarchar(64) NULL,
+    [role_desc] nvarchar(256) NULL,
     [concurrency_stamp] nvarchar(48) NULL,
     CONSTRAINT [PK_bat_roles] PRIMARY KEY ([role_id])
 );

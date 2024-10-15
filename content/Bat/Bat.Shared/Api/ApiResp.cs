@@ -197,6 +197,26 @@ public struct UserResp
 
 /*----------------------------------------------------------------------*/
 
+public struct RoleResp
+{
+	public static RoleResp BuildFromRole(BatRole role)
+	{
+		return new RoleResp
+		{
+			Id = role.Id,
+			Name = role.Name!
+		};
+	}
+
+	[JsonPropertyName("id")]
+	public string Id { get; set; }
+
+	[JsonPropertyName("name")]
+	public string Name { get; set; }
+}
+
+/*----------------------------------------------------------------------*/
+
 public struct ChangePasswordResp
 {
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

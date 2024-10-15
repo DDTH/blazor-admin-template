@@ -6,6 +6,8 @@ public sealed partial class BatRole : IdentityRole
 {
 	public IEnumerable<IdentityRoleClaim<string>>? Claims { get; set; } = default!;
 
+	public string? Description { get; set; }
+
 	/// <summary>
 	/// Touches the entity, updating the <see cref="ConcurrencyStamp"/> property.
 	/// </summary>

@@ -1,9 +1,20 @@
 ﻿<PageTitle>@PageTitle</PageTitle>
+
+<div class="wrapper d-flex align-items-center min-vh-100">
+    <div class="container">
+        <CAlert type="warning">
+            <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
+        </CAlert>
+    </div>
+</div>
 <CAlert type="warning">
     <span>You are not authorized to access this page.</span>
 </CAlert>
 
 @code {
+    [Parameter]
+    public string LoginUrl { get; set; } = UIGlobals.ROUTE_LOGIN;
+
     [Parameter]
     public string PageTitle { get; set; } = "Not Authorized";
 }

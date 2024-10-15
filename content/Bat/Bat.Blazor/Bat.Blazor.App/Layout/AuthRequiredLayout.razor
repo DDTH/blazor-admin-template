@@ -12,27 +12,13 @@
 <CascadingValue Value="this" Name="Layout">
     <AuthorizeView>
         <Authorizing>
-            <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Authorizing</PageTitle>
-            <div class="wrapper d-flex align-items-center min-vh-100">
-                <div class="container">
-                    <CAlert type="info">
-                        <span>Please wait...</span>
-                    </CAlert>
-                </div>
-            </div>
+            <AuthorizingView PageTitle="@($"{AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
         </Authorizing>
         <Authorized>
             @Body
         </Authorized>
         <NotAuthorized>
-            <PageTitle>@AppInfo?.Name v@(AppInfo?.Version) - Not Authorized</PageTitle>
-            <div class="wrapper d-flex align-items-center min-vh-100">
-                <div class="container">
-                    <CAlert type="warning">
-                        <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
-                    </CAlert>
-                </div>
-            </div>
+            <NotAuthorizedView PageTitle="@($"{AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl"/>
         </NotAuthorized>
     </AuthorizeView>
 </CascadingValue>

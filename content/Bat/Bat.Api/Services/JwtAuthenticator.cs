@@ -41,11 +41,16 @@ public sealed class SampleJwtAuthenticator(
 		};
 
 		// add roles
-		var userRoles = await identityRepo.GetRolesAsync(user);
+		var userRoles = user.Roles ?? await identityRepo.GetRolesAsync(user, RoleFetchOptions.DEFAULT.FetchClaims());
 		authClaims.AddRange(userRoles.Select(role => new Claim(claimTypeRole, role.Name!)));
 
 		// add claims
-		// TODO
+		userRoles.ToList().ForEach(role =>
+		{
+			authClaims.AddRange(role.Claims!.Select(claim => new Claim(claim.ClaimType!, claim.ClaimValue!)));
+		});
+		var userClaims = user.Claims ?? await identityRepo.GetClaimsAsync(user);
+		authClaims.AddRange(userClaims.Select(claim => new Claim(claim.ClaimType!, claim.ClaimValue!)));
 
 		// Add more claims as needed
 

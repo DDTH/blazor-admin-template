@@ -14,10 +14,12 @@ public interface IApiClient
 	public const string API_ENDPOINT_AUTH_REFRESH = "/auth/refresh";
 
 	public const string API_ENDPOINT_USERS_ME = "/api/users/-me";
-	public const string API_ENDPOINT_USERS_ME_UPDATE_PROFILE = "/api/users/-me/profile";
-	public const string API_ENDPOINT_USERS_ME_CHANGE_PASSWORD = "/api/users/-me/password";
+	public const string API_ENDPOINT_USERS_ME_PROFILE = "/api/users/-me/profile";
+	public const string API_ENDPOINT_USERS_ME_PASSWORD = "/api/users/-me/password";
 
-	public const string API_ENDPOINT_APPS_GET_ALL = "/api/apps";
+	public const string API_ENDPOINT_ROLES = "/api/roles";
+
+	public const string API_ENDPOINT_APPS = "/api/apps";
 
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_INFO"/> to get the backend information.
@@ -56,10 +58,10 @@ public interface IApiClient
 	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<UserResp>> GetMyInfo(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<UserResp>> GetMyInfoAsync(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
-	/// Calls the API <see cref="API_ENDPOINT_USERS_ME_UPDATE_PROFILE"/> to update current user's profile.
+	/// Calls the API <see cref="API_ENDPOINT_USERS_ME_PROFILE"/> to update current user's profile.
 	/// </summary>
 	/// <param name="req"></param>
 	/// <param name="authToken"></param>
@@ -67,10 +69,10 @@ public interface IApiClient
 	/// <param name="httpClient"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<UserResp>> UpdateMyProfile(UpdateUserProfileReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<UserResp>> UpdateMyProfileAsync(UpdateUserProfileReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
-	/// Calls the API <see cref="API_ENDPOINT_USERS_ME_CHANGE_PASSWORD"/> to change current user's password.
+	/// Calls the API <see cref="API_ENDPOINT_USERS_ME_PASSWORD"/> to change current user's password.
 	/// </summary>
 	/// <param name="req"></param>
 	/// <param name="authToken"></param>
@@ -78,11 +80,20 @@ public interface IApiClient
 	/// <param name="httpClient"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<ChangePasswordResp>> ChangeMyPassword(ChangePasswordReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<ChangePasswordResp>> ChangeMyPasswordAsync(ChangePasswordReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Alls the API <see cref="API_ENDPOINT_ROLES"/> to get all roles.
+	/// </summary>
+	/// <param name="baseUrl"></param>
+	/// <param name="httpClient"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
-/// Request info for the <see cref="IApiClient.LoginAsync(LoginReq, string?, HttpClient?)"/> API call.
+/// Request info for the <see cref="IApiClient.LoginAsync(LoginReq, string?, HttpClient?, CancellationToken)"/> API call.
 /// </summary>
 public struct LoginReq
 {
@@ -94,7 +105,7 @@ public struct LoginReq
 }
 
 /// <summary>
-/// Request info for the <see cref="IApiClient.UpdateMyProfile(UpdateUserProfileReq, string, string?, HttpClient?)"/> API call.
+/// Request info for the <see cref="IApiClient.UpdateMyProfileAsync(UpdateUserProfileReq, string, string?, HttpClient?, CancellationToken)"/> API call.
 /// </summary>
 public struct UpdateUserProfileReq
 {
@@ -109,7 +120,7 @@ public struct UpdateUserProfileReq
 }
 
 /// <summary>
-/// Request info for the <see cref="IApiClient.ChangeMyPassword(ChangePasswordReq, string, string?, HttpClient?)"/> API call.
+/// Request info for the <see cref="IApiClient.ChangeMyPasswordAsync(ChangePasswordReq, string, string?, HttpClient?, CancellationToken)"/> API call.
 /// </summary>
 public struct ChangePasswordReq
 {

@@ -35,7 +35,7 @@ public partial class Profile
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var respUser = await ApiClient.GetMyInfo(authToken!, NavigationManager.BaseUri);
+			var respUser = await ApiClient.GetMyInfoAsync(authToken!, NavigationManager.BaseUri);
 			User = respUser.Data;
 			GivenName = User?.GivenName ?? string.Empty;
 			FamilyName = User?.FamilyName ?? string.Empty;
@@ -83,7 +83,7 @@ public partial class Profile
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateMyProfile(req, authToken, NavigationManager.BaseUri);
+			var resp = await ApiClient.UpdateMyProfileAsync(req, authToken, NavigationManager.BaseUri);
 			DisableUpdateProfile = false;
 			if (resp.Status != 200)
 			{
@@ -110,7 +110,7 @@ public partial class Profile
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateMyProfile(req, authToken, NavigationManager.BaseUri);
+			var resp = await ApiClient.UpdateMyProfileAsync(req, authToken, NavigationManager.BaseUri);
 			DisableChangeEmail = false;
 			if (resp.Status != 200)
 			{
@@ -152,7 +152,7 @@ public partial class Profile
 				CurrentPassword = CurrentPwd,
 				NewPassword = NewPwd
 			};
-			var resp = await ApiClient.ChangeMyPassword(req, authToken, NavigationManager.BaseUri);
+			var resp = await ApiClient.ChangeMyPasswordAsync(req, authToken, NavigationManager.BaseUri);
 			DisableChangePassword = false;
 			if (resp.Status != 200)
 			{

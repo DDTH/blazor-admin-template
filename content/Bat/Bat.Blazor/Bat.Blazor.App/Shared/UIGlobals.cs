@@ -12,8 +12,12 @@ public class UIGlobals
 	public const string ROUTE_LOGOUT = "/logout";
 	public const string ROUTE_PROFILE = "/profile";
 
-	public const string ROUTE_IDENTITY_USERS = "/admin/users";
-	public const string ROUTE_IDENTITY_ROLES = "/admin/roles";
+	public const string ROUTE_BASE = "/admin";
+	public const string ROUTE_CATCHALL = ROUTE_BASE+"/{*route:nonfile}";
 
-	public const string ROUTE_APPLICATIONS_LIST = "/admin/applications";
+	public const string ROUTE_IDENTITY_USERS = $"{ROUTE_BASE}/users";
+	public const string ROUTE_IDENTITY_ROLES = $"{ROUTE_BASE}/roles";
+
+	public const string ROUTE_APPLICATIONS_LIST = $"{ROUTE_BASE}/applications";
+	public const string ROUTE_ROLES_LIST = $"{ROUTE_BASE}/roles";
 }

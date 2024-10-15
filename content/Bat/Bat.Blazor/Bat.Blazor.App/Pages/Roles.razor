@@ -1,0 +1,72 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using Bat.Shared.Identity
+@using Microsoft.AspNetCore.Components.WebAssembly
+
+@attribute [Route(UIGlobals.ROUTE_ROLES_LIST)]
+@inherits BaseComponent
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>Applications</span>
+    </li>
+</SectionContent>
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
+        <div class="container-lg px-4">
+            <div class="card border-top-3 mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">@PAGE_TITLE</h4>
+                </div>
+                <div class="card-body">
+                    @if (RoleList == null)
+                    {
+                        if (string.IsNullOrEmpty(ErrorMessage))
+                        {
+                            <CAlert type="info"><span>Loading...</span></CAlert>
+                        }
+                        else
+                        {
+                            <CAlert type="danger"><span>Error while fetching roles from server: @ErrorMessage</span></CAlert>
+                        }
+                    }
+                    else
+                    {
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Description</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private const string PAGE_TITLE = "Roles";
+    private string LoginUrl
+    {
+        get
+        {
+            return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
+        }
+    }
+}
