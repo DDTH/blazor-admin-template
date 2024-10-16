@@ -1,12 +1,10 @@
 ﻿using Bat.Shared.Cache;
 using Bat.Shared.Identity;
-using Bat.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Security.Claims;
-using System.Text.Json;
 
 namespace Bat.Shared.EF.Identity;
 

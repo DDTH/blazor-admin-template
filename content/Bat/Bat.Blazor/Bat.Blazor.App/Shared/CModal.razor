@@ -20,7 +20,7 @@ Modal dialog with a button to close:
     }
 -->
 
-<div class="modal fade @cssClassShow" role="dialog"
+<div class="modal fade @cssClassShow @cssClassSize" role="dialog"
     data-coreui-backdrop="static" 
     data-coreui-keyboard="false"
     tabindex="-1"
@@ -53,6 +53,12 @@ Modal dialog with a button to close:
     public bool centered { get; set; } = true;
 
     /// <summary>
+    /// Model size, one of "sm", "lg", "xl". Default is "default".
+    /// </summary>
+    [Parameter]
+    public string size { get; set; } = "default";
+
+    /// <summary>
     /// Dialog type, one of "info", "warning", "danger", "success", "primary", "secondary". Default is "info".
     /// The dialog will display an icon corresponding to the type. The icon is taken from Bootstrap Icons.
     /// </summary>
@@ -63,6 +69,24 @@ Modal dialog with a button to close:
     [Parameter]
     public RenderFragment ChildContent { get; set; } = default!;
 
+    private string cssClassSize
+    {
+        get
+        {
+            return size switch
+            {
+                "sm" => "modal-sm",
+                "small" => "modal-sm",
+                "lg" => "modal-lg",
+                "large" => "modal-lg",
+                "xl" => "modal-xl",
+                "extra" => "modal-xl",
+                "extra-large" => "modal-xl",
+                "extra large" => "modal-xl",
+                _ => string.Empty
+            };
+        }
+    }
     private string cssClassShow = string.Empty;
     private string display = "none";
     private string? hidden = "true";

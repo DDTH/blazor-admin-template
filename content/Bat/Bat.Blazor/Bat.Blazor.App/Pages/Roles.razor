@@ -55,7 +55,17 @@
                                         <td>@item.Id</td>
                                         <td>@item.Name</td>
                                         <td>@item.Description</td>
-                                        <td>&nbdp;</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
+                                                <CIcon icon="cil-info" />
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" @onclick="(()=>BtnClickModify(item.Id))">
+                                                <CIcon icon="cil-pencil" />
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="(()=>BtnClickDelete(item.Id))">
+                                                <CIcon icon="cil-x" />
+                                            </button>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
@@ -72,6 +82,29 @@
         <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
     </NotAuthorized>
 </AuthorizeView>
+
+<CModal @ref="@ModalDialogInfo" title="Role Information" centered="false" type="info" size="large">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">@(SelectedRole?.Name)</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Id: @(SelectedRole?.Id)</h6>
+            <p class="card-text">@(SelectedRole?.Description)</p>
+            @if (SelectedRole?.Claims is not null)
+            {
+                <p class="card-text">
+                    Claims:
+                    <ul>
+                        @foreach (var claim in SelectedRole?.Claims!)
+                        {
+                            <li>@claim.ClaimType: @claim.ClaimValue</li>
+                        }
+                    </ul>
+                </p>
+            }
+            <button type="button" class="btn btn-primary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
+        </div>
+    </div>
+</CModal>
 
 @code {
     private const string PAGE_TITLE = "Roles";

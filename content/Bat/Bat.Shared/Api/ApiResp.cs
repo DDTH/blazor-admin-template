@@ -1,5 +1,7 @@
 ﻿using Bat.Shared.Identity;
 using Bat.Shared.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 namespace Bat.Shared.Api;
@@ -206,6 +208,7 @@ public struct RoleResp
 			Id = role.Id,
 			Name = role.Name ?? string.Empty,
 			Description = role.Description ?? string.Empty,
+			Claims = role.Claims,
 		};
 	}
 
@@ -217,6 +220,10 @@ public struct RoleResp
 
 	[JsonPropertyName("description")]
 	public string Description { get; set; }
+
+	[JsonPropertyName("claims")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<IdentityRoleClaim<string>>? Claims { get; set; }
 }
 
 /*----------------------------------------------------------------------*/

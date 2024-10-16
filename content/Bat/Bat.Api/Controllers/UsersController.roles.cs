@@ -15,6 +15,7 @@ public partial class UsersController
 		var result = new List<RoleResp>();
 		await foreach (var role in roles)
 		{
+			role.Claims = await identityRepository.GetClaimsAsync(role);
 			result.Add(RoleResp.BuildFromRole(role));
 		}
 		return ResponseOk(result);
