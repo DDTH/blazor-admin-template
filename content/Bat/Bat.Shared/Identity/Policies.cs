@@ -59,6 +59,39 @@ public sealed class BuiltinPolicies
 		})
 		.Build();
 
+	public const string POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM = "AdminRoleOrCreateRolePermission";
+	public static readonly AuthorizationPolicy POLICY_ADMIN_ROLE_OR_CREATE_ROLE_PERM = new AuthorizationPolicyBuilder()
+		.RequireAuthenticatedUser()
+		.RequireAssertion(context =>
+		{
+			var hasAdminRole = context.User.HasClaim(BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Type, BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Value);
+			var hasCreateRolePerm = context.User.HasClaim(BuiltinClaims.CLAIM_PERM_CREATE_ROLE.Type, BuiltinClaims.CLAIM_PERM_CREATE_ROLE.Value);
+			return hasAdminRole || hasCreateRolePerm;
+		})
+		.Build();
+
+	public const string POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM = "AdminRoleOrModifyRolePermission";
+	public static readonly AuthorizationPolicy POLICY_ADMIN_ROLE_OR_MODIFY_ROLE_PERM = new AuthorizationPolicyBuilder()
+		.RequireAuthenticatedUser()
+		.RequireAssertion(context =>
+		{
+			var hasAdminRole = context.User.HasClaim(BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Type, BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Value);
+			var hasModifyRolePerm = context.User.HasClaim(BuiltinClaims.CLAIM_PERM_MODIFY_ROLE.Type, BuiltinClaims.CLAIM_PERM_MODIFY_ROLE.Value);
+			return hasAdminRole || hasModifyRolePerm;
+		})
+		.Build();
+
+	public const string POLICY_NAME_ADMIN_ROLE_OR_DELETE_ROLE_PERM = "AdminRoleOrDeleteRolePermission";
+	public static readonly AuthorizationPolicy POLICY_ADMIN_ROLE_OR_DELETE_ROLE_PERM = new AuthorizationPolicyBuilder()
+		.RequireAuthenticatedUser()
+		.RequireAssertion(context =>
+		{
+			var hasAdminRole = context.User.HasClaim(BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Type, BuiltinClaims.CLAIM_ROLE_GLOBAL_ADMIN.Value);
+			var hasDeleteRolePerm = context.User.HasClaim(BuiltinClaims.CLAIM_PERM_DELETE_ROLE.Type, BuiltinClaims.CLAIM_PERM_DELETE_ROLE.Value);
+			return hasAdminRole || hasDeleteRolePerm;
+		})
+		.Build();
+
 	public const string POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM = "AdminRoleOrCreateAppPermission";
 	public static readonly AuthorizationPolicy POLICY_ADMIN_ROLE_OR_CREATE_APP_PERM = new AuthorizationPolicyBuilder()
 		.RequireAuthenticatedUser()

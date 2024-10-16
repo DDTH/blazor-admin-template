@@ -19,7 +19,7 @@ public partial class Roles
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		base.OnAfterRender(firstRender);
+		await base.OnAfterRenderAsync(firstRender);
 		RoleIndex = 0;
 		if (firstRender)
 		{
@@ -54,5 +54,10 @@ public partial class Roles
 	private void BtnClickDelete(string roleId)
 	{
 		Console.WriteLine($"[BtnClickDelete] Role ID: {roleId} -> {RoleMap?[roleId]}");
+	}
+
+	private void BtnClickAdd()
+	{
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_ROLES_ADD);
 	}
 }

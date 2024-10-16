@@ -11,7 +11,7 @@
         <a href="@UIGlobals.ROUTE_HOME">Home</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Applications</span>
+        <span>Roles</span>
     </li>
 </SectionContent>
 
@@ -24,6 +24,11 @@
                     <h4 class="card-title">@PAGE_TITLE</h4>
                 </div>
                 <div class="card-body">
+					<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+                        <ChildContent Context="context1">
+						    <button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+                        </ChildContent>
+					</AuthorizeView>
                     @if (RoleList == null)
                     {
                         if (string.IsNullOrEmpty(ErrorMessage))
@@ -71,6 +76,11 @@
                             </tbody>
                         </table>
                     }
+					<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+                        <ChildContent Context="context2">
+						    <button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+                        </ChildContent>
+					</AuthorizeView>
                 </div>
             </div>
         </div>

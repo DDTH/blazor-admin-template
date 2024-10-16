@@ -50,6 +50,37 @@ public sealed class BuiltinClaims
 	/// Permission to modify a user account.
 	/// </summary>
 	public static readonly Claim CLAIM_PERM_MODIFY_USER = new($"{CLAIM_PREFIX}perm", "modify-user");
+
+	/// <summary>
+	/// Permission to create a new role.
+	/// </summary>
+	public static readonly Claim CLAIM_PERM_CREATE_ROLE = new($"{CLAIM_PREFIX}perm", "create-role");
+
+	/// <summary>
+	/// Permission to delete a role.
+	/// </summary>
+	public static readonly Claim CLAIM_PERM_DELETE_ROLE = new($"{CLAIM_PREFIX}perm", "delete-role");
+
+	/// <summary>
+	/// Permission to modify a role.
+	/// </summary>
+	public static readonly Claim CLAIM_PERM_MODIFY_ROLE = new($"{CLAIM_PREFIX}perm", "modify-role");
+
+	public static readonly IEnumerable<Claim> ALL_CLAIMS = new Claim[]
+	{
+		CLAIM_ROLE_GLOBAL_ADMIN,
+		CLAIM_ROLE_APPLICATION_MANAGER,
+		CLAIM_ROLE_USER_MANAGER,
+		CLAIM_PERM_CREATE_APPLICATION,
+		CLAIM_PERM_DELETE_APPLICATION,
+		CLAIM_PERM_MODIFY_APPLICATION,
+		CLAIM_PERM_CREATE_USER,
+		CLAIM_PERM_DELETE_USER,
+		CLAIM_PERM_MODIFY_USER,
+		CLAIM_PERM_CREATE_ROLE,
+		CLAIM_PERM_DELETE_ROLE,
+		CLAIM_PERM_MODIFY_ROLE,
+	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
 }
 
 public class ClaimEqualityComparer : IEqualityComparer<Claim>

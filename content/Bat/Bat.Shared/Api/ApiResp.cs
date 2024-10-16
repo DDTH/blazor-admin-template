@@ -1,7 +1,6 @@
 ﻿using Bat.Shared.Identity;
 using Bat.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 using System.Text.Json.Serialization;
 
 namespace Bat.Shared.Api;
@@ -166,6 +165,17 @@ public struct AuthResp
 
 /*----------------------------------------------------------------------*/
 
+public struct ClaimResp
+{
+	[JsonPropertyName("type")]
+	public string ClaimType { get; set; }
+
+	[JsonPropertyName("value")]
+	public string ClaimValue { get; set; }
+}
+
+/*----------------------------------------------------------------------*/
+
 public struct UserResp
 {
 	public static UserResp BuildFromUser(BatUser user)
@@ -177,7 +187,7 @@ public struct UserResp
 			Email = user.Email!,
 			GivenName = user.GivenName,
 			FamilyName = user.FamilyName,
-			Roles = user.Roles?.Select(r => r.Name!)
+			Roles = user.Roles?.Select(r => RoleResp.BuildFromRole(r)),
 		};
 	}
 
@@ -190,11 +200,13 @@ public struct UserResp
 	[JsonPropertyName("family_name")]
 	public string? FamilyName { get; set; }
 
+	[JsonPropertyName("roles")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public IEnumerable<string>? Roles { get; set; }
+	public IEnumerable<RoleResp>? Roles { get; set; }
 
-	//[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	//public IEnumerable<string>? Claims { get; set; }
+	[JsonPropertyName("claims")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<ClaimResp>? Claims { get; set; }
 }
 
 /*----------------------------------------------------------------------*/
@@ -208,7 +220,7 @@ public struct RoleResp
 			Id = role.Id,
 			Name = role.Name ?? string.Empty,
 			Description = role.Description ?? string.Empty,
-			Claims = role.Claims,
+			Claims = role.Claims?.Select(c => new ClaimResp { ClaimType = c.ClaimType!, ClaimValue = c.ClaimValue! }),
 		};
 	}
 
@@ -223,7 +235,7 @@ public struct RoleResp
 
 	[JsonPropertyName("claims")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public IEnumerable<IdentityRoleClaim<string>>? Claims { get; set; }
+	public IEnumerable<ClaimResp>? Claims { get; set; }
 }
 
 /*----------------------------------------------------------------------*/
