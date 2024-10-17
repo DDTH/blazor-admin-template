@@ -27,6 +27,12 @@
                     <h4 class="card-title">@PAGE_TITLE</h4>
                 </div>
                 <div class="card-body">
+					@if (!string.IsNullOrEmpty(AlertMessage))
+					{
+						<CAlert type="@AlertType">
+							@AlertMessage
+						</CAlert>
+					}
 					<form>
 						<div class="form-floating mb-2">
 							<input type="text" class="form-control form-control-sm" id="roleName" placeholder="Role Name" @bind-value="RoleName">

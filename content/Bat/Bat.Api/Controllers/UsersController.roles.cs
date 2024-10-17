@@ -25,7 +25,11 @@ public partial class UsersController
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> CreateRole(CreateRoleReq req, IIdentityRepository identityRepository)
 	{
-		await Task.CompletedTask;
+		var existingRole = await identityRepository.GetRoleByNameAsync(req.Name);
+		if (existingRole != null)
+		{
+			return ResponseNoData(400, $"Role '{req.Name}' already exists.");
+		}
 		return ResponseOk();
 	}
 }

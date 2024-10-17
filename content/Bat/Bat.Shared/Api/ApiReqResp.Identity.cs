@@ -101,10 +101,12 @@ public struct CreateRoleReq
 	public string Name { get; set; }
 
 	[JsonPropertyName("description")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? Description { get; set; }
 
 	[JsonPropertyName("claims")]
-	public IDictionary<string, string>? Claims { get; set; }
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<KeyValuePair<string, string>>? Claims { get; set; }
 }
 
 public struct RoleResp
