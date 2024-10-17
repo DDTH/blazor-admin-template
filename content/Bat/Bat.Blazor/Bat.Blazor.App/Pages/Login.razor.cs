@@ -58,7 +58,7 @@ public partial class Login : BaseComponent
 
 		HideLoginForm = true;
 		ShowAlert("info", "Authenticating, please wait...");
-		var req = new LoginReq()
+		var req = new AuthReq()
 		{
 			Email = Email,
 			Password = Password

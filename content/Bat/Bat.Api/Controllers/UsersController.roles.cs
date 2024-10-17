@@ -20,4 +20,12 @@ public partial class UsersController
 		}
 		return ResponseOk(result);
 	}
+
+	[HttpPost(IApiClient.API_ENDPOINT_ROLES)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> CreateRole(CreateRoleReq req, IIdentityRepository identityRepository)
+	{
+		await Task.CompletedTask;
+		return ResponseOk();
+	}
 }

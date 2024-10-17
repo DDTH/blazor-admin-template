@@ -50,7 +50,7 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	/*----------------------------------------------------------------------*/
 
 	/// <inheritdoc/>
-	public async Task<ApiResp<AuthResp>> LoginAsync(LoginReq req, string? baseUrl = null, HttpClient? requestHttpClient = null, CancellationToken cancellationToken = default)
+	public async Task<ApiResp<AuthResp>> LoginAsync(AuthReq req, string? baseUrl = null, HttpClient? requestHttpClient = null, CancellationToken cancellationToken = default)
 	{
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_AUTH_SIGNIN);

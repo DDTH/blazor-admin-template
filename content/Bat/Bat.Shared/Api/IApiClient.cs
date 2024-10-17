@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Bat.Shared.Api;
+﻿namespace Bat.Shared.Api;
 
 public interface IApiClient
 {
@@ -39,7 +37,7 @@ public interface IApiClient
 	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<AuthResp>> LoginAsync(LoginReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<AuthResp>> LoginAsync(AuthReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_AUTH_REFRESH"/> to refresh current user's authentication token.
@@ -83,7 +81,6 @@ public interface IApiClient
 	/// <returns></returns>
 	public Task<ApiResp<ChangePasswordResp>> ChangeMyPasswordAsync(ChangePasswordReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
-
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_CLAIMS"/> to get all claims.
 	/// </summary>
@@ -102,43 +99,4 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// Request info for the <see cref="IApiClient.LoginAsync(LoginReq, string?, HttpClient?, CancellationToken)"/> API call.
-/// </summary>
-public struct LoginReq
-{
-	[JsonPropertyName("email")]
-	public string? Email { get; set; }
-
-	[JsonPropertyName("password")]
-	public string? Password { get; set; }
-}
-
-/// <summary>
-/// Request info for the <see cref="IApiClient.UpdateMyProfileAsync(UpdateUserProfileReq, string, string?, HttpClient?, CancellationToken)"/> API call.
-/// </summary>
-public struct UpdateUserProfileReq
-{
-	[JsonPropertyName("given_name")]
-	public string? GivenName { get; set; }
-
-	[JsonPropertyName("family_name")]
-	public string? FamilyName { get; set; }
-
-	[JsonPropertyName("email")]
-	public string? Email { get; set; }
-}
-
-/// <summary>
-/// Request info for the <see cref="IApiClient.ChangeMyPasswordAsync(ChangePasswordReq, string, string?, HttpClient?, CancellationToken)"/> API call.
-/// </summary>
-public struct ChangePasswordReq
-{
-	[JsonPropertyName("current_password")]
-	public string CurrentPassword { get; set; }
-
-	[JsonPropertyName("new_password")]
-	public string NewPassword { get; set; }
 }

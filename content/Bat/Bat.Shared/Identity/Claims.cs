@@ -66,21 +66,24 @@ public sealed class BuiltinClaims
 	/// </summary>
 	public static readonly Claim CLAIM_PERM_MODIFY_ROLE = new($"{CLAIM_PREFIX}perm", "modify-role");
 
-	public static readonly IEnumerable<Claim> ALL_CLAIMS = new Claim[]
+	private static readonly IEnumerable<Claim> ALL_CLAIMS_ROLES = new Claim[]
 	{
 		CLAIM_ROLE_GLOBAL_ADMIN,
 		CLAIM_ROLE_APPLICATION_MANAGER,
 		CLAIM_ROLE_USER_MANAGER,
+	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
+
+	private static readonly IEnumerable<Claim> ALL_CLAIMS_PERMS = new Claim[]
+	{
 		CLAIM_PERM_CREATE_APPLICATION,
 		CLAIM_PERM_DELETE_APPLICATION,
 		CLAIM_PERM_MODIFY_APPLICATION,
 		CLAIM_PERM_CREATE_USER,
 		CLAIM_PERM_DELETE_USER,
 		CLAIM_PERM_MODIFY_USER,
-		CLAIM_PERM_CREATE_ROLE,
-		CLAIM_PERM_DELETE_ROLE,
-		CLAIM_PERM_MODIFY_ROLE,
 	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
+
+	public static readonly IEnumerable<Claim> ALL_CLAIMS = ALL_CLAIMS_ROLES.Concat(ALL_CLAIMS_PERMS);
 }
 
 public class ClaimEqualityComparer : IEqualityComparer<Claim>
