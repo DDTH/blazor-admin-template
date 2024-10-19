@@ -12,6 +12,10 @@ public partial class UsersController
 		ClaimValue = c.Value
 	}).ToList());
 
+	/// <summary>
+	/// Gets all available claims.
+	/// </summary>
+	/// <returns></returns>
 	[HttpGet(IApiClient.API_ENDPOINT_CLAIMS)]
 	public ActionResult<ApiResp<IEnumerable<ClaimResp>>> GetAllClaims()
 	{

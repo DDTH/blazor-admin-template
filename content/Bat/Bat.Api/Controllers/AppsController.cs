@@ -9,6 +9,11 @@ namespace Bat.Api.Controllers;
 [Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER)]
 public partial class AppsController : ApiBaseController
 {
+	/// <summary>
+	/// Gets all available applications.
+	/// </summary>
+	/// <param name="applicationRepository"></param>
+	/// <returns></returns>
 	[HttpGet(IApiClient.API_ENDPOINT_APPS)]
 	public async Task<ActionResult<ApiResp<AppResp>>> GetAllApps(IApplicationRepository applicationRepository)
 	{

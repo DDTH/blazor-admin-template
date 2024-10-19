@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using Bat.Blazor.App.Helpers;
+﻿using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
+using Bat.Shared.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
@@ -52,11 +52,11 @@ public partial class RolesAdd
 		NavigationManager.NavigateTo(UIGlobals.ROUTE_ROLES_LIST);
 	}
 
-	private void CloseAlert()
-	{
-		AlertMessage = string.Empty;
-		StateHasChanged();
-	}
+	// private void CloseAlert()
+	// {
+	// 	AlertMessage = string.Empty;
+	// 	StateHasChanged();
+	// }
 
 	private void ShowAlert(string type, string message)
 	{
@@ -77,7 +77,7 @@ public partial class RolesAdd
 		{
 			Name = RoleName.Trim(),
 			Description = RoleDescription.Trim(),
-			Claims = ClaimSelectedMap.Keys.Select(k => new KeyValuePair<string, string>(k.Split(':')[0], k.Split(':')[1])),
+			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
 		using (var scope = ServiceProvider.CreateScope())
 		{

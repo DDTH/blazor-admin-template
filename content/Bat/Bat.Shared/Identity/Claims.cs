@@ -1,6 +1,19 @@
 ﻿using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace Bat.Shared.Identity;
+
+/// <summary>
+/// Convenience struct to represent a claim in API requests/responses.
+/// </summary>
+public struct IdentityClaim
+{
+	[JsonPropertyName("type")]
+	public string Type { get; set; }
+
+	[JsonPropertyName("value")]
+	public string Value { get; set; }
+}
 
 public sealed class BuiltinClaims
 {

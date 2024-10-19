@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Bat.Shared.Identity;
 
@@ -106,7 +107,7 @@ public struct CreateRoleReq
 
 	[JsonPropertyName("claims")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public IEnumerable<KeyValuePair<string, string>>? Claims { get; set; }
+	public IEnumerable<IdentityClaim>? Claims { get; set; }
 }
 
 public struct RoleResp
