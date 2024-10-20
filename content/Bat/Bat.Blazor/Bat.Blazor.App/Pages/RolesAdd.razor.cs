@@ -2,6 +2,7 @@
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
@@ -90,8 +91,10 @@ public partial class RolesAdd
 				return;
 			}
 			ShowAlert("success", "Role created successfully. Navigating to roles list...");
-			await Task.Delay(1500);
-			NavigationManager.NavigateTo(UIGlobals.ROUTE_ROLES_LIST);
+			var passAlertMessage = $"Role '{req.Name}' created successfully.";
+			var passAlertType = "success";
+			await Task.Delay(500);
+			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_ROLES_LIST}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Shared.Api;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
 
 namespace Bat.Blazor.App.Pages;
 

@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Text.Json;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +22,7 @@ public partial class UsersController
 		var result = new List<RoleResp>();
 		await foreach (var role in roles)
 		{
-			role.Claims = await identityRepository.GetClaimsAsync(role);
+			role.Claims ??= await identityRepository.GetClaimsAsync(role);
 			result.Add(RoleResp.BuildFromRole(role));
 		}
 		return ResponseOk(result);
@@ -68,7 +67,7 @@ public partial class UsersController
 		// first, create the role
 		var role = new BatRole
 		{
-			Name = req.Name.Trim().ToLower(),
+			Name = req.Name.Trim(),
 			NormalizedName = lookupNormalizer.NormalizeName(req.Name),
 			Description = req.Description?.Trim(),
 		};
@@ -85,6 +84,48 @@ public partial class UsersController
 			return ResponseNoData(509, $"Failed to add claims to role: {iresult.ToString()} / Note: Role was created successfully.");
 		}
 
+		return ResponseOk(RoleResp.BuildFromRole(role));
+	}
+
+	/// <summary>
+	/// Gets a role by id.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="identityRepository"></param>
+	/// <returns></returns>
+	[HttpGet(IApiClient.API_ENDPOINT_ROLES_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> GetRole([FromRoute] string id, IIdentityRepository identityRepository)
+	{
+		var role = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
+		if (role == null)
+		{
+			return ResponseNoData(404, $"Role '{id}' not found.");
+		}
+		role.Claims ??= await identityRepository.GetClaimsAsync(role);
+		return ResponseOk(RoleResp.BuildFromRole(role));
+	}
+
+	/// <summary>
+	/// Deletes a role by id.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="identityRepository"></param>
+	/// <returns></returns>
+	[HttpDelete(IApiClient.API_ENDPOINT_ROLES_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> DeleteRole([FromRoute] string id, IIdentityRepository identityRepository)
+	{
+		var role = await identityRepository.GetRoleByIDAsync(id);
+		if (role == null)
+		{
+			return ResponseNoData(404, $"Role '{id}' not found.");
+		}
+		var iresult = await identityRepository.DeleteAsync(role);
+		if (!iresult.Succeeded)
+		{
+			return ResponseNoData(500, $"Failed to delete role: {iresult.ToString()}");
+		}
 		return ResponseOk(RoleResp.BuildFromRole(role));
 	}
 }

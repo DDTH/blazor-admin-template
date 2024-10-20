@@ -32,16 +32,16 @@ CREATE UNIQUE INDEX [UserNameIndex] ON [bat_users] ([normalized_name]) WHERE [no
 
 CREATE TABLE [bat_role_claims] (
     [role_id] nvarchar(48) NOT NULL,
-    [claim_type] nvarchar(32) NULL,
-    [claim_value] nvarchar(64) NULL,
+    [claim_type] nvarchar(32) NOT NULL,
+    [claim_value] nvarchar(64) NOT NULL,
     CONSTRAINT [PK_bat_role_claims] PRIMARY KEY ([role_id], [claim_type], [claim_value]),
     CONSTRAINT [FK_bat_role_claims_bat_roles_role_id] FOREIGN KEY ([role_id]) REFERENCES [bat_roles] ([role_id]) ON DELETE CASCADE
 );
 
 CREATE TABLE [bat_user_claims] (
     [user_id] nvarchar(48) NOT NULL,
-    [claim_type] nvarchar(32) NULL,
-    [claim_value] nvarchar(64) NULL,
+    [claim_type] nvarchar(32) NOT NULL,
+    [claim_value] nvarchar(64) NOT NULL,
     CONSTRAINT [PK_bat_user_claims] PRIMARY KEY ([user_id], [claim_type], [claim_value]),
     CONSTRAINT [FK_bat_user_claims_bat_users_user_id] FOREIGN KEY ([user_id]) REFERENCES [bat_users] ([uid]) ON DELETE CASCADE
 );
