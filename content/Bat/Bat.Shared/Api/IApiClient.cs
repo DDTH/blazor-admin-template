@@ -111,7 +111,7 @@ public interface IApiClient
 	/// <param name="httpClient"></param>
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
-	public Task<ApiResp<RoleResp>> CreateRoleAsync(CreateRoleReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+	public Task<ApiResp<RoleResp>> CreateRoleAsync(CreateOrUpdateRoleReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_ROLES_ID"/> to get a role by id.
@@ -134,4 +134,16 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<RoleResp>> DeleteRoleAsync(string id, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_ROLES_ID"/> to update a role.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="req"></param>
+	/// <param name="authToken"></param>
+	/// <param name="baseUrl"></param>
+	/// <param name="httpClient"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<RoleResp>> UpdateRoleAsync(string id, CreateOrUpdateRoleReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }

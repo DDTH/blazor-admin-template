@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text.Json.Serialization;
 using Bat.Shared.Identity;
 
@@ -94,9 +94,9 @@ public struct ClaimResp
 /*----------------------------------------------------------------------*/
 
 /// <summary>
-/// Request to create a new role.
+/// Request to create a new role or update an exixting one.
 /// </summary>
-public struct CreateRoleReq
+public struct CreateOrUpdateRoleReq
 {
 	[JsonPropertyName("name")]
 	public string Name { get; set; }

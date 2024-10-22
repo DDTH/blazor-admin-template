@@ -24,6 +24,6 @@ public class UIGlobals
 
 	public const string ROUTE_ROLES_LIST = $"{ROUTE_BASE}/roles";
 	public const string ROUTE_ROLES_ADD = $"{ROUTE_BASE}/roles/add";
-	public const string ROUTE_ROLES_DELETE = $"{ROUTE_BASE}/roles/delete/"+"{id}";
-	public const string ROUTE_ROLES_MODIFY = $"{ROUTE_BASE}/roles/modify/"+"{id}";
+	public const string ROUTE_ROLES_DELETE = $"{ROUTE_BASE}/roles/delete/{{id}}";
+	public const string ROUTE_ROLES_MODIFY = $"{ROUTE_BASE}/roles/modify/{{id}}";
 }

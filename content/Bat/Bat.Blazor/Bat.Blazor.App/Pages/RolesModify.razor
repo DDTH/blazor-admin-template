@@ -3,7 +3,7 @@
 @using Bat.Shared.Identity
 @using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_ROLES_ADD)]
+@attribute [Route(UIGlobals.ROUTE_ROLES_MODIFY)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -14,11 +14,11 @@
         <a href="@UIGlobals.ROUTE_ROLES_LIST">Roles</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Add New Role</span>
+        <span>Modify Role</span>
     </li>
 </SectionContent>
 
-<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM">
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
@@ -33,31 +33,41 @@
 							@AlertMessage
 						</CAlert>
 					}
-					<form>
-						<div class="form-floating mb-2">
-							<input type="text" class="form-control form-control-sm" id="roleName" placeholder="Role Name" @bind-value="RoleName">
-							<label for="roleName">Role Name</label>
-						</div>
-						<div class="form-floating mb-2">
-							<input type="text" class="form-control" id="roleDescription" placeholder="Role Description" @bind-value="RoleDescription">
-							<label for="roleDescription">Role Description</label>
-						</div>
-						@if (ClaimList != null)
-						{
-							<label>Claims:</label>
-							@foreach (var claim in ClaimList)
+					@if (!HideUI)
+					{
+						<form>
+							<div class="form-floating mb-2">
+								<input type="text" class="form-control form-control-sm" id="roleName" placeholder="Role Name" @bind-value="RoleName">
+								<label for="roleName">Role Name</label>
+							</div>
+							<div class="form-floating mb-2">
+								<input type="text" class="form-control" id="roleDescription" placeholder="Role Description" @bind-value="RoleDescription">
+								<label for="roleDescription">Role Description</label>
+							</div>
+							@if (ClaimList != null)
 							{
-								<div class="form-check">
-									<input class="form-check-input" type="checkbox" id="claim-@claim.ClaimType-@claim.ClaimValue" value="@claim.ClaimType:@claim.ClaimValue" @onchange="(()=>OnClaimChanged(claim.ClaimType, claim.ClaimValue))">
-									<label class="form-check-label" for="claim-@claim.ClaimType-@claim.ClaimValue">@claim.ClaimType:@claim.ClaimValue</label>
-								</div>
+								<label>Claims:</label>
+								@foreach (var claim in ClaimList)
+								{
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox"
+											id="claim-@claim.ClaimType-@claim.ClaimValue"
+											value="@claim.ClaimType:@claim.ClaimValue"
+											checked="@ClaimSelectedMap.ContainsKey($"{claim.ClaimType}:{claim.ClaimValue}")"
+											@onchange="(()=>OnClaimChanged(claim.ClaimType, claim.ClaimValue))">
+										<label class="form-check-label" for="claim-@claim.ClaimType-@claim.ClaimValue">@claim.ClaimType:@claim.ClaimValue</label>
+									</div>
+								}
 							}
-						}
-					</form>
+						</form>
+					}
                 </div>
 				<div class="card-footer">
 					<button class="btn btn-secondary" @onclick="(()=>BtnClickCancel())"><CIcon icon="cil-x-circle" /> Cancel</button>
-					<button class="btn btn-primary" @onclick="(()=>BtnClickCreate())"><CIcon icon="cil-save" /> Create Role</button>
+					@if (!HideUI)
+					{
+						<button class="btn btn-primary ms-2" @onclick="(()=>BtnClickSave())"><CIcon icon="cil-save" /> Save</button>
+					}
 				</div>
             </div>
         </div>
@@ -71,7 +81,7 @@
 </AuthorizeView>
 
 @code {
-    private const string PAGE_TITLE = "Add New Role";
+    private const string PAGE_TITLE = "Modify Role";
     private string LoginUrl
     {
         get

@@ -29,6 +29,25 @@ public partial class UsersController
 	}
 
 	/// <summary>
+	/// Gets a role by id.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="identityRepository"></param>
+	/// <returns></returns>
+	[HttpGet(IApiClient.API_ENDPOINT_ROLES_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> GetRole([FromRoute] string id, IIdentityRepository identityRepository)
+	{
+		var role = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
+		if (role == null)
+		{
+			return ResponseNoData(404, $"Role '{id}' not found.");
+		}
+		role.Claims ??= await identityRepository.GetClaimsAsync(role);
+		return ResponseOk(RoleResp.BuildFromRole(role));
+	}
+
+	/// <summary>
 	/// Creates a new role.
 	/// </summary>
 	/// <param name="req"></param>
@@ -42,7 +61,7 @@ public partial class UsersController
 	[HttpPost(IApiClient.API_ENDPOINT_ROLES)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> CreateRole(
-		CreateRoleReq req,
+		CreateOrUpdateRoleReq req,
 		IIdentityRepository identityRepository,
 		ILookupNormalizer lookupNormalizer)
 	{
@@ -88,21 +107,69 @@ public partial class UsersController
 	}
 
 	/// <summary>
-	/// Gets a role by id.
+	/// Updates an existing role.
 	/// </summary>
 	/// <param name="id"></param>
+	/// <param name="req"></param>
 	/// <param name="identityRepository"></param>
-	/// <returns></returns>
-	[HttpGet(IApiClient.API_ENDPOINT_ROLES_ID)]
-	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
-	public async Task<ActionResult<ApiResp<RoleResp>>> GetRole([FromRoute] string id, IIdentityRepository identityRepository)
+	/// <param name="lookupNormalizer"></param>
+	[HttpPut(IApiClient.API_ENDPOINT_ROLES_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> UpdateRole(
+		[FromRoute] string id,
+		CreateOrUpdateRoleReq req,
+		IIdentityRepository identityRepository,
+		ILookupNormalizer lookupNormalizer)
 	{
 		var role = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
 		if (role == null)
 		{
 			return ResponseNoData(404, $"Role '{id}' not found.");
 		}
-		role.Claims ??= await identityRepository.GetClaimsAsync(role);
+
+		var existingRole = await identityRepository.GetRoleByNameAsync(req.Name);
+		if (existingRole != null && !existingRole.Id.Equals(role.Id, StringComparison.InvariantCulture))
+		{
+			return ResponseNoData(400, $"Role '{req.Name}' already exists.");
+		}
+
+		var uniqueClaims = req.Claims?.Distinct() ?? [];
+		var claims = new List<Claim>();
+		foreach (var uc in uniqueClaims)
+		{
+			var claim = new Claim(uc.Type, uc.Value);
+			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
+			{
+				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
+			}
+			claims.Add(claim);
+		}
+
+		// first, update the role
+		role.Name = req.Name.Trim();
+		role.NormalizedName = lookupNormalizer.NormalizeName(req.Name);
+		role.Description = req.Description?.Trim();
+		role = await identityRepository.UpdateAsync(role);
+		if (role == null)
+		{
+			return ResponseNoData(500, $"Failed to update role.");
+		}
+
+		// then, update the claims
+		if (role.Claims != null)
+		{
+			var iresultRemove = await identityRepository.RemoveClaimsAsync(role, role.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
+			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemove))
+			{
+				return ResponseNoData(500, $"Failed to update role's claims: {iresultRemove.ToString()}");
+			}
+		}
+		var iresultAdd = await identityRepository.AddClaimsAsync(role, claims);
+		if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAdd))
+		{
+			return ResponseNoData(500, $"Failed to update role's claims: {iresultAdd.ToString()}");
+		}
+
 		return ResponseOk(RoleResp.BuildFromRole(role));
 	}
 

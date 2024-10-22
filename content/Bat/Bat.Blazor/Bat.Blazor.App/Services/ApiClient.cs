@@ -11,10 +11,10 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		usingHttpClient = requestHttpClient ?? httpClient;
 	}
 
-	private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken)
-	{
-		return BuildRequest(method, endpoint, authToken, null);
-	}
+	// private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken)
+	// {
+	// 	return BuildRequest(method, endpoint, authToken, null);
+	// }
 
 	private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken, object? requestData)
 	{
@@ -163,7 +163,7 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	}
 
 	/// <inheritdoc/>
-	public async Task<ApiResp<RoleResp>> CreateRoleAsync(CreateRoleReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	public async Task<ApiResp<RoleResp>> CreateRoleAsync(CreateOrUpdateRoleReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
 		var httpResult = await BuildAndSendRequestAsync(
 			requestHttpClient,
@@ -195,9 +195,23 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	{
 		var httpResult = await BuildAndSendRequestAsync(
 			requestHttpClient,
-			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id),
+			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id, StringComparison.InvariantCultureIgnoreCase),
 			authToken,
 			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
+		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<RoleResp>> UpdateRoleAsync(string id, CreateOrUpdateRoleReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id, StringComparison.InvariantCultureIgnoreCase),
+			authToken,
+			req,
 			cancellationToken
 		);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);

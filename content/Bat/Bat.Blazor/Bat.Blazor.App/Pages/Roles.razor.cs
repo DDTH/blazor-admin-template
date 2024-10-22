@@ -77,7 +77,8 @@ public partial class Roles
 
 	private void BtnClickModify(string roleId)
 	{
-		Console.WriteLine($"[BtnClickModify] Role ID: {roleId} -> {RoleMap?[roleId]}");
+		SelectedRole = RoleMap?[roleId];
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_ROLES_MODIFY.Replace("{id}", roleId));
 	}
 
 	private void BtnClickDelete(string roleId)

@@ -76,6 +76,21 @@ public class RoleFetchOptions
 public interface IIdentityRepository
 {
 	/// <summary>
+	/// General error when no changes are saved.
+	/// </summary>
+	public static readonly IdentityResult NoChangesSaved = IdentityResult.Failed(new IdentityError() { Code = "NoChangesSaved" });
+
+	/// <summary>
+	/// Convenience method to check if the result is succeeded or no changes saved.
+	/// </summary>
+	/// <param name="result"></param>
+	/// <returns></returns>
+	public static bool IsSucceededOrNoChangesSaved(IdentityResult result)
+	{
+		return result.Succeeded || result.Errors.Any(e => e.Code == "NoChangesSaved");
+	}
+
+	/// <summary>
 	/// Creates a new user.
 	/// </summary>
 	/// <param name="user"></param>
@@ -156,9 +171,6 @@ public interface IIdentityRepository
 	/// </remarks>
 	ValueTask<IEnumerable<IdentityUserClaim<string>>> GetClaimsAsync(BatUser user, CancellationToken cancellationToken = default);
 
-	//ValueTask<bool> HasRoleAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default);
-	//ValueTask<bool> HasRoleAsync(BatUser user, string roleName, CancellationToken cancellationToken = default);
-
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<BatRole> roles, CancellationToken cancellationToken = default);
 	ValueTask<IdentityResult> AddToRolesAsync(BatUser user, IEnumerable<string> roleNames, CancellationToken cancellationToken = default);
 	ValueTask<IdentityResult> AddToRoleIfNotExistsAsync(BatUser user, BatRole role, CancellationToken cancellationToken = default);
@@ -205,6 +217,24 @@ public interface IIdentityRepository
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimIfNotExistsAsync(BatUser user, Claim claim, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Removes claims from the user.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="claims"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> RemoveClaimsAsync(BatUser user, IEnumerable<IdentityUserClaim<string>> claims, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Removes claims from the user.
+	/// </summary>
+	/// <param name="user"></param>
+	/// <param name="claims"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> RemoveClaimsAsync(BatUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
 
 	/*----------------------------------------------------------------------*/
 
@@ -281,4 +311,22 @@ public interface IIdentityRepository
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	ValueTask<IdentityResult> AddClaimIfNotExistsAsync(BatRole role, Claim claim, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Removes claims from the role.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="claims"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> RemoveClaimsAsync(BatRole role, IEnumerable<IdentityRoleClaim<string>> claims, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Removes claims from the role.
+	/// </summary>
+	/// <param name="role"></param>
+	/// <param name="claims"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	ValueTask<IdentityResult> RemoveClaimsAsync(BatRole role, IEnumerable<Claim> claims, CancellationToken cancellationToken = default);
 }
