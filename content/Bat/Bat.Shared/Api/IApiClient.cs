@@ -11,6 +11,9 @@ public interface IApiClient
 	public const string API_ENDPOINT_AUTH_LOGIN = "/auth/login";
 	public const string API_ENDPOINT_AUTH_REFRESH = "/auth/refresh";
 
+	public const string API_ENDPOINT_USERS = "/api/users";
+	public const string API_ENDPOINT_USERS_ID = "/api/users/{id}";
+
 	public const string API_ENDPOINT_USERS_ME = "/api/users/-me";
 	public const string API_ENDPOINT_USERS_ME_PROFILE = "/api/users/-me/profile";
 	public const string API_ENDPOINT_USERS_ME_PASSWORD = "/api/users/-me/password";
@@ -81,6 +84,16 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<ChangePasswordResp>> ChangeMyPasswordAsync(ChangePasswordReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_USERS"/> to get all users.
+	/// </summary>
+	/// <param name="authToken"></param>
+	/// <param name="baseUrl"></param>
+	/// <param name="httpClient"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<IEnumerable<UserResp>>> GetAllUsersAsync(string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_CLAIMS"/> to get all claims.

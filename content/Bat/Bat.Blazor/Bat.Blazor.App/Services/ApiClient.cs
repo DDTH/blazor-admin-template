@@ -135,6 +135,20 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	/*----------------------------------------------------------------------*/
 
 	/// <inheritdoc/>
+	public async Task<ApiResp<IEnumerable<UserResp>>> GetAllUsersAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_USERS,
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<UserResp>>>(cancellationToken);
+		return result ?? new ApiResp<IEnumerable<UserResp>> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
 	public async Task<ApiResp<IEnumerable<ClaimResp>>> GetAllClaimsAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
 		var httpResult = await BuildAndSendRequestAsync(

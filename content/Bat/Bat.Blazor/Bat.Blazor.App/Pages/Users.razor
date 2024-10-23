@@ -1,8 +1,8 @@
-﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
 @using Bat.Shared.Identity
 
-@attribute [Route(UIGlobals.ROUTE_IDENTITY_ROLES)]
+@attribute [Route(UIGlobals.ROUTE_IDENTITY_USERS)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -10,7 +10,7 @@
         <a href="@UIGlobals.ROUTE_HOME">Home</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Roles</span>
+        <span>Users</span>
     </li>
 </SectionContent>
 
@@ -31,32 +31,36 @@
 					}
 					@if (!HideUI)
 					{
-						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM">
 							<ChildContent Context="context1">
-								<button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+								<button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New User</button>
 							</ChildContent>
 						</AuthorizeView>
 					}
-                    @if (RoleList != null && !HideUI)
+                    @if (UserList != null && !HideUI)
                     {
                         <table class="table table-sm table-bordered border-primary table-striped table-hover">
                             <thead>
                                 <tr>
                                     <th scope="col" class="text-center">#</th>
                                     <th scope="col" class="text-center">Id</th>
-                                    <th scope="col" class="text-center">Name</th>
-                                    <th scope="col">Description</th>
+                                    <th scope="col" class="text-center">User name</th>
+                                    <th scope="col" class="text-center">Email</th>
+									<th scope="col" class="text-center">Given name</th>
+									<th scope="col" class="text-center">Family name</th>
                                     <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in RoleList)
+                                @foreach (var item in UserList)
                                 {
                                     <tr>
-                                        <th scope="row" class="text-center">@(++RoleIndex)</th>
-                                        <td>@item.Id</td>
-                                        <td>@item.Name</td>
-                                        <td>@item.Description</td>
+                                        <th scope="row" class="text-center">@(++UserIndex)</th>
+                                        <td class="text-center">@item.Id</td>
+                                        <td class="text-center">@item.Username</td>
+                                        <td class="text-center">@item.Email</td>
+										<td class="text-center">@item.GivenName</td>
+										<td class="text-center">@item.FamilyName</td>
                                         <td class="text-center">
                                             <button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
                                                 <CIcon icon="cil-info" />
@@ -75,9 +79,9 @@
                     }
 					@if (!HideUI)
 					{
-						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM">
 							<ChildContent Context="context2">
-								<button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+								<button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New User</button>
 							</ChildContent>
 						</AuthorizeView>
 					}
@@ -93,44 +97,65 @@
     </NotAuthorized>
 </AuthorizeView>
 
-<CModal @ref="@ModalDialogInfo" title="Role Information" centered="false" type="info" size="large">
+<CModal @ref="@ModalDialogInfo" title="User Information" centered="false" type="info" size="large">
     <div class="card">
         <div class="card-body">
 			<form>
 				<div class="row mb-1">
 					<label for="inputId" class="col-sm-2 col-form-label col-form-label-sm">Id</label>
 					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputId" disabled value="@(SelectedRole?.Id)">
+						<input type="text" class="form-control form-control-sm" id="inputId" disabled value="@(SelectedUser?.Id)">
 					</div>
 				</div>
 				<div class="row mb-1">
-					<label for="inputName" class="col-sm-2 col-form-label col-form-label-sm">Name</label>
+					<label for="inputFamilyName" class="col-sm-2 col-form-label col-form-label-sm">Family name</label>
 					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputName" disabled value="@(SelectedRole?.Name)">
+						<input type="text" class="form-control form-control-sm" id="inputFamilyName" disabled value="@(SelectedUser?.FamilyName)">
+					</div>
+					<label for="inputGivenName" class="col-sm-2 col-form-label col-form-label-sm">Given name</label>
+					<div class="col-sm">
+						<input type="text" class="form-control form-control-sm" id="inputGivenName" disabled value="@(SelectedUser?.GivenName)">
 					</div>
 				</div>
 				<div class="row mb-1">
-					<label for="inputDescription" class="col-sm-2 col-form-label col-form-label-sm">Description</label>
+					<label for="inputUsername" class="col-sm-2 col-form-label col-form-label-sm">User name</label>
 					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputDescription" disabled value="@(SelectedRole?.Description)">
+						<input type="text" class="form-control form-control-sm" id="inputUsername" disabled value="@(SelectedUser?.Username)">
 					</div>
 				</div>
-				@if (SelectedRole?.Claims is not null)
-				{
-					<hr />
-					<div class="row mb-1">
-						<div class="col-sm">
-							<label class="col-form-label col-form-label-sm">Claims:</label>
+				<div class="row mb-1">
+					<label for="inputEmail" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
+					<div class="col-sm">
+						<input type="email" class="form-control form-control-sm" id="inputEmail" disabled value="@(SelectedUser?.Email)">
+					</div>
+				</div>
+				<hr />
+				<div class="row mb-1">
+					<div class="col-sm-6">
+						@if (SelectedUser?.Roles is not null)
+						{
+							<label class="col-form-label col-form-label-sm">Roles:</label>
 							<ul class="list-unstyled">
-								@foreach (var claim in SelectedRole?.Claims!)
+								@foreach (var role in SelectedUser?.Roles!)
 								{
-									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-activity"/> @claim.ClaimType:@claim.ClaimValue</li>
+									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> <abbr title="@role.Description">@role.Name</abbr></li>
 								}
 							</ul>
-
-						</div>
+						}
 					</div>
-				}
+					<div class="col-sm-6">
+						@if (SelectedUser?.Claims is not null)
+						{
+							<label class="col-form-label col-form-label-sm">Claims:</label>
+							<ul class="list-unstyled">
+								@foreach (var claim in SelectedUser?.Claims!)
+								{
+									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-activity" /> @claim.ClaimType:@claim.ClaimValue</li>
+								}
+							</ul>
+						}
+					</div>
+				</div>
 			</form>
 			<hr />
             <button type="button" class="btn btn-secondary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
@@ -138,18 +163,18 @@
     </div>
 </CModal>
 
-<CModal @ref="@ModalDialogDelete" title="Delete Role" centered="false" type="danger" size="large">
+<CModal @ref="@ModalDialogDelete" title="Delete User" centered="false" type="danger" size="large">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Are you sure you want to delete role <strong>@(SelectedRole?.Name)</strong>?</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Id: @(SelectedRole?.Id)</h6>
-            <p class="card-text">@(SelectedRole?.Description)</p>
-            @if (SelectedRole?.Claims is not null)
+            <h5 class="card-title">Are you sure you want to delete user <strong>@(SelectedUser?.Username)</strong>?</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Id: @(SelectedUser?.Id)</h6>
+            <p class="card-text">@(SelectedUser?.Email)</p>
+            @if (SelectedUser?.Claims is not null)
             {
                 <p class="card-text">
                     Claims:
                     <ul>
-                        @foreach (var claim in SelectedRole?.Claims!)
+                        @foreach (var claim in SelectedUser?.Claims!)
                         {
                             <li>@claim.ClaimType: @claim.ClaimValue</li>
                         }
@@ -163,7 +188,7 @@
 </CModal>
 
 @code {
-    private const string PAGE_TITLE = "Roles";
+    private const string PAGE_TITLE = "Users";
     private string LoginUrl
     {
         get

@@ -102,7 +102,7 @@ public partial class RolesModify
 
 	private void BtnClickCancel()
 	{
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_ROLES_LIST);
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_IDENTITY_ROLES);
 	}
 
 	private void ShowAlert(string type, string message)
@@ -146,7 +146,7 @@ public partial class RolesModify
 			var passAlertMessage = $"Role '{req.Name}' updated successfully.";
 			var passAlertType = "success";
 			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_ROLES_LIST}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_ROLES}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 		}
 	}
 }

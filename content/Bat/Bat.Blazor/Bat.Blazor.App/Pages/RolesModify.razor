@@ -3,7 +3,7 @@
 @using Bat.Shared.Identity
 @using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_ROLES_MODIFY)]
+@attribute [Route(UIGlobals.ROUTE_IDENTITY_ROLES_MODIFY)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -11,7 +11,7 @@
         <a href="@UIGlobals.ROUTE_HOME">Home</a>
     </li>
 	<li class="breadcrumb-item">
-        <a href="@UIGlobals.ROUTE_ROLES_LIST">Roles</a>
+        <a href="@UIGlobals.ROUTE_IDENTITY_ROLES">Roles</a>
     </li>
     <li class="breadcrumb-item active">
         <span>Modify Role</span>
