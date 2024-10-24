@@ -91,13 +91,21 @@ public struct UserResp
 		};
 	}
 
+	[JsonPropertyName("id")]
 	public string Id { get; set; }
+
+	[JsonPropertyName("username")]
 	public string Username { get; set; }
+
+	[JsonPropertyName("email")]
 	public string Email { get; set; }
 
 	[JsonPropertyName("given_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? GivenName { get; set; }
+
 	[JsonPropertyName("family_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? FamilyName { get; set; }
 
 	[JsonPropertyName("roles")]
