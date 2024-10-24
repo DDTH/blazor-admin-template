@@ -37,7 +37,7 @@
 					{
 						<form>
 							<div class="form-floating mb-2">
-								<input type="text" class="form-control form-control-sm" id="roleName" placeholder="Role Name" @bind-value="RoleName">
+								<input type="text" class="form-control" id="roleName" placeholder="Role Name" @bind-value="RoleName">
 								<label for="roleName">Role Name</label>
 							</div>
 							<div class="form-floating mb-2">
@@ -46,10 +46,11 @@
 							</div>
 							@if (ClaimList != null)
 							{
-								<label>Claims:</label>
+								<hr />
+								<label class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> Claims:</label>
 								@foreach (var claim in ClaimList)
 								{
-									<div class="form-check">
+									<div class="form-check form-control-sm">
 										<input class="form-check-input" type="checkbox"
 											id="claim-@claim.ClaimType-@claim.ClaimValue"
 											value="@claim.ClaimType:@claim.ClaimValue"
