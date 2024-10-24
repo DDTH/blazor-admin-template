@@ -88,6 +88,7 @@ public struct UserResp
 			GivenName = user.GivenName,
 			FamilyName = user.FamilyName,
 			Roles = user.Roles?.Select(r => RoleResp.BuildFromRole(r)),
+			Claims = user.Claims?.Select(c => new ClaimResp { ClaimType = c.ClaimType!, ClaimValue = c.ClaimValue! }),
 		};
 	}
 

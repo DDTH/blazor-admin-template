@@ -108,6 +108,17 @@
 					</div>
 				</div>
 				<div class="row mb-1">
+					<label for="inputUsername" class="col-sm-2 col-form-label col-form-label-sm">User name</label>
+					<div class="col-sm">
+						<input type="text" class="form-control form-control-sm" id="inputUsername" disabled value="@(SelectedUser?.Username)">
+					</div>
+					<label for="inputEmail" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
+					<div class="col-sm">
+						<input type="email" class="form-control form-control-sm" id="inputEmail" disabled value="@(SelectedUser?.Email)">
+					</div>
+				</div>
+				<hr />
+				<div class="row mb-1">
 					<label for="inputFamilyName" class="col-sm-2 col-form-label col-form-label-sm">Family name</label>
 					<div class="col-sm">
 						<input type="text" class="form-control form-control-sm" id="inputFamilyName" disabled value="@(SelectedUser?.FamilyName)">
@@ -115,18 +126,6 @@
 					<label for="inputGivenName" class="col-sm-2 col-form-label col-form-label-sm">Given name</label>
 					<div class="col-sm">
 						<input type="text" class="form-control form-control-sm" id="inputGivenName" disabled value="@(SelectedUser?.GivenName)">
-					</div>
-				</div>
-				<div class="row mb-1">
-					<label for="inputUsername" class="col-sm-2 col-form-label col-form-label-sm">User name</label>
-					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputUsername" disabled value="@(SelectedUser?.Username)">
-					</div>
-				</div>
-				<div class="row mb-1">
-					<label for="inputEmail" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
-					<div class="col-sm">
-						<input type="email" class="form-control form-control-sm" id="inputEmail" disabled value="@(SelectedUser?.Email)">
 					</div>
 				</div>
 				<hr />
@@ -146,7 +145,7 @@
 					<div class="col-sm-6">
 						@if (SelectedUser?.Claims is not null)
 						{
-							<label class="col-form-label col-form-label-sm">Permissions:</label>
+							<label class="col-form-label col-form-label-sm">Claims:</label>
 							<ul class="list-unstyled">
 								@foreach (var claim in SelectedUser?.Claims!)
 								{
