@@ -45,6 +45,35 @@ public struct UpdateUserProfileReq
 }
 
 /// <summary>
+/// Request to create a new user or update an exixting one.
+/// </summary>
+public struct CreateOrUpdateUserReq
+{
+	[JsonPropertyName("username")]
+	public string Username { get; set; }
+
+	[JsonPropertyName("email")]
+	public string Email { get; set; }
+
+	[JsonPropertyName("password")]
+	public string Password { get; set; }
+
+	[JsonPropertyName("given_name")]
+	public string? GivenName { get; set; }
+
+	[JsonPropertyName("family_name")]
+	public string? FamilyName { get; set; }
+
+	[JsonPropertyName("roles")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<string>? Roles { get; set; }
+
+	[JsonPropertyName("claims")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IEnumerable<IdentityClaim>? Claims { get; set; }
+}
+
+/// <summary>
 /// Response structure for APIs that return user information.
 /// </summary>
 public struct UserResp

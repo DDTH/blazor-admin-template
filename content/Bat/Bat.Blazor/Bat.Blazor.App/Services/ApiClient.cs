@@ -149,6 +149,62 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	}
 
 	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> CreateUserAsync(CreateOrUpdateUserReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Post, baseUrl, IApiClient.API_ENDPOINT_USERS,
+			authToken,
+			req,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> GetUserAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_USERS_ID.Replace("{id}", id),
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> DeleteUserAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_USERS_ID.Replace("{id}", id),
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<UserResp>> UpdateUserAsync(string id, CreateOrUpdateUserReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_USERS_ID.Replace("{id}", id),
+			authToken,
+			req,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
+		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
 	public async Task<ApiResp<IEnumerable<ClaimResp>>> GetAllClaimsAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
 		var httpResult = await BuildAndSendRequestAsync(
@@ -209,7 +265,7 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	{
 		var httpResult = await BuildAndSendRequestAsync(
 			requestHttpClient,
-			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id, StringComparison.InvariantCultureIgnoreCase),
+			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id),
 			authToken,
 			NoData,
 			cancellationToken
@@ -223,7 +279,7 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 	{
 		var httpResult = await BuildAndSendRequestAsync(
 			requestHttpClient,
-			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id, StringComparison.InvariantCultureIgnoreCase),
+			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_ROLES_ID.Replace("{id}", id),
 			authToken,
 			req,
 			cancellationToken

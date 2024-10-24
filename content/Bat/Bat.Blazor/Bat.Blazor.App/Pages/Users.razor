@@ -138,7 +138,7 @@
 							<ul class="list-unstyled">
 								@foreach (var role in SelectedUser?.Roles!)
 								{
-									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> <abbr title="@role.Description">@role.Name</abbr></li>
+									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
 								}
 							</ul>
 						}
@@ -146,11 +146,11 @@
 					<div class="col-sm-6">
 						@if (SelectedUser?.Claims is not null)
 						{
-							<label class="col-form-label col-form-label-sm">Claims:</label>
+							<label class="col-form-label col-form-label-sm">Permissions:</label>
 							<ul class="list-unstyled">
 								@foreach (var claim in SelectedUser?.Claims!)
 								{
-									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-activity" /> @claim.ClaimType:@claim.ClaimValue</li>
+									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
 								}
 							</ul>
 						}

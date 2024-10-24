@@ -110,6 +110,6 @@ public partial class Users
 
 	private void BtnClickAdd()
 	{
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_IDENTITY_ROLES_ADD);
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_IDENTITY_USERS_ADD);
 	}
 }

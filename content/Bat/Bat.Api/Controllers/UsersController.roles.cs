@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
+using Bat.Api.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Bat.Api.Controllers;
 
@@ -51,8 +53,11 @@ public partial class UsersController
 	/// Creates a new role.
 	/// </summary>
 	/// <param name="req"></param>
+	/// <param name="identityOptions"></param>
 	/// <param name="identityRepository"></param>
 	/// <param name="lookupNormalizer"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
 	/// <response code="200">Role created successfully.</response>
 	/// <response code="400">Input validation failed (e.g. role already exists).</response>
@@ -62,9 +67,22 @@ public partial class UsersController
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> CreateRole(
 		CreateOrUpdateRoleReq req,
+		IOptions<IdentityOptions> identityOptions,
 		IIdentityRepository identityRepository,
-		ILookupNormalizer lookupNormalizer)
+		ILookupNormalizer lookupNormalizer,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
 	{
+		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+			identityRepository,
+			identityOptions.Value,
+			authenticator, authenticatorAsync);
+		if (vAuthTokenResult != null)
+		{
+			// current auth token and signed-in user should all be valid
+			return vAuthTokenResult;
+		}
+
 		var existingRole = await identityRepository.GetRoleByNameAsync(req.Name);
 		if (existingRole != null)
 		{
@@ -111,16 +129,32 @@ public partial class UsersController
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="req"></param>
+	/// <param name="identityOptions"></param>
 	/// <param name="identityRepository"></param>
 	/// <param name="lookupNormalizer"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
 	[HttpPut(IApiClient.API_ENDPOINT_ROLES_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> UpdateRole(
 		[FromRoute] string id,
 		CreateOrUpdateRoleReq req,
+		IOptions<IdentityOptions> identityOptions,
 		IIdentityRepository identityRepository,
-		ILookupNormalizer lookupNormalizer)
+		ILookupNormalizer lookupNormalizer,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
 	{
+		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+			identityRepository,
+			identityOptions.Value,
+			authenticator, authenticatorAsync);
+		if (vAuthTokenResult != null)
+		{
+			// current auth token and signed-in user should all be valid
+			return vAuthTokenResult;
+		}
+
 		var role = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
 		if (role == null)
 		{
@@ -177,12 +211,30 @@ public partial class UsersController
 	/// Deletes a role by id.
 	/// </summary>
 	/// <param name="id"></param>
+	/// <param name="identityOptions"></param>
 	/// <param name="identityRepository"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
 	[HttpDelete(IApiClient.API_ENDPOINT_ROLES_ID)]
-	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
-	public async Task<ActionResult<ApiResp<RoleResp>>> DeleteRole([FromRoute] string id, IIdentityRepository identityRepository)
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_ROLE_PERM)]
+	public async Task<ActionResult<ApiResp<RoleResp>>> DeleteRole(
+		[FromRoute] string id,
+		IOptions<IdentityOptions> identityOptions,
+		IIdentityRepository identityRepository,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
 	{
+		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+			identityRepository,
+			identityOptions.Value,
+			authenticator, authenticatorAsync);
+		if (vAuthTokenResult != null)
+		{
+			// current auth token and signed-in user should all be valid
+			return vAuthTokenResult;
+		}
+
 		var role = await identityRepository.GetRoleByIDAsync(id);
 		if (role == null)
 		{
