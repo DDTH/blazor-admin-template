@@ -3,6 +3,7 @@ using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+
 namespace Bat.Api.Controllers;
 
 public partial class UsersController : ApiBaseController
@@ -29,7 +30,7 @@ public partial class UsersController : ApiBaseController
 		var currentUser = await GetCurrentUserAsync(identityOptions, identityRepository);
 		if (currentUser == null)
 		{
-			// should not happen  
+			// should not happen
 			return (_respAuthenticationRequired, null!);
 		}
 
