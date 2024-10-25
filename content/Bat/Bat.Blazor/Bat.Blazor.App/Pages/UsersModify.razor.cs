@@ -7,51 +7,43 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
-public partial class UsersAdd
+public partial class UsersModify
 {
+	[Parameter]
+	public string Id { get; set; } = string.Empty;
+
 	private string AlertMessage { get; set; } = string.Empty;
 	private string AlertType { get; set; } = "info";
+	private bool HideUI { get; set; } = false;
 
 	private string UserName { get; set; } = string.Empty;
 	private string UserEmail { get; set; } = string.Empty;
 	private string UserFamilyName { get; set; } = string.Empty;
 	private string UserGivenName { get; set; } = string.Empty;
-	private string UserPassword { get; set; } = string.Empty;
-	private string UserConfirmPassword { get; set; } = string.Empty;
 
+	private UserResp? SelectedUser { get; set; }
 	private IEnumerable<RoleResp>? RoleList { get; set; }
 	private IDictionary<string, bool> RoleSelectedMap { get; set; } = new Dictionary<string, bool>();
 
 	private IEnumerable<ClaimResp>? ClaimList { get; set; }
 	private IDictionary<string, bool> ClaimSelectedMap { get; set; } = new Dictionary<string, bool>();
 
-	private void ShowAlert(string type, string message)
+	private async Task<UserResp?> LoadUserAsync(string id, string authToken)
 	{
-		AlertType = type;
-		AlertMessage = message;
-		StateHasChanged();
-	}
-
-	private void CloseAlert()
-	{
-		AlertMessage = string.Empty;
-		StateHasChanged();
-	}
-
-	private async Task<ApiResp<IEnumerable<RoleResp>>> GetAllRolesAsync(string authToken)
-	{
-		ShowAlert("info", "Loading roles, please wait...");
-		RoleSelectedMap.Clear();
-		var result = await ApiClient.GetAllRolesAsync(authToken, NavigationManager.BaseUri);
+		HideUI = true;
+		ShowAlert("info", "Loading user details. Please wait...");
+		var result = await ApiClient.GetUserAsync(id, authToken, NavigationManager.BaseUri);
 		if (result.Status == 200)
 		{
-			RoleList = result.Data;
+			return result.Data;
 		}
-		return result;
+		ShowAlert("danger", result.Message!);
+		return null;
 	}
 
-	private async Task<ApiResp<IEnumerable<ClaimResp>>> GetAllClaimsAsync(string authToken)
+	private async Task<ApiResp<IEnumerable<ClaimResp>>> LoadAllClaimsAsync(string authToken)
 	{
+		HideUI = true;
 		ShowAlert("info", "Loading claims, please wait...");
 		ClaimSelectedMap.Clear();
 		var result = await ApiClient.GetAllClaimsAsync(authToken, NavigationManager.BaseUri);
@@ -62,28 +54,68 @@ public partial class UsersAdd
 		return result;
 	}
 
+	private async Task<ApiResp<IEnumerable<RoleResp>>> LoadAllRolesAsync(string authToken)
+	{
+		HideUI = true;
+		ShowAlert("info", "Loading roles, please wait...");
+		RoleSelectedMap.Clear();
+		var result = await ApiClient.GetAllRolesAsync(authToken, NavigationManager.BaseUri);
+		if (result.Status == 200)
+		{
+			RoleList = result.Data;
+		}
+		return result;
+	}
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
+			HideUI = true;
+			ShowAlert("info", "Loading role details. Please wait...");
 			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
 
-			var roleResult = await GetAllRolesAsync(authToken ?? "");
+			SelectedUser = await LoadUserAsync(Id, authToken ?? "");
+			if (SelectedUser == null)
+			{
+				return;
+			}
+			UserName = SelectedUser?.Username ?? string.Empty;
+			UserEmail = SelectedUser?.Email ?? string.Empty;
+			UserFamilyName = SelectedUser?.FamilyName ?? string.Empty;
+			UserGivenName = SelectedUser?.GivenName ?? string.Empty;
+
+			var roleResult = await LoadAllRolesAsync(authToken ?? "");
 			if (roleResult.Status != 200)
 			{
 				ShowAlert("danger", roleResult.Message!);
 				return;
 			}
+			if (SelectedUser?.Roles != null)
+			{
+				foreach (var role in SelectedUser?.Roles!)
+				{
+					RoleSelectedMap.Add(role.Id, true);
+				}
+			}
 
-			var claimResult = await GetAllClaimsAsync(authToken ?? "");
+			var claimResult = await LoadAllClaimsAsync(authToken ?? "");
 			if (claimResult.Status != 200)
 			{
 				ShowAlert("danger", claimResult.Message!);
 				return;
 			}
+			if (SelectedUser?.Claims != null)
+			{
+				foreach (var claim in SelectedUser?.Claims!)
+				{
+					ClaimSelectedMap.Add($"{claim.ClaimType}:{claim.ClaimValue}", true);
+				}
+			}
 
+			HideUI = false;
 			CloseAlert();
 		}
 	}
@@ -99,7 +131,6 @@ public partial class UsersAdd
 		{
 			ClaimSelectedMap.Add(claim, true);
 		}
-		Console.WriteLine($"[DEBUG] ClaimSelectedMap: {string.Join(", ", ClaimSelectedMap.Select(kvp => $"{kvp.Key}:{kvp.Value}"))}");
 	}
 
 	private void OnRoleChanged(string roleId)
@@ -112,7 +143,6 @@ public partial class UsersAdd
 		{
 			RoleSelectedMap.Add(roleId, true);
 		}
-		Console.WriteLine($"[DEBUG] RoleSelectedMap: {string.Join(", ", RoleSelectedMap.Select(kvp => $"{kvp.Key}:{kvp.Value}"))}");
 	}
 
 	private void BtnClickCancel()
@@ -120,7 +150,20 @@ public partial class UsersAdd
 		NavigationManager.NavigateTo(UIGlobals.ROUTE_IDENTITY_USERS);
 	}
 
-	private async Task BtnClickCreate()
+	private void ShowAlert(string type, string message)
+	{
+		AlertType = type;
+		AlertMessage = message;
+		StateHasChanged();
+	}
+
+	private void CloseAlert()
+	{
+		AlertType = AlertMessage = string.Empty;
+		StateHasChanged();
+	}
+
+	private async Task BtnClickSave()
 	{
 		ShowAlert("info", "Please wait...");
 		if (string.IsNullOrWhiteSpace(UserName))
@@ -133,21 +176,10 @@ public partial class UsersAdd
 			ShowAlert("warning", "Email is required.");
 			return;
 		}
-		if (string.IsNullOrWhiteSpace(UserPassword))
-		{
-			ShowAlert("warning", "Password is required.");
-			return;
-		}
-		if (!UserPassword.Equals(UserConfirmPassword, StringComparison.InvariantCulture))
-		{
-			ShowAlert("warning", "Password does not match the confirmed one.");
-			return;
-		}
 		var req = new CreateOrUpdateUserReq
 		{
 			Username = UserName.ToLower().Trim(),
 			Email = UserEmail.ToLower().Trim(),
-			Password = UserPassword.Trim(),
 			GivenName = UserGivenName.Trim(),
 			FamilyName = UserFamilyName.Trim(),
 			Roles = RoleSelectedMap.Keys.Select(k => k),
@@ -157,14 +189,14 @@ public partial class UsersAdd
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.CreateUserAsync(req, authToken, NavigationManager.BaseUri);
+			var resp = await ApiClient.UpdateUserAsync(Id, req, authToken, NavigationManager.BaseUri);
 			if (resp.Status != 200)
 			{
 				ShowAlert("danger", resp.Message!);
 				return;
 			}
-			ShowAlert("success", "User created successfully. Navigating to users list...");
-			var passAlertMessage = $"User '{req.Username}' created successfully.";
+			ShowAlert("success", "User updated successfully. Navigating to users list...");
+			var passAlertMessage = $"User '{Id}' updated successfully.";
 			var passAlertType = "success";
 			await Task.Delay(500);
 			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_USERS}?alertMessage={passAlertMessage}&alertType={passAlertType}");

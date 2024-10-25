@@ -64,10 +64,10 @@ public partial class UsersController
 	/// <param name="authenticatorAsync"></param>
 	/// <param name="userManager"></param>
 	/// <returns></returns>
-	/// <response code="200">Role created successfully.</response>
+	/// <response code="200">User created successfully.</response>
 	/// <response code="400">Input validation failed (e.g. user already exists).</response>
 	/// <response code="500">Failed to create user.</response>
-	/// <response code="509">Failed to add claims to user or user to roles, but user was created successfully.</response>
+	/// <response code="509">Failed to add claims to user or user to roles, but user was created.</response>
 	[HttpPost(IApiClient.API_ENDPOINT_USERS)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM)]
 	public async Task<ActionResult<ApiResp<UserResp>>> CreateUser(
@@ -91,23 +91,44 @@ public partial class UsersController
 			return vAuthTokenResult;
 		}
 
-		var existingUserName = await identityRepository.GetUserByUserNameAsync(req.Username);
-		if (existingUserName != null)
+		// validate the username
+		var username = req.Username?.ToLower().Trim() ?? string.Empty;
+		if (string.IsNullOrWhiteSpace(username))
 		{
-			return ResponseNoData(400, $"User '{req.Username}' already exists.");
+			return ResponseNoData(400, "Username is required.");
 		}
 
-		var existingUserEmail = await identityRepository.GetUserByEmailAsync(req.Email);
-		if (existingUserEmail != null)
+		// validate the email
+		var email = req.Email?.ToLower().Trim() ?? string.Empty;
+		if (string.IsNullOrWhiteSpace(email))
 		{
-			return ResponseNoData(400, $"Email '{req.Email}' has been used by another user.");
+			return ResponseNoData(400, "Email is required.");
 		}
 
-		// verify if the password meets the compexity requirements
-		var vPasswordResult = await passwordValidator.ValidateAsync(userManager, null!, req.Password);
+		// validate the password
+		var password = req.Password?.Trim() ?? string.Empty;
+		if (string.IsNullOrWhiteSpace(password))
+		{
+			return ResponseNoData(400, "Password is required.");
+		}
+		var vPasswordResult = await passwordValidator.ValidateAsync(userManager, null!, password);
 		if (vPasswordResult != IdentityResult.Success)
 		{
 			return ResponseNoData(400, vPasswordResult.ToString());
+		}
+
+		// check if the username is already taken
+		var existingUserName = await identityRepository.GetUserByUserNameAsync(username);
+		if (existingUserName != null)
+		{
+			return ResponseNoData(400, $"User '{username}' already exists.");
+		}
+
+		// check if the email is already taken
+		var existingUserEmail = await identityRepository.GetUserByEmailAsync(email);
+		if (existingUserEmail != null)
+		{
+			return ResponseNoData(400, $"Email '{email}' has been used by another user.");
 		}
 
 		// verify if the claims are valid
@@ -139,34 +160,216 @@ public partial class UsersController
 		// first, create the user
 		var user = new BatUser
 		{
-			UserName = req.Username.Trim(),
-			NormalizedUserName = lookupNormalizer.NormalizeName(req.Username),
-			Email = req.Email.Trim(),
-			NormalizedEmail = lookupNormalizer.NormalizeEmail(req.Email),
-			PasswordHash = passwordHasher.HashPassword(null!, req.Password),
+			UserName = username,
+			NormalizedUserName = lookupNormalizer.NormalizeName(username),
+			Email = email,
+			NormalizedEmail = lookupNormalizer.NormalizeEmail(email),
+			PasswordHash = passwordHasher.HashPassword(null!, password),
 			FamilyName = req.FamilyName?.Trim(),
 			GivenName = req.GivenName?.Trim(),
 		};
-		var iresult = await identityRepository.CreateAsync(user);
-		if (!iresult.Succeeded)
+		var iresultCreate = await identityRepository.CreateAsync(user);
+		if (!iresultCreate.Succeeded)
 		{
-			return ResponseNoData(500, $"Failed to create user: {iresult.ToString()}");
+			return ResponseNoData(500, $"Failed to create user: {iresultCreate.ToString()}");
 		}
 
 		// then add the claims
-		iresult = await identityRepository.AddClaimsAsync(user, claims);
-		if (!iresult.Succeeded)
+		var iresultAddClaims = await identityRepository.AddClaimsAsync(user, claims);
+		if (!iresultAddClaims.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add claims to user: {iresult.ToString()} / Note: User was created successfully.");
+			return ResponseNoData(509, $"Failed to add claims to user: {iresultAddClaims.ToString()} / Note: User has been created.");
 		}
 
 		// then add the roles
-		iresult = await identityRepository.AddToRolesAsync(user, roles);
-		if (!iresult.Succeeded)
+		var iresultAddRoles = await identityRepository.AddToRolesAsync(user, roles);
+		if (!iresultAddRoles.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add roles to user: {iresult.ToString()} / Note: User was created successfully.");
+			return ResponseNoData(509, $"Failed to add roles to user: {iresultAddRoles.ToString()} / Note: User has been created.");
 		}
 
+		return ResponseOk(UserResp.BuildFromUser(user));
+	}
+
+	/// <summary>
+	/// Updates an existing user.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="req"></param>
+	/// <param name="identityOptions"></param>
+	/// <param name="identityRepository"></param>
+	/// <param name="lookupNormalizer"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
+	/// <returns></returns>
+	/// <response code="200">User updated successfully.</response>
+	/// <response code="400">Input validation failed (e.g. user's name already used by another one).</response>
+	/// <response code="404">User not found.</response>
+	/// <response code="500">Failed to update user.</response>
+	/// <response code="509">Failed to update user's roles or claims, but other user data was updated.</response>
+	[HttpPut(IApiClient.API_ENDPOINT_USERS_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_USER_PERM)]
+	public async Task<ActionResult<ApiResp<UserResp>>> UpdateUser(
+		[FromRoute] string id,
+		CreateOrUpdateUserReq req,
+		IOptions<IdentityOptions> identityOptions,
+		IIdentityRepository identityRepository,
+		ILookupNormalizer lookupNormalizer,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
+	{
+		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+			identityRepository,
+			identityOptions.Value,
+			authenticator, authenticatorAsync);
+		if (vAuthTokenResult != null)
+		{
+			// current auth token and signed-in user should all be valid
+			return vAuthTokenResult;
+		}
+
+		var targetUser = await identityRepository.GetUserByIDAsync(id, UserFetchOptions.DEFAULT.FetchRoles().FetchClaims());
+		if (targetUser == null)
+		{
+			return ResponseNoData(404, $"User '{id}' not found.");
+		}
+
+		var username = req.Username?.ToLower().Trim() ?? targetUser.UserName; // if not provided, keep the original username
+		if (!string.IsNullOrWhiteSpace(username))
+		{
+			var existingUserName = await identityRepository.GetUserByUserNameAsync(username);
+			if (existingUserName != null && !existingUserName.Id.Equals(targetUser.Id, StringComparison.InvariantCulture))
+			{
+				return ResponseNoData(400, $"Username '{username}' already exists.");
+			}
+		}
+
+		var email = req.Email?.ToLower().Trim() ?? targetUser.Email; // if not provided, keep the original email
+		if (!string.IsNullOrWhiteSpace(email))
+		{
+			var existingUserEmail = await identityRepository.GetUserByEmailAsync(email);
+			if (existingUserEmail != null && !existingUserEmail.Id.Equals(targetUser.Id, StringComparison.InvariantCulture))
+			{
+				return ResponseNoData(400, $"Email '{email}' has been used by another user.");
+			}
+		}
+
+		// verify if the claims are valid
+		var uniqueClaimsNew = req.Claims?.Distinct() ?? [];
+		var claimsNew = new List<Claim>();
+		foreach (var uc in uniqueClaimsNew)
+		{
+			var claim = new Claim(uc.Type, uc.Value);
+			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
+			{
+				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
+			}
+			claimsNew.Add(claim);
+		}
+
+		// verify if the roles are valid
+		var uniqueRolesNew = req.Roles?.Distinct() ?? [];
+		var rolesNew = new List<BatRole>();
+		foreach (var ur in uniqueRolesNew)
+		{
+			var role = await identityRepository.GetRoleByIDAsync(ur);
+			if (role == null)
+			{
+				return ResponseNoData(400, $"Role '{ur}' does not exist.");
+			}
+			rolesNew.Add(role);
+		}
+
+		// first, update the user
+		targetUser.UserName = username;
+		targetUser.NormalizedUserName = lookupNormalizer.NormalizeName(username);
+		targetUser.Email = email;
+		targetUser.NormalizedEmail = lookupNormalizer.NormalizeEmail(email);
+		targetUser.FamilyName = req.FamilyName?.Trim() ?? targetUser.FamilyName; // if not provided, keep the original family name
+		targetUser.GivenName = req.GivenName?.Trim() ?? targetUser.GivenName; // if not provided, keep the original given name
+		var iresultUpdate	 = await identityRepository.UpdateAsync(targetUser);
+		if (iresultUpdate == null)
+		{
+			return ResponseNoData(500, $"Failed to update user.");
+		}
+
+		// then, update the roles, only if provided
+		if (req.Roles is not null)
+		{
+			if (targetUser.Roles != null)
+			{
+				var iresultRemoveRoles = await identityRepository.RemoveFromRolesAsync(targetUser, targetUser.Roles);
+				if (!iresultRemoveRoles.Succeeded)
+				{
+					return ResponseNoData(509, $"Failed to update user's roles: {iresultRemoveRoles.ToString()} / Note: User's data was updated.");
+				}
+			}
+			var iresultAddRoles = await identityRepository.AddToRolesAsync(targetUser, rolesNew);
+			if (!iresultAddRoles.Succeeded)
+			{
+				return ResponseNoData(509, $"Failed to update user's roles: {iresultAddRoles.ToString()} / Note: User's data was updated.");
+			}
+		}
+
+		// finally, update the claims, only if provided
+		if (req.Claims is not null)
+		{
+			if (targetUser.Claims != null)
+			{
+				var iresultRemoveClaims = await identityRepository.RemoveClaimsAsync(targetUser, targetUser.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
+				if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemoveClaims))
+				{
+					return ResponseNoData(509, $"Failed to update user's claims: {iresultRemoveClaims.ToString()} / Note: User's data was updated.");
+				}
+			}
+			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetUser, claimsNew);
+			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
+			{
+				return ResponseNoData(509, $"Failed to update user's claims: {iresultAddClaims.ToString()} / Note: User's data was updated.");
+			}
+		}
+
+		return ResponseOk(UserResp.BuildFromUser(targetUser));
+	}
+
+	/// <summary>
+	/// Deletes a user by id.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="identityOptions"></param>
+	/// <param name="identityRepository"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
+	/// <returns></returns>
+	[HttpDelete(IApiClient.API_ENDPOINT_USERS_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_USER_PERM)]
+	public async Task<ActionResult<ApiResp<UserResp>>> DeleteUser(
+		[FromRoute] string id,
+		IOptions<IdentityOptions> identityOptions,
+		IIdentityRepository identityRepository,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
+	{
+		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+			identityRepository,
+			identityOptions.Value,
+			authenticator, authenticatorAsync);
+		if (vAuthTokenResult != null)
+		{
+			// current auth token and signed-in user should all be valid
+			return vAuthTokenResult;
+		}
+
+		var user = await identityRepository.GetUserByIDAsync(id);
+		if (user == null)
+		{
+			return ResponseNoData(404, $"User '{id}' not found.");
+		}
+		var iresult = await identityRepository.DeleteAsync(user);
+		if (!iresult.Succeeded)
+		{
+			return ResponseNoData(500, $"Failed to delete user: {iresult.ToString()}");
+		}
 		return ResponseOk(UserResp.BuildFromUser(user));
 	}
 }

@@ -51,7 +51,6 @@ public partial class Users
 				HideUI = false;
 				UserList = result.Data?.OrderBy(r => r.Username);
 				UserMap = UserList!.ToDictionary(user => user.Id);
-				Console.WriteLine($"UserMap: {JsonSerializer.Serialize(UserMap)}");
 				var queryParameters = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query);
 				var alertMessage = queryParameters.TryGetValue("alertMessage", out var alertMessageValue) ? alertMessageValue.ToString() : string.Empty;
 				var alertType = queryParameters.TryGetValue("alertType", out var alertTypeValue) ? alertTypeValue.ToString() : string.Empty;

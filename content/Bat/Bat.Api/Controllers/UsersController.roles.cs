@@ -62,7 +62,7 @@ public partial class UsersController
 	/// <response code="200">Role created successfully.</response>
 	/// <response code="400">Input validation failed (e.g. role already exists).</response>
 	/// <response code="500">Failed to create role.</response>
-	/// <response code="509">Failed to add claims to role, but role was created successfully.</response>
+	/// <response code="509">Failed to add claims to role, but role was created.</response>
 	[HttpPost(IApiClient.API_ENDPOINT_ROLES)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> CreateRole(
@@ -83,12 +83,21 @@ public partial class UsersController
 			return vAuthTokenResult;
 		}
 
-		var existingRole = await identityRepository.GetRoleByNameAsync(req.Name);
-		if (existingRole != null)
+		// validate the role name
+		var roleName = req.Name?.Trim() ?? string.Empty;
+		if (string.IsNullOrWhiteSpace(roleName))
 		{
-			return ResponseNoData(400, $"Role '{req.Name}' already exists.");
+			return ResponseNoData(400, "Role name is required.");
 		}
 
+		// check if the role name is already taken
+		var existingRole = await identityRepository.GetRoleByNameAsync(roleName);
+		if (existingRole != null)
+		{
+			return ResponseNoData(400, $"Role '{roleName}' already exists.");
+		}
+
+		// verify if the claims are valid
 		var uniqueClaims = req.Claims?.Distinct() ?? [];
 		var claims = new List<Claim>();
 		foreach (var uc in uniqueClaims)
@@ -104,9 +113,9 @@ public partial class UsersController
 		// first, create the role
 		var role = new BatRole
 		{
-			Name = req.Name.Trim(),
-			NormalizedName = lookupNormalizer.NormalizeName(req.Name),
-			Description = req.Description?.Trim(),
+			Name = roleName,
+			NormalizedName = lookupNormalizer.NormalizeName(roleName),
+			Description = req.Description?.Trim() ?? string.Empty,
 		};
 		var iresult = await identityRepository.CreateAsync(role);
 		if (!iresult.Succeeded)
@@ -118,7 +127,7 @@ public partial class UsersController
 		iresult = await identityRepository.AddClaimsAsync(role, claims);
 		if (!iresult.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add claims to role: {iresult.ToString()} / Note: Role was created successfully.");
+			return ResponseNoData(509, $"Failed to add claims to role: {iresult.ToString()} / Note: Role has been created.");
 		}
 
 		return ResponseOk(RoleResp.BuildFromRole(role));
@@ -134,6 +143,12 @@ public partial class UsersController
 	/// <param name="lookupNormalizer"></param>
 	/// <param name="authenticator"></param>
 	/// <param name="authenticatorAsync"></param>
+	/// <returns></returns>
+	/// <response code="200">Role updated successfully.</response>
+	/// <response code="400">Input validation failed (e.g. role's name already used by another one).</response>
+	/// <response code="404">Role not found.</response>
+	/// <response code="500">Failed to update role.</response>
+	/// <response code="509">Failed to update role's claims, but other role data was updated.</response>
 	[HttpPut(IApiClient.API_ENDPOINT_ROLES_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM)]
 	public async Task<ActionResult<ApiResp<RoleResp>>> UpdateRole(
@@ -155,56 +170,64 @@ public partial class UsersController
 			return vAuthTokenResult;
 		}
 
-		var role = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
-		if (role == null)
+		var targetRole = await identityRepository.GetRoleByIDAsync(id, RoleFetchOptions.DEFAULT.FetchClaims());
+		if (targetRole == null)
 		{
 			return ResponseNoData(404, $"Role '{id}' not found.");
 		}
 
-		var existingRole = await identityRepository.GetRoleByNameAsync(req.Name);
-		if (existingRole != null && !existingRole.Id.Equals(role.Id, StringComparison.InvariantCulture))
+		var roleName = req.Name?.Trim() ?? targetRole.Name; // if not provided, keep the original name
+		if (!string.IsNullOrWhiteSpace(roleName))
 		{
-			return ResponseNoData(400, $"Role '{req.Name}' already exists.");
+			var existingRole = await identityRepository.GetRoleByNameAsync(roleName);
+			if (existingRole != null && !existingRole.Id.Equals(targetRole.Id, StringComparison.InvariantCulture))
+			{
+				return ResponseNoData(400, $"Role '{roleName}' already exists.");
+			}
 		}
 
-		var uniqueClaims = req.Claims?.Distinct() ?? [];
-		var claims = new List<Claim>();
-		foreach (var uc in uniqueClaims)
+		// verify if the claims are valid
+		var uniqueClaimsNew = req.Claims?.Distinct() ?? [];
+		var claimsNew = new List<Claim>();
+		foreach (var uc in uniqueClaimsNew)
 		{
 			var claim = new Claim(uc.Type, uc.Value);
 			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
 			{
 				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
 			}
-			claims.Add(claim);
+			claimsNew.Add(claim);
 		}
 
 		// first, update the role
-		role.Name = req.Name.Trim();
-		role.NormalizedName = lookupNormalizer.NormalizeName(req.Name);
-		role.Description = req.Description?.Trim();
-		role = await identityRepository.UpdateAsync(role);
-		if (role == null)
+		targetRole.Name = roleName;
+		targetRole.NormalizedName = lookupNormalizer.NormalizeName(roleName);
+		targetRole.Description = req.Description?.Trim() ?? targetRole.Description; // if not provided, keep the original description
+		var iresultUpdate = await identityRepository.UpdateAsync(targetRole);
+		if (iresultUpdate == null)
 		{
 			return ResponseNoData(500, $"Failed to update role.");
 		}
 
-		// then, update the claims
-		if (role.Claims != null)
+		// then, update the claims, only if provided
+		if (req.Claims is not null)
 		{
-			var iresultRemove = await identityRepository.RemoveClaimsAsync(role, role.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
-			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemove))
+			if (targetRole.Claims != null)
 			{
-				return ResponseNoData(500, $"Failed to update role's claims: {iresultRemove.ToString()}");
+				var iresultRemoveClaims = await identityRepository.RemoveClaimsAsync(targetRole, targetRole.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
+				if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemoveClaims))
+				{
+					return ResponseNoData(509, $"Failed to update role's claims: {iresultRemoveClaims.ToString()} / Note: Role's data was updated.");
+				}
+			}
+			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetRole, claimsNew);
+			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
+			{
+				return ResponseNoData(509, $"Failed to update role's claims: {iresultAddClaims.ToString()} / Note: Role's data was updated.");
 			}
 		}
-		var iresultAdd = await identityRepository.AddClaimsAsync(role, claims);
-		if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAdd))
-		{
-			return ResponseNoData(500, $"Failed to update role's claims: {iresultAdd.ToString()}");
-		}
 
-		return ResponseOk(RoleResp.BuildFromRole(role));
+		return ResponseOk(RoleResp.BuildFromRole(targetRole));
 	}
 
 	/// <summary>

@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Bat.Blazor.App.Helpers;
+﻿using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
@@ -24,7 +23,7 @@ public partial class RolesModify
 	private IEnumerable<ClaimResp>? ClaimList { get; set; }
 	private IDictionary<string, bool> ClaimSelectedMap { get; set; } = new Dictionary<string, bool>();
 
-	private async Task<RoleResp?> LoadRole(string id, string authToken)
+	private async Task<RoleResp?> LoadRoleAsync(string id, string authToken)
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading role details. Please wait...");
@@ -37,7 +36,7 @@ public partial class RolesModify
 		return null;
 	}
 
-	private async Task<IEnumerable<ClaimResp>?> LoadClaims(string authToken)
+	private async Task<IEnumerable<ClaimResp>?> LoadAllClaimsAsync(string authToken)
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading claims. Please wait...");
@@ -60,7 +59,7 @@ public partial class RolesModify
 			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
 
-			SelectedRole = await LoadRole(Id, authToken ?? "");
+			SelectedRole = await LoadRoleAsync(Id, authToken ?? "");
 			if (SelectedRole == null)
 			{
 				return;
@@ -68,7 +67,7 @@ public partial class RolesModify
 			RoleName = SelectedRole?.Name ?? string.Empty;
 			RoleDescription = SelectedRole?.Description ?? string.Empty;
 
-			ClaimList = await LoadClaims(authToken ?? "");
+			ClaimList = await LoadAllClaimsAsync(authToken ?? "");
 			if (ClaimList == null)
 			{
 				return;

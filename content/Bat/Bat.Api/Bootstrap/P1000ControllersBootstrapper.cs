@@ -22,7 +22,7 @@ public class ControllersBootstrapper
 					return new BadRequestObjectResult(new ApiResp
 					{
 						Status = 400,
-						Message = "Bad request.",
+						Message = $"Bad request: {string.Join(", ", errors)}",
 						Extras = errors
 					});
 				};

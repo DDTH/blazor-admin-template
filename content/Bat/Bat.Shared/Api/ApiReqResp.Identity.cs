@@ -50,15 +50,19 @@ public struct UpdateUserProfileReq
 public struct CreateOrUpdateUserReq
 {
 	[JsonPropertyName("username")]
-	public string Username { get; set; }
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Username { get; set; }
 
 	[JsonPropertyName("email")]
-	public string Email { get; set; }
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Email { get; set; }
 
 	[JsonPropertyName("password")]
-	public string Password { get; set; }
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Password { get; set; }
 
 	[JsonPropertyName("given_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? GivenName { get; set; }
 
 	[JsonPropertyName("family_name")]
@@ -137,7 +141,8 @@ public struct ClaimResp
 public struct CreateOrUpdateRoleReq
 {
 	[JsonPropertyName("name")]
-	public string Name { get; set; }
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? Name { get; set; }
 
 	[JsonPropertyName("description")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
