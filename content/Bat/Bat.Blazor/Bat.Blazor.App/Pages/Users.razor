@@ -56,11 +56,11 @@
                                 {
                                     <tr>
                                         <th scope="row" class="text-center">@(++UserIndex)</th>
-                                        <td class="text-center">@item.Id</td>
-                                        <td class="text-center">@item.Username</td>
-                                        <td class="text-center">@item.Email</td>
-										<td class="text-center">@item.GivenName</td>
-										<td class="text-center">@item.FamilyName</td>
+                                        <td>@item.Id</td>
+                                        <td>@item.Username</td>
+                                        <td>@item.Email</td>
+										<td>@item.GivenName</td>
+										<td>@item.FamilyName</td>
                                         <td class="text-center">
                                             <button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
                                                 <CIcon icon="cil-info" />
@@ -165,21 +165,64 @@
 <CModal @ref="@ModalDialogDelete" title="Delete User" centered="false" type="danger" size="large">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Are you sure you want to delete user <strong>@(SelectedUser?.Username)</strong>?</h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Id: @(SelectedUser?.Id)</h6>
-            <p class="card-text">@(SelectedUser?.Email)</p>
-            @if (SelectedUser?.Claims is not null)
-            {
-                <p class="card-text">
-                    Claims:
-                    <ul>
-                        @foreach (var claim in SelectedUser?.Claims!)
-                        {
-                            <li>@claim.ClaimType: @claim.ClaimValue</li>
-                        }
-                    </ul>
-                </p>
-            }
+			<CAlert type="warning"><span class="h6">Are you sure you want to delete the following role?</span></CAlert>
+			<form>
+				<div class="form-floating mb-1">
+					<input type="text" class="form-control" id="userId" placeholder="Id" disabled value="@(SelectedUser?.Id)">
+					<label for="userId">Id</label>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="userName" placeholder="User name" disabled value="@(SelectedUser?.Username)">
+							<label for="userName">User name</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="userEmail" placeholder="Email" disabled value="@(SelectedUser?.Email)">
+							<label for="userEmail">Email</label>
+						</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="userFamilyName" placeholder="Family name" disabled value="@(SelectedUser?.FamilyName)">
+							<label for="userFamilyName">Family name</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="userGivenName" placeholder="Given name" disabled value="@(SelectedUser?.GivenName)">
+							<label for="userGivenName">Given name</label>
+						</div>
+					</div>
+				</div>
+				<hr />
+				<div class="row">
+					<div class="col-sm-6">
+						<label class="col-form-label col-form-label-sm">Roles:</label>
+						<ul class="list-unstyled">
+							@foreach (var role in SelectedUser?.Roles!)
+							{
+								<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
+							}
+						</ul>
+					</div>
+					<div class="col-sm-6">
+						<label class="col-form-label col-form-label-sm">Claims:</label>
+						<ul class="list-unstyled">
+							@foreach (var claim in SelectedUser?.Claims!)
+							{
+								<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
+							}
+						</ul>
+					</div>
+				</div>
+			</form>
+			<hr />
             <button type="button" class="btn btn-secondary" @onclick="() => ModalDialogDelete.Close()"><CIcon icon="x-circle" /> Cancel</button>
 			<button type="button" class="btn btn-danger" @onclick="() => BtnClickDeleteConfirm()"><CIcon icon="x" /> Delete</button>
         </div>

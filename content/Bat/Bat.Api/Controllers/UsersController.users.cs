@@ -350,7 +350,7 @@ public partial class UsersController
 		IAuthenticator? authenticator,
 		IAuthenticatorAsync? authenticatorAsync)
 	{
-		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
+		var (vAuthTokenResult, currentUser) = await VerifyAuthTokenAndCurrentUser(
 			identityRepository,
 			identityOptions.Value,
 			authenticator, authenticatorAsync);
@@ -364,6 +364,10 @@ public partial class UsersController
 		if (user == null)
 		{
 			return ResponseNoData(404, $"User '{id}' not found.");
+		}
+		if (user.Id.Equals(currentUser.Id, StringComparison.InvariantCulture))
+		{
+			return ResponseNoData(400, "You cannot delete yourself.");
 		}
 		var iresult = await identityRepository.DeleteAsync(user);
 		if (!iresult.Succeeded)

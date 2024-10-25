@@ -90,23 +90,22 @@ public partial class Users
 
 	private async void BtnClickDeleteConfirm()
 	{
-		await Task.Delay(1000);
 		ModalDialogDelete.Close();
 		HideUI = true;
 		ShowAlert("info", $"Deleting user '{SelectedUser?.Username}', please wait...");
-		// var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-		// var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		// var result = await ApiClient.DeleteUserAsync(SelectedUser?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
-		// HideUI = false;
-		// if (result.Status == 200)
-		// {
-		// 	await OnAfterRenderAsync(true);
-		// 	ShowAlert("success", $"User '{SelectedUser?.Username}' deleted successfully.");
-		// }
-		// else
-		// {
-		// 	ShowAlert("danger", result.Message ?? "Unknown error");
-		// }
+		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
+		var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+		var result = await ApiClient.DeleteUserAsync(SelectedUser?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
+		HideUI = false;
+		if (result.Status == 200)
+		{
+			await OnAfterRenderAsync(true);
+			ShowAlert("success", $"User '{SelectedUser?.Username}' deleted successfully.");
+		}
+		else
+		{
+			ShowAlert("danger", result.Message ?? "Unknown error");
+		}
 	}
 
 	private void BtnClickAdd()
