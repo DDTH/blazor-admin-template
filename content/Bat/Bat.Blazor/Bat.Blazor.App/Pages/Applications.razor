@@ -48,6 +48,7 @@
                                     <th scope="col" class="text-center">Name</th>
 									<th scope="col" class="text-center">Created At</th>
 									<th scope="col" class="text-center">Last Updated</th>
+									<th scope="col" class="text-center">RSA PubKey</th>
                                     <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -55,7 +56,7 @@
 							{
 								<tbody>
 									<tr>
-										<td colspan="6" class="text-center">No applications found.</td>
+										<td colspan="7" class="text-center">No applications found.</td>
 									</tr>
 								</tbody>
 							}
@@ -70,6 +71,14 @@
 											<td>@item.DisplayName</td>
 											<td class="text-center">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
 											<td class="text-center">@(item.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
+											@if (string.IsNullOrEmpty(item.PublicKeyPEM))
+											{
+												<td class="text-center">-</td>
+											}
+											else
+											{
+												<td class="text-center"><BIcon icon="bi-key" /></td>
+											}
 											<td class="text-center">
 												<button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
 													<CIcon icon="cil-info" />
@@ -122,6 +131,28 @@
 						<div class="form-floating mb-1">
 							<input type="text" class="form-control" id="appName" placeholder="Name" disabled value="@(SelectedApp?.DisplayName)">
 							<label for="appName">Name</label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appCreatedAt" placeholder="Created At" disabled value="@(SelectedApp?.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"))">
+							<label for="appCreatedAt">Created At</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appUpdatedAt" placeholder="Last Updated" disabled value="@(SelectedApp?.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")">
+							<label for="appUpdatedAt">Last Updated</label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-floating mb-1">
+							<textarea class="form-control" id="appPublicKey" placeholder="RSA Public Key" disabled style="height: 100px;">@(SelectedApp?.PublicKeyPEM)</textarea>
+							<label for="appPublicKey">RSA Public Key</label>
 						</div>
 					</div>
 				</div>

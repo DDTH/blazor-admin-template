@@ -1,8 +1,9 @@
 @using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
 @using Bat.Shared.Identity
+@using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_ADD)]
+@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_MODIFY)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -13,11 +14,11 @@
         <a href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Add New Application</span>
+        <span>Modify Application</span>
     </li>
 </SectionContent>
 
-<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM">
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
@@ -36,12 +37,12 @@
 					{
 						<form>
 							<div class="form-floating mb-2">
-								<input type="text" class="form-control" id="displayName" placeholder="Display Name" @bind-value="DisplayName">
-								<label for="displayName">Display Name (*)</label>
+								<input type="text" class="form-control" id="appName" placeholder="Application Name" @bind-value="AppName">
+								<label for="appName">Application Name</label>
 							</div>
 							<div class="form-floating mb-2">
 								<textarea type="text" class="form-control form-control-sm" id="publicKeyPem" placeholder="Public Key PEM" style="height: 256px"
-									@bind-value:event="oninput" @bind-value="PublicKeyPEM"></textarea>
+									@bind-value:event="oninput" @bind-value="AppPublicKeyPEM"></textarea>
 								<label for="publicKeyPem">RSA Public Key (in PEM format)</label>
 							</div>
 						</form>
@@ -51,7 +52,7 @@
 					<button class="btn btn-secondary" @onclick="(()=>BtnClickCancel())"><CIcon icon="cil-x-circle" /> Cancel</button>
 					@if (!HideUI)
 					{
-						<button class="btn btn-primary ms-2" @onclick="(()=>BtnClickCreate())"><CIcon icon="cil-save" /> Create Application</button>
+						<button class="btn btn-primary ms-2" @onclick="(()=>BtnClickSave())"><CIcon icon="cil-save" /> Save</button>
 					}
 				</div>
             </div>
@@ -66,7 +67,7 @@
 </AuthorizeView>
 
 @code {
-    private const string PAGE_TITLE = "Add New Application";
+    private const string PAGE_TITLE = "Modify Application";
     private string LoginUrl
     {
         get

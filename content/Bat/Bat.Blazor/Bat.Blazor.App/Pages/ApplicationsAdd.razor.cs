@@ -10,6 +10,7 @@ public partial class ApplicationsAdd
 {
 	private string AlertMessage { get; set; } = string.Empty;
 	private string AlertType { get; set; } = "info";
+	private bool HideUI { get; set; } = false;
 
 	private string DisplayName { get; set; } = string.Empty;
 	private string PublicKeyPEM { get; set; } = string.Empty;
@@ -28,11 +29,13 @@ public partial class ApplicationsAdd
 
 	private async Task BtnClickCreate()
 	{
+		HideUI = true;
 		ShowAlert("info", "Please wait...");
 
 		// Validate display name
 		if (string.IsNullOrWhiteSpace(DisplayName))
 		{
+			HideUI = false;
 			ShowAlert("warning", "Display name is required.");
 			return;
 		}
@@ -49,6 +52,7 @@ public partial class ApplicationsAdd
 			var resp = await ApiClient.CreateAppAsync(req, authToken, NavigationManager.BaseUri);
 			if (resp.Status != 200)
 			{
+				HideUI = false;
 				ShowAlert("danger", resp.Message!);
 				return;
 			}
