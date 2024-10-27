@@ -2,7 +2,6 @@
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Bat.Api.Controllers;
 
@@ -20,7 +19,6 @@ public partial class UsersController : ApiBaseController
 
 		var jwtToken = GetAuthToken();
 		var tokenValidationResult = await ValidateAuthTokenAsync(authenticator, authenticatorAsync, jwtToken!);
-		Console.WriteLine($"VerifyAuthTokenAndCurrentUser/ValidateAuthTokenAsync: {JsonSerializer.Serialize(tokenValidationResult)}");
 		if (tokenValidationResult.Status != 200)
 		{
 			// the auth token should still be valid

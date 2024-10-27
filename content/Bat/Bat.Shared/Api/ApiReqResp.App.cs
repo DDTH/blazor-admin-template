@@ -4,6 +4,20 @@ using Bat.Shared.Models;
 namespace Bat.Shared.Api;
 
 /// <summary>
+/// Request to create or update an application.
+/// </summary>
+public struct CreateOrUpdateAppReq
+{
+	[JsonPropertyName("display_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? DisplayName { get; set; }
+
+	[JsonPropertyName("public_key_pem")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? PublicKeyPEM { get; set; }
+}
+
+/// <summary>
 /// Response structure for APIs that return application information.
 /// </summary>
 public struct AppResp

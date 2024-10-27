@@ -11,11 +11,6 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		usingHttpClient = requestHttpClient ?? httpClient;
 	}
 
-	// private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken)
-	// {
-	// 	return BuildRequest(method, endpoint, authToken, null);
-	// }
-
 	private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken, object? requestData)
 	{
 		var req = new HttpRequestMessage(method, endpoint)
@@ -286,5 +281,63 @@ public class ApiClient(HttpClient httpClient) : IApiClient
 		);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
 		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/*----------------------------------------------------------------------*/
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<IEnumerable<AppResp>>> GetAllAppsAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS,
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<AppResp>>>(cancellationToken);
+		return result ?? new ApiResp<IEnumerable<AppResp>> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<AppResp>> GetAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
+		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<AppResp>> DeleteAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+			authToken,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
+		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<AppResp>> UpdateAppAsync(string id, CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+			authToken,
+			req,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
+		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
 	}
 }

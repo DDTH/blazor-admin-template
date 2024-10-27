@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Bat.Shared.Identity;
 
 namespace Bat.Shared.Api;

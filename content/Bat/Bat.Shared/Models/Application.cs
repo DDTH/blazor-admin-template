@@ -2,7 +2,6 @@
 
 public sealed class Application : Entity<string>
 {
-
 	/// <inheritdoc />
 	public override string Id { get; set; } = new Guid().ToString();
 

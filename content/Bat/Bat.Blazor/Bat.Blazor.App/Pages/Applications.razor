@@ -3,10 +3,8 @@
 @using Bat.Shared.Identity
 @using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_LIST)]
+@attribute [Route(UIGlobals.ROUTE_APPLICATIONS)]
 @inherits BaseComponent
-
-<PageTitle>Applications | @AppInfo?.Name</PageTitle>
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
     <li class="breadcrumb-item">
@@ -17,19 +15,153 @@
     </li>
 </SectionContent>
 
-<AuthorizeView>
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER">
     <Authorized>
+		<PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
             <div class="card border-top-3 mb-4">
                 <div class="card-header">
-                    <h4 class="card-title">Applications</h4>
+                    <h4 class="card-title">@PAGE_TITLE</h4>
                 </div>
                 <div class="card-body">
+					@if (!string.IsNullOrEmpty(AlertMessage))
+					{
+						<CAlert type="@AlertType">
+							@AlertMessage
+						</CAlert>
+					}
+					@if (!HideUI)
+					{
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+							<ChildContent Context="context1">
+								<button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New App</button>
+							</ChildContent>
+						</AuthorizeView>
+					}
+                    @if (AppList != null && !HideUI)
+                    {
+                        <table class="table table-sm table-bordered border-primary table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col" class="text-center">Id</th>
+                                    <th scope="col" class="text-center">Name</th>
+                                    <th scope="col" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+							@if (AppList.Count() == 0)
+							{
+								<tbody>
+									<tr>
+										<td colspan="4" class="text-center">No applications found.</td>
+									</tr>
+								</tbody>
+							}
+							else
+							{
+								<tbody>
+									@foreach (var item in AppList)
+									{
+										<tr>
+											<th scope="row" class="text-center">@(++AppIndex)</th>
+											<td>@item.Id</td>
+											<td>@item.DisplayName</td>
+											<td class="text-center">
+												<button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
+													<CIcon icon="cil-info" />
+												</button>
+												<button class="btn btn-sm btn-outline-info" @onclick="(()=>BtnClickModify(item.Id))">
+													<CIcon icon="cil-pencil" />
+												</button>
+												<button class="btn btn-sm btn-outline-danger" @onclick="(()=>BtnClickDelete(item.Id))">
+													<CIcon icon="cil-x" />
+												</button>
+											</td>
+										</tr>
+									}
+								</tbody>
+							}
+                        </table>
+                    }
+					@if (!HideUI)
+					{
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+							<ChildContent Context="context2">
+								<button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New App</button>
+							</ChildContent>
+						</AuthorizeView>
+					}
                 </div>
             </div>
         </div>
     </Authorized>
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
     <NotAuthorized>
-        <NotAuthorizedView PageTitle="@($"{AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" />
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
     </NotAuthorized>
 </AuthorizeView>
+
+<CModal @ref="@ModalDialogInfo" title="Application Information" centered="false" type="info" size="large">
+    <div class="card">
+        <div class="card-body">
+			<form>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appId" placeholder="Id" disabled value="@(SelectedApp?.Id)">
+							<label for="appId">Id</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appName" placeholder="Name" disabled value="@(SelectedApp?.DisplayName)">
+							<label for="appName">Name</label>
+						</div>
+					</div>
+				</div>
+			</form>
+			<hr />
+            <button type="button" class="btn btn-secondary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
+        </div>
+    </div>
+</CModal>
+
+<CModal @ref="@ModalDialogDelete" title="Delete Application" centered="false" type="danger" size="large">
+    <div class="card">
+        <div class="card-body">
+			<CAlert type="warning"><span class="h6">Are you sure you want to delete the following application?</span></CAlert>
+			<form>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appId" placeholder="Id" disabled value="@(SelectedApp?.Id)">
+							<label for="appId">Id</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appName" placeholder="Name" disabled value="@(SelectedApp?.DisplayName)">
+							<label for="appName">Name</label>
+						</div>
+					</div>
+				</div>
+			</form>
+			<hr />
+			<button type="button" class="btn btn-secondary" @onclick="() => ModalDialogDelete.Close()"><CIcon icon="x-circle" /> Cancel</button>
+			<button type="button" class="btn btn-danger" @onclick="() => BtnClickDeleteConfirm()"><CIcon icon="x" /> Delete</button>
+        </div>
+    </div>
+</CModal>
+
+@code {
+    private const string PAGE_TITLE = "Applications";
+    private string LoginUrl
+    {
+        get
+        {
+            return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
+        }
+    }
+}

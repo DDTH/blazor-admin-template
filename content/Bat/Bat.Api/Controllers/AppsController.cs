@@ -1,7 +1,9 @@
-﻿using Bat.Shared.Api;
+﻿using Bat.Api.Services;
+using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Bat.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bat.Api.Controllers;
@@ -24,5 +26,48 @@ public partial class AppsController : ApiBaseController
 			result.Add(AppResp.BuildFromApp(app));
 		}
 		return ResponseOk(apps);
+	}
+
+	/// <summary>
+	/// Creates a new application.
+	/// </summary>
+	/// <param name="req"></param>
+	/// <param name="applicationRepository"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
+	/// <returns></returns>
+	[HttpPost(IApiClient.API_ENDPOINT_APPS)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM)]
+	public async Task<ActionResult<ApiResp<AppResp>>> CreateApp(
+		[FromBody] CreateOrUpdateAppReq req,
+		IApplicationRepository applicationRepository,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
+	{
+		if (authenticator == null && authenticatorAsync == null)
+		{
+			throw new ArgumentNullException("No authenticator defined.");
+		}
+
+		var jwtToken = GetAuthToken();
+		var tokenValidationResult = await ValidateAuthTokenAsync(authenticator, authenticatorAsync, jwtToken!);
+		if (tokenValidationResult.Status != 200)
+		{
+			// the auth token should still be valid
+			return ResponseNoData(403, tokenValidationResult.Error);
+		}
+
+		if (string.IsNullOrWhiteSpace(req.DisplayName))
+		{
+			return ResponseNoData(400, "Display name is required.");
+		}
+
+		var app = new Application
+		{
+			DisplayName = req.DisplayName,
+			PublicKeyPEM = req.PublicKeyPEM
+		};
+		app = await applicationRepository.CreateAsync(app);
+		return ResponseOk(AppResp.BuildFromApp(app));
 	}
 }
