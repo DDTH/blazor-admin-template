@@ -1,9 +1,9 @@
-﻿using Bat.Api.Services;
+﻿using System.Security.Cryptography;
+using Bat.Api.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Bat.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bat.Api.Controllers;
@@ -25,7 +25,7 @@ public partial class AppsController : ApiBaseController
 		{
 			result.Add(AppResp.BuildFromApp(app));
 		}
-		return ResponseOk(apps);
+		return ResponseOk(result);
 	}
 
 	/// <summary>
@@ -57,15 +57,30 @@ public partial class AppsController : ApiBaseController
 			return ResponseNoData(403, tokenValidationResult.Error);
 		}
 
+		// Validate display name
 		if (string.IsNullOrWhiteSpace(req.DisplayName))
 		{
 			return ResponseNoData(400, "Display name is required.");
 		}
 
+		if (!string.IsNullOrWhiteSpace(req.PublicKeyPEM))
+		{
+			// Validate public key PEM
+			try
+			{
+				var rsa = new RSACryptoServiceProvider();
+				rsa.ImportFromPem(req.PublicKeyPEM);
+			}
+			catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException)
+			{
+				return ResponseNoData(400, $"Invalid RSA public key: {ex.Message}");
+			}
+		}
+
 		var app = new Application
 		{
-			DisplayName = req.DisplayName,
-			PublicKeyPEM = req.PublicKeyPEM
+			DisplayName = req.DisplayName.Trim(),
+			PublicKeyPEM = req.PublicKeyPEM?.Trim()
 		};
 		app = await applicationRepository.CreateAsync(app);
 		return ResponseOk(AppResp.BuildFromApp(app));

@@ -3,7 +3,7 @@
 public sealed class Application : Entity<string>
 {
 	/// <inheritdoc />
-	public override string Id { get; set; } = new Guid().ToString();
+	public override string Id { get; set; } = Guid.NewGuid().ToString();
 
 	/// <summary>
 	/// Application's display name.

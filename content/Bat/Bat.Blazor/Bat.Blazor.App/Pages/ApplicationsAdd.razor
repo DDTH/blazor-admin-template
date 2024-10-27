@@ -1,0 +1,71 @@
+@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using Bat.Shared.Identity
+
+@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_ADD)]
+@inherits BaseComponent
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+	<li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>Add New Application</span>
+    </li>
+</SectionContent>
+
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+    <Authorized>
+        <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
+        <div class="container-lg px-4">
+            <div class="card border-top-3 mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">@PAGE_TITLE</h4>
+                </div>
+                <div class="card-body">
+					@if (!string.IsNullOrEmpty(AlertMessage))
+					{
+						<CAlert type="@AlertType">
+							@AlertMessage
+						</CAlert>
+					}
+					<form>
+						<div class="form-floating mb-2">
+							<input type="text" class="form-control" id="displayName" placeholder="Display Name" @bind-value="DisplayName">
+							<label for="displayName">Display Name (*)</label>
+						</div>
+						<div class="form-floating mb-2">
+							<textarea type="text" class="form-control" id="publicKeyPem" placeholder="Public Key PEM" style="height: 256px"
+								@bind-value:event="oninput" @bind-value="PublicKeyPEM"></textarea>
+							<label for="publicKeyPem">RSA Public Key (in PEM format)</label>
+						</div>
+					</form>
+                </div>
+				<div class="card-footer">
+					<button class="btn btn-secondary" @onclick="(()=>BtnClickCancel())"><CIcon icon="cil-x-circle" /> Cancel</button>
+					<button class="btn btn-primary" @onclick="(()=>BtnClickCreate())"><CIcon icon="cil-save" /> Create Application</button>
+				</div>
+            </div>
+        </div>
+    </Authorized>
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private const string PAGE_TITLE = "Add New Application";
+    private string LoginUrl
+    {
+        get
+        {
+            return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
+        }
+    }
+}

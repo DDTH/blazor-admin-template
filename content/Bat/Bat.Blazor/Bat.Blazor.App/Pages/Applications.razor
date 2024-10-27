@@ -46,6 +46,8 @@
                                     <th scope="col" class="text-center">#</th>
                                     <th scope="col" class="text-center">Id</th>
                                     <th scope="col" class="text-center">Name</th>
+									<th scope="col" class="text-center">Created At</th>
+									<th scope="col" class="text-center">Last Updated</th>
                                     <th scope="col" class="text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -53,7 +55,7 @@
 							{
 								<tbody>
 									<tr>
-										<td colspan="4" class="text-center">No applications found.</td>
+										<td colspan="6" class="text-center">No applications found.</td>
 									</tr>
 								</tbody>
 							}
@@ -66,6 +68,8 @@
 											<th scope="row" class="text-center">@(++AppIndex)</th>
 											<td>@item.Id</td>
 											<td>@item.DisplayName</td>
+											<td class="text-center">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+											<td class="text-center">@(item.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
 											<td class="text-center">
 												<button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
 													<CIcon icon="cil-info" />
