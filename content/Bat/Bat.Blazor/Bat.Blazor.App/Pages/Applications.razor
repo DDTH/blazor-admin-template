@@ -151,7 +151,7 @@
 				<div class="row">
 					<div class="col-sm-12">
 						<div class="form-floating mb-1">
-							<textarea class="form-control" id="appPublicKey" placeholder="RSA Public Key" disabled style="height: 100px;">@(SelectedApp?.PublicKeyPEM)</textarea>
+							<textarea class="form-control form-control-sm" id="appPublicKey" placeholder="RSA Public Key" disabled style="height: 100px;">@(SelectedApp?.PublicKeyPEM)</textarea>
 							<label for="appPublicKey">RSA Public Key</label>
 						</div>
 					</div>
@@ -179,6 +179,28 @@
 						<div class="form-floating mb-1">
 							<input type="text" class="form-control" id="appName" placeholder="Name" disabled value="@(SelectedApp?.DisplayName)">
 							<label for="appName">Name</label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appCreatedAt" placeholder="Created At" disabled value="@(SelectedApp?.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss"))">
+							<label for="appCreatedAt">Created At</label>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="appUpdatedAt" placeholder="Last Updated" disabled value="@(SelectedApp?.UpdatedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")">
+							<label for="appUpdatedAt">Last Updated</label>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="form-floating mb-1">
+							<textarea class="form-control form-control-sm" id="appPublicKey" placeholder="RSA Public Key" disabled style="height: 100px;">@(SelectedApp?.PublicKeyPEM)</textarea>
+							<label for="appPublicKey">RSA Public Key</label>
 						</div>
 					</div>
 				</div>

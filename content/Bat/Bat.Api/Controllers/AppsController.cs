@@ -167,4 +167,47 @@ public partial class AppsController : ApiBaseController
 		}
 		return ResponseOk(AppResp.BuildFromApp(app));
 	}
+
+	/// <summary>
+	/// Deletes an existing application.
+	/// </summary>
+	/// <param name="id"></param>
+	/// <param name="applicationRepository"></param>
+	/// <param name="authenticator"></param>
+	/// <param name="authenticatorAsync"></param>
+	/// <returns></returns>
+	[HttpDelete(IApiClient.API_ENDPOINT_APPS_ID)]
+	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
+	public async Task<ActionResult<ApiResp<AppResp>>> DeleteApp(
+		[FromRoute] string id,
+		IApplicationRepository applicationRepository,
+		IAuthenticator? authenticator,
+		IAuthenticatorAsync? authenticatorAsync)
+	{
+		if (authenticator == null && authenticatorAsync == null)
+		{
+			throw new ArgumentNullException("No authenticator defined.");
+		}
+
+		var jwtToken = GetAuthToken();
+		var tokenValidationResult = await ValidateAuthTokenAsync(authenticator, authenticatorAsync, jwtToken!);
+		if (tokenValidationResult.Status != 200)
+		{
+			// the auth token should still be valid
+			return ResponseNoData(403, tokenValidationResult.Error);
+		}
+
+		var app = await applicationRepository.GetByIDAsync(id);
+		if (app == null)
+		{
+			return ResponseNoData(404, $"Application '{id}' not found.");
+		}
+
+		var resultDelete = await applicationRepository.DeleteAsync(app);
+		if (!resultDelete)
+		{
+			return ResponseNoData(500, $"Failed to delete application '{id}'.");
+		}
+		return ResponseOk(AppResp.BuildFromApp(app));
+	}
 }

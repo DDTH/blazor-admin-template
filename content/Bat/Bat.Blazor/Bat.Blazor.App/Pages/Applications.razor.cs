@@ -89,23 +89,22 @@ public partial class Applications
 
 	private async void BtnClickDeleteConfirm()
 	{
-		await Task.Delay(1000);
-		// ModalDialogDelete.Close();
-		// HideUI = true;
-		// ShowAlert("info", $"Deleting application '{SelectedApp?.DisplayName}', please wait...");
-		// var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-		// var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		// var result = await ApiClient.DeleteAppAsync(SelectedApp?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
-		// HideUI = false;
-		// if (result.Status == 200)
-		// {
-		// 	await OnAfterRenderAsync(true);
-		// 	ShowAlert("success", $"Application '{SelectedApp?.DisplayName}' deleted successfully.");
-		// }
-		// else
-		// {
-		// 	ShowAlert("danger", result.Message ?? "Unknown error");
-		// }
+		ModalDialogDelete.Close();
+		HideUI = true;
+		ShowAlert("info", $"Deleting application '{SelectedApp?.DisplayName}', please wait...");
+		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
+		var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+		var result = await ApiClient.DeleteAppAsync(SelectedApp?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
+		HideUI = false;
+		if (result.Status == 200)
+		{
+			await OnAfterRenderAsync(true);
+			ShowAlert("success", $"Application '{SelectedApp?.DisplayName}' deleted successfully.");
+		}
+		else
+		{
+			ShowAlert("danger", result.Message ?? "Unknown error");
+		}
 	}
 
 	private void BtnClickAdd()

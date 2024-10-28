@@ -31,11 +31,21 @@ public abstract class Entity<TKey> where TKey : IEquatable<TKey>
 		ConcurrencyStamp = Guid.NewGuid().ToString();
 	}
 
+	/// <inheritdoc/>
 	public override bool Equals(object? obj) => obj is Entity<TKey> other
 		&& (ReferenceEquals(this, other) || EqualityComparer<TKey>.Default.Equals(Id, other.Id));
 
+	/// <inheritdoc/>
 	public override int GetHashCode()
 	{
 		return Id.GetHashCode();
+	}
+
+	/// <summary>
+	/// Clones the entity.
+	/// </summary>
+	public virtual Entity<TKey> Clone()
+	{
+		return (Entity<TKey>)MemberwiseClone();
 	}
 }
