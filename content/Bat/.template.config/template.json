@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "btnguyen2k <btnguyen2k at gmail>",
+  "classifications": [ "Blazor", "Admin Template", "AdminCP", "Web API", "WebAPI", "API", "Web Assembly", "WebAssembly", "WASM" ],
+  "identity": "WebAPITemplate",
+  "groupIdentity": "Ddth",
+  "name": "Blazor Admin Template",
+  "shortName": "bat",
+  "sourceName": "Bat",
+  "exclude": [ "**/[Bb]in/**", "**/[Oo]bj/**", ".template.config/**/*", "**/*.filelist", "**/*.user", "**/*.lock.json", ".vs/**/*" ],
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  }
+}
