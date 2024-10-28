@@ -31,8 +31,8 @@ WORKDIR /app
 ARG BASENAME="Bat"
 
 COPY --from=build /app ./
-COPY ${BASENAME}.Api/config ./config
-COPY ${BASENAME}.Api/data ./data
+COPY ${BASENAME}.Blazor/${BASENAME}.Blazor/config ./config
+COPY ${BASENAME}.Blazor/${BASENAME}.Blazor/data ./data
 
 # Create a non-privileged user that the app will run under.
 # See https://docs.docker.com/go/dockerfile-user-best-practices/
