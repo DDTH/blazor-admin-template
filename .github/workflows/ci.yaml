@@ -170,6 +170,38 @@ jobs:
           dockerfile: ${{ env.TEMPLATE_ROOT }}/Dockerfile.win
           directory: ${{ env.TEMPLATE_ROOT }}/
 
+  PublishDockerImageLinux:
+    if: needs.ReleaseDryRun.outputs.RESULT == 'SUCCESS'
+    needs: [ReleaseDryRun, TestDockerfileLinuxTemplate]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platforms: [ 'linux/amd64', 'linux/arm64' ]
+    name: Publishing Docker image(s) - Linux - Non-release Branch
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PAT }}
+      - name: Build Docker image for ${{ matrix.platforms }}
+        env:
+          VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.platforms }}
+          push: true
+          tags:
+            - ${{ secrets.DOCKER_HUB_USER }}/bat:${{ env.VERSION }}-dev
+            - ${{ secrets.DOCKER_HUB_USER }}/bat:dev
+            - ${{ secrets.DOCKER_HUB_USER }}/bat:latest
+          file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
+          context: ${{ env.TEMPLATE_ROOT }}
+
   TestGenerateSolutionLinux:
     runs-on: ubuntu-latest
     needs: [BuildAndTestTemplate, TestDockerfileLinuxTemplate]
