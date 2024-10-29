@@ -94,7 +94,6 @@ public partial class UsersAdd
 		{
 			ClaimSelectedMap.Add(claim, true);
 		}
-		Console.WriteLine($"[DEBUG] ClaimSelectedMap: {string.Join(", ", ClaimSelectedMap.Select(kvp => $"{kvp.Key}:{kvp.Value}"))}");
 	}
 
 	private void OnRoleChanged(string roleId)
@@ -107,7 +106,6 @@ public partial class UsersAdd
 		{
 			RoleSelectedMap.Add(roleId, true);
 		}
-		Console.WriteLine($"[DEBUG] RoleSelectedMap: {string.Join(", ", RoleSelectedMap.Select(kvp => $"{kvp.Key}:{kvp.Value}"))}");
 	}
 
 	private void BtnClickCancel()

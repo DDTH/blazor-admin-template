@@ -4,14 +4,14 @@
 @attribute [Route(UIGlobals.ROUTE_PROFILE)]
 @inherits BaseComponent
 
-<PageTitle>Profile | @AppInfo?.Name</PageTitle>
+<PageTitle>@PAGE_TITLE | @AppInfo?.Name</PageTitle>
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
     <li class="breadcrumb-item">
         <a href="@UIGlobals.ROUTE_HOME">Home</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Profile</span>
+        <span>@PAGE_TITLE</span>
     </li>
 </SectionContent>
 
@@ -111,3 +111,7 @@
         </div>
     </div>
 </div>
+
+@code {
+    private const string PAGE_TITLE = "Profile";
+}

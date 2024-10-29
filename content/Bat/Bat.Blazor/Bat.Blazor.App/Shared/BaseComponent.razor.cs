@@ -39,6 +39,11 @@ public abstract class BaseComponent : ComponentBase
 	protected virtual string ApiBaseUrl => Layout.ApiBaseUrl;
 
 	/// <summary>
+	/// Convenience property to construct the login url that will redirect to the current page after login.
+	/// </summary>
+	protected virtual string LoginUrl => $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
+
+	/// <summary>
 	/// Convenience method to obtain the authentication token from local storage.
 	/// </summary>
 	/// <returns>The authentication token, or an empty string if not found.</returns>

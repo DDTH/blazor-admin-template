@@ -11,13 +11,7 @@ public partial class AuthRequiredLayout : BaseLayout
 
 	protected virtual IEnumerable<Claim> UserClaims { get; set; } = [];
 
-	private string LoginUrl
-	{
-		get
-		{
-			return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
-		}
-	}
+	private string LoginUrl => $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -29,13 +23,11 @@ public partial class AuthRequiredLayout : BaseLayout
 	{
 		if (AuthState != null)
 		{
-			Console.WriteLine($"[DEBUG] AuthRequiredLayout/OnAfterRenderAsync - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...");
 			var authState = await AuthState;
 			if (authState?.User?.Identity?.IsAuthenticated ?? false)
 			{
 				UserClaims = authState.User.Claims;
 			}
-			Console.WriteLine($"[DEBUG] AuthRequiredLayout/OnAfterRenderAsync - {IsBrowser} / AuthRequiredLayout.OnAfterRenderAsync: validating auth stage...DONE.");
 		}
 		await base.OnAfterRenderAsync(firstRender);
 		// Add your logic here

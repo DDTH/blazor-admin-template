@@ -16,10 +16,8 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 	{
 		using (var scope = serviceProvider.CreateScope())
 		{
-			var isBrowser = OperatingSystem.IsBrowser();
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync - {isBrowser} / authToken: {authToken}");
 			if (!string.IsNullOrEmpty(authToken))
 			{
 				try
@@ -28,10 +26,10 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 					var principles = jwtService.ValidateToken(authToken, out _);
 					if (principles != null)
 					{
-						principles.Claims.ToList().ForEach(c => Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync/User claim: {c.Type} = {c.Value}"));
+						// principles.Claims.ToList().ForEach(c => Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync/User claim: {c.Type} = {c.Value}"));
 						return new(principles);
 					}
-				} catch (Exception ex) when (ex is SecurityTokenException)
+				} catch (Exception ex) when (ex is SecurityTokenException or SecurityTokenArgumentException)
 				{
 				}
 			}

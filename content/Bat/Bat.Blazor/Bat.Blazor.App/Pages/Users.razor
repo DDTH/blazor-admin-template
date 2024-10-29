@@ -10,11 +10,17 @@
         <a href="@UIGlobals.ROUTE_HOME">Home</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Users</span>
+        <span>@PAGE_TITLE</span>
     </li>
 </SectionContent>
 
 <AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER">
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
@@ -88,154 +94,147 @@
                 </div>
             </div>
         </div>
+
+		<CModal @ref="@ModalDialogInfo" title="User Information" centered="false" type="info" size="large">
+			<div class="card">
+				<div class="card-body">
+					<form>
+						<div class="row mb-1">
+							<label for="inputId" class="col-sm-2 col-form-label col-form-label-sm">Id</label>
+							<div class="col-sm">
+								<input type="text" class="form-control form-control-sm" id="inputId" disabled value="@(SelectedUser?.Id)">
+							</div>
+						</div>
+						<div class="row mb-1">
+							<label for="inputUsername" class="col-sm-2 col-form-label col-form-label-sm">User name</label>
+							<div class="col-sm">
+								<input type="text" class="form-control form-control-sm" id="inputUsername" disabled value="@(SelectedUser?.Username)">
+							</div>
+							<label for="inputEmail" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
+							<div class="col-sm">
+								<input type="email" class="form-control form-control-sm" id="inputEmail" disabled value="@(SelectedUser?.Email)">
+							</div>
+						</div>
+						<hr />
+						<div class="row mb-1">
+							<label for="inputFamilyName" class="col-sm-2 col-form-label col-form-label-sm">Family name</label>
+							<div class="col-sm">
+								<input type="text" class="form-control form-control-sm" id="inputFamilyName" disabled value="@(SelectedUser?.FamilyName)">
+							</div>
+							<label for="inputGivenName" class="col-sm-2 col-form-label col-form-label-sm">Given name</label>
+							<div class="col-sm">
+								<input type="text" class="form-control form-control-sm" id="inputGivenName" disabled value="@(SelectedUser?.GivenName)">
+							</div>
+						</div>
+						<hr />
+						<div class="row mb-1">
+							<div class="col-sm-6">
+								@if (SelectedUser?.Roles is not null)
+								{
+									<label class="col-form-label col-form-label-sm">Roles:</label>
+									<ul class="list-unstyled">
+										@foreach (var role in SelectedUser?.Roles!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
+										}
+									</ul>
+								}
+							</div>
+							<div class="col-sm-6">
+								@if (SelectedUser?.Claims is not null)
+								{
+									<label class="col-form-label col-form-label-sm">Claims:</label>
+									<ul class="list-unstyled">
+										@foreach (var claim in SelectedUser?.Claims!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
+										}
+									</ul>
+								}
+							</div>
+						</div>
+					</form>
+					<hr />
+					<button type="button" class="btn btn-secondary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
+				</div>
+			</div>
+		</CModal>
+
+		<CModal @ref="@ModalDialogDelete" title="Delete User" centered="false" type="danger" size="large">
+			<div class="card">
+				<div class="card-body">
+					<CAlert type="warning"><span class="h6">Are you sure you want to delete the following role?</span></CAlert>
+					<form>
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="userId" placeholder="Id" disabled value="@(SelectedUser?.Id)">
+							<label for="userId">Id</label>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="userName" placeholder="User name" disabled value="@(SelectedUser?.Username)">
+									<label for="userName">User name</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="userEmail" placeholder="Email" disabled value="@(SelectedUser?.Email)">
+									<label for="userEmail">Email</label>
+								</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="userFamilyName" placeholder="Family name" disabled value="@(SelectedUser?.FamilyName)">
+									<label for="userFamilyName">Family name</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="userGivenName" placeholder="Given name" disabled value="@(SelectedUser?.GivenName)">
+									<label for="userGivenName">Given name</label>
+								</div>
+							</div>
+						</div>
+						<hr />
+						<div class="row">
+							<div class="col-sm-6">
+								@if (SelectedUser?.Roles is not null)
+								{
+									<label class="col-form-label col-form-label-sm">Roles:</label>
+									<ul class="list-unstyled">
+										@foreach (var role in SelectedUser?.Roles!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
+										}
+									</ul>
+								}
+							</div>
+							<div class="col-sm-6">
+								@if (SelectedUser?.Claims is not null)
+								{
+									<label class="col-form-label col-form-label-sm">Claims:</label>
+									<ul class="list-unstyled">
+										@foreach (var claim in SelectedUser?.Claims!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
+										}
+									</ul>
+								}
+							</div>
+						</div>
+					</form>
+					<hr />
+					<button type="button" class="btn btn-secondary" @onclick="() => ModalDialogDelete.Close()"><CIcon icon="x-circle" /> Cancel</button>
+					<button type="button" class="btn btn-danger" @onclick="() => BtnClickDeleteConfirm()"><CIcon icon="x" /> Delete</button>
+				</div>
+			</div>
+		</CModal>
     </Authorized>
-    <Authorizing>
-        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
-    </Authorizing>
-    <NotAuthorized>
-        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
-    </NotAuthorized>
 </AuthorizeView>
-
-<CModal @ref="@ModalDialogInfo" title="User Information" centered="false" type="info" size="large">
-    <div class="card">
-        <div class="card-body">
-			<form>
-				<div class="row mb-1">
-					<label for="inputId" class="col-sm-2 col-form-label col-form-label-sm">Id</label>
-					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputId" disabled value="@(SelectedUser?.Id)">
-					</div>
-				</div>
-				<div class="row mb-1">
-					<label for="inputUsername" class="col-sm-2 col-form-label col-form-label-sm">User name</label>
-					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputUsername" disabled value="@(SelectedUser?.Username)">
-					</div>
-					<label for="inputEmail" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
-					<div class="col-sm">
-						<input type="email" class="form-control form-control-sm" id="inputEmail" disabled value="@(SelectedUser?.Email)">
-					</div>
-				</div>
-				<hr />
-				<div class="row mb-1">
-					<label for="inputFamilyName" class="col-sm-2 col-form-label col-form-label-sm">Family name</label>
-					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputFamilyName" disabled value="@(SelectedUser?.FamilyName)">
-					</div>
-					<label for="inputGivenName" class="col-sm-2 col-form-label col-form-label-sm">Given name</label>
-					<div class="col-sm">
-						<input type="text" class="form-control form-control-sm" id="inputGivenName" disabled value="@(SelectedUser?.GivenName)">
-					</div>
-				</div>
-				<hr />
-				<div class="row mb-1">
-					<div class="col-sm-6">
-						@if (SelectedUser?.Roles is not null)
-						{
-							<label class="col-form-label col-form-label-sm">Roles:</label>
-							<ul class="list-unstyled">
-								@foreach (var role in SelectedUser?.Roles!)
-								{
-									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
-								}
-							</ul>
-						}
-					</div>
-					<div class="col-sm-6">
-						@if (SelectedUser?.Claims is not null)
-						{
-							<label class="col-form-label col-form-label-sm">Claims:</label>
-							<ul class="list-unstyled">
-								@foreach (var claim in SelectedUser?.Claims!)
-								{
-									<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
-								}
-							</ul>
-						}
-					</div>
-				</div>
-			</form>
-			<hr />
-            <button type="button" class="btn btn-secondary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
-        </div>
-    </div>
-</CModal>
-
-<CModal @ref="@ModalDialogDelete" title="Delete User" centered="false" type="danger" size="large">
-    <div class="card">
-        <div class="card-body">
-			<CAlert type="warning"><span class="h6">Are you sure you want to delete the following role?</span></CAlert>
-			<form>
-				<div class="form-floating mb-1">
-					<input type="text" class="form-control" id="userId" placeholder="Id" disabled value="@(SelectedUser?.Id)">
-					<label for="userId">Id</label>
-				</div>
-				<div class="row">
-					<div class="col-sm-6">
-						<div class="form-floating mb-1">
-							<input type="text" class="form-control" id="userName" placeholder="User name" disabled value="@(SelectedUser?.Username)">
-							<label for="userName">User name</label>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-floating mb-1">
-							<input type="text" class="form-control" id="userEmail" placeholder="Email" disabled value="@(SelectedUser?.Email)">
-							<label for="userEmail">Email</label>
-						</div>
-					</div>
-				</div>
-				<hr />
-				<div class="row">
-					<div class="col-sm-6">
-						<div class="form-floating mb-1">
-							<input type="text" class="form-control" id="userFamilyName" placeholder="Family name" disabled value="@(SelectedUser?.FamilyName)">
-							<label for="userFamilyName">Family name</label>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="form-floating mb-1">
-							<input type="text" class="form-control" id="userGivenName" placeholder="Given name" disabled value="@(SelectedUser?.GivenName)">
-							<label for="userGivenName">Given name</label>
-						</div>
-					</div>
-				</div>
-				<hr />
-				<div class="row">
-					<div class="col-sm-6">
-						<label class="col-form-label col-form-label-sm">Roles:</label>
-						<ul class="list-unstyled">
-							@foreach (var role in SelectedUser?.Roles!)
-							{
-								<li class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> <abbr title="@role.Description">@role.Name</abbr></li>
-							}
-						</ul>
-					</div>
-					<div class="col-sm-6">
-						<label class="col-form-label col-form-label-sm">Claims:</label>
-						<ul class="list-unstyled">
-							@foreach (var claim in SelectedUser?.Claims!)
-							{
-								<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> @claim.ClaimType:@claim.ClaimValue</li>
-							}
-						</ul>
-					</div>
-				</div>
-			</form>
-			<hr />
-            <button type="button" class="btn btn-secondary" @onclick="() => ModalDialogDelete.Close()"><CIcon icon="x-circle" /> Cancel</button>
-			<button type="button" class="btn btn-danger" @onclick="() => BtnClickDeleteConfirm()"><CIcon icon="x" /> Delete</button>
-        </div>
-    </div>
-</CModal>
 
 @code {
     private const string PAGE_TITLE = "Users";
-    private string LoginUrl
-    {
-        get
-        {
-            return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
-        }
-    }
 }

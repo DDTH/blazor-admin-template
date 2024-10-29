@@ -14,11 +14,17 @@
         <a href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a>
     </li>
     <li class="breadcrumb-item active">
-        <span>Modify Application</span>
+        <span>@PAGE_TITLE</span>
     </li>
 </SectionContent>
 
 <AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM">
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
@@ -58,21 +64,8 @@
             </div>
         </div>
     </Authorized>
-    <Authorizing>
-        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
-    </Authorizing>
-    <NotAuthorized>
-        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
-    </NotAuthorized>
 </AuthorizeView>
 
 @code {
     private const string PAGE_TITLE = "Modify Application";
-    private string LoginUrl
-    {
-        get
-        {
-            return $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
-        }
-    }
 }
