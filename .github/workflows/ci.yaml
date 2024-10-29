@@ -196,9 +196,7 @@ jobs:
           platforms: ${{ matrix.platforms }}
           push: true
           tags:
-            - ${{ secrets.DOCKER_HUB_USER }}/bat:${{ env.VERSION }}-dev
-            - ${{ secrets.DOCKER_HUB_USER }}/bat:dev
-            - ${{ secrets.DOCKER_HUB_USER }}/bat:latest
+            - btnguyen2k/bat:dev
           file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
           context: ${{ env.TEMPLATE_ROOT }}
 
