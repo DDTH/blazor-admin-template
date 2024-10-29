@@ -213,7 +213,7 @@ jobs:
           outputs: type=image,name=${{ env.DOCKER_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
           context: ${{ env.TEMPLATE_ROOT }}
-          # tags: dev, ${{ env.VERSION }}-dev
+          tags: ${{ env.DOCKER_IMAGE }}:dev, ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
