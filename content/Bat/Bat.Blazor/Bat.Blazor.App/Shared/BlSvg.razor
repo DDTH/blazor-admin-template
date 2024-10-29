@@ -1,0 +1,34 @@
+﻿@namespace Bat.Blazor.App.Shared
+
+<!--
+Razor component to render SVG images in Blazor components
+-->
+
+<svg class="@className" style="@style" alt="@alt" width="@width" height="@height">
+    @ImgMarkupString
+</svg>
+
+@code {
+    [Parameter]
+    public string url { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? className { get; set; } = null;
+
+    [Parameter]
+    public string? style { get; set; } = null;
+
+    [Parameter]
+    public string? alt { get; set; } = null;
+
+    [Parameter]
+    public int? width { get; set; } = null;
+
+    [Parameter]
+    public int? height { get; set; } = null;
+
+    private MarkupString ImgMarkupString
+    {
+        get => new MarkupString($"<use xlink:href=\"{url}\"></use>");
+    }
+}

@@ -1,0 +1,65 @@
+﻿@namespace Bat.Blazor.App.Shared
+
+<!--
+Razor component to render CoreUI alert. Ref: https://coreui.io/bootstrap/docs/components/alerts/
+
+Sample usage:
+    <CAlert type="info">
+        <span>Alert body text goes here.</span>
+    </CAlert>
+-->
+
+<div class="alert @alertClass d-flex align-items-center" role="alert">
+    <BIcon icon="@icon" extraClassName="@iconClass"/>
+    <div>
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Alert type, one of "info", "warning", "danger", "success", "primary", "secondary". Default is "info".
+    /// The alert will display an icon corresponding to the type. The icon is taken from Bootstrap Icons.
+    /// </summary>
+    [Parameter]
+    public string type { get; set; } = "info";
+
+    // property name must be ChildContent
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = default!;
+
+    private string icon
+    {
+        get => type.ToLower() switch
+        {
+            "warning" => "bi-exclamation-triangle",
+            "danger" => "x-circle-fill",
+            "success" => "check-circle",
+            _ => "bi-info-circle"
+        };
+    }
+    private string iconClass
+    {
+        get => type.ToLower() switch
+        {
+            "warning" => "flex-shrink-0 me-2 text-warning",
+            "danger" => "flex-shrink-0 me-2 text-danger",
+            "success" => "flex-shrink-0 me-2 text-success",
+            "primary" => "flex-shrink-0 me-2 text-primary",
+            "secondary" => "flex-shrink-0 me-2 text-secondary",
+            _ => "flex-shrink-0 me-2 text-info"
+        };
+    }
+    private string alertClass
+    {
+        get => type.ToLower() switch
+        {
+            "warning" => "alert-warning",
+            "danger" => "alert-danger",
+            "success" => "alert-success",
+            "primary" => "alert-primary",
+            "secondary" => "alert-secondary",
+            _ => "alert-info"
+        };
+    }
+}

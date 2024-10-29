@@ -1,0 +1,46 @@
+# Please see the documentation for all configuration options:
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Shared"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Shared.EF"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Api"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Blazor/Bat.Blazor"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Blazor/Bat.Blazor.App"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "nuget"
+    directory: "/content/Bat/Bat.Blazor/Bat.Blazor.Client"
+    schedule:
+      interval: "weekly"
+      day: "saturday"

@@ -1,0 +1,32 @@
+﻿@using Bat.Blazor.App.Shared
+﻿
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Bat.Blazor.App._Imports).Assembly }">
+        <Found Context="routeData">
+            <!--<RouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)" />-->
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)">
+                <NotAuthorized>
+                    <PageTitle>Not authorized</PageTitle>
+                    <LayoutView Layout="typeof(Bat.Blazor.App.Layout.MainLayout)">
+                        <div class="container">
+                            <CAlert type="danger">
+                                <span>You are not authorized to access this page.</span>
+                            </CAlert>
+                        </div>
+                    </LayoutView>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <!--<FocusOnNavigate RouteData="routeData" Selector="h1" />-->
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="typeof(Bat.Blazor.App.Layout.MainLayout)">
+                <div class="container">
+                    <CAlert type="danger">
+                        <span>Sorry, there's nothing at this address.</span>
+                    </CAlert>
+                </div>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

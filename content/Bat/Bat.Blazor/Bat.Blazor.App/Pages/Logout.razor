@@ -1,0 +1,11 @@
+﻿@using Bat.Blazor.App.Shared
+
+@attribute [Route(UIGlobals.ROUTE_LOGOUT)]
+@layout Layout.Empty
+@inherits BaseComponent
+
+<PageTitle>Logout | @AppInfo?.Name</PageTitle>
+
+<CAlert type="info">
+    @Message
+</CAlert>

@@ -1,0 +1,12 @@
+﻿<PageTitle>@PageTitle</PageTitle>
+
+<div class="container">
+    <CAlert type="info">
+        <span>Please wait...</span>
+    </CAlert>
+</div>
+
+@code {
+    [Parameter]
+    public string PageTitle { get; set; } = "Authorizing...";
+}

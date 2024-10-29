@@ -1,0 +1,188 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using Bat.Shared.Identity
+
+@attribute [Route(UIGlobals.ROUTE_IDENTITY_ROLES)]
+@inherits BaseComponent
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>@PAGE_TITLE</span>
+    </li>
+</SectionContent>
+
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER">
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
+    <Authorized>
+        <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
+        <div class="container-lg px-4">
+            <div class="card border-top-3 mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">@PAGE_TITLE</h4>
+                </div>
+                <div class="card-body">
+					@if (!string.IsNullOrEmpty(AlertMessage))
+					{
+						<CAlert type="@AlertType">
+							@AlertMessage
+						</CAlert>
+					}
+					@if (!HideUI)
+					{
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+							<ChildContent Context="context1">
+								<button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+							</ChildContent>
+						</AuthorizeView>
+					}
+                    @if (RoleList != null && !HideUI)
+                    {
+                        <table class="table table-sm table-bordered border-primary table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col" class="text-center">Id</th>
+                                    <th scope="col" class="text-center">Name</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in RoleList)
+                                {
+                                    <tr>
+                                        <th scope="row" class="text-center">@(++RoleIndex)</th>
+                                        <td>@item.Id</td>
+                                        <td>@item.Name</td>
+                                        <td>@item.Description</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
+                                                <CIcon icon="cil-info" />
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" @onclick="(()=>BtnClickModify(item.Id))">
+                                                <CIcon icon="cil-pencil" />
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="(()=>BtnClickDelete(item.Id))">
+                                                <CIcon icon="cil-x" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+					@if (!HideUI)
+					{
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_ROLE_PERM">
+							<ChildContent Context="context2">
+								<button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New Role</button>
+							</ChildContent>
+						</AuthorizeView>
+					}
+                </div>
+            </div>
+        </div>
+
+		<CModal @ref="@ModalDialogInfo" title="Role Information" centered="false" type="info" size="large">
+			<div class="card">
+				<div class="card-body">
+					<form>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="roleId" placeholder="Id" disabled value="@(SelectedRole?.Id)">
+									<label for="roleId">Id</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="roleName" placeholder="Name" disabled value="@(SelectedRole?.Name)">
+									<label for="roleName">Name</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="roleDescription" placeholder="Description" disabled value="@(SelectedRole?.Description)">
+							<label for="roleDescription">Description</label>
+						</div>
+						@if (SelectedRole?.Claims is not null)
+						{
+							<hr />
+							<div class="row mb-1">
+								<div class="col-sm">
+									<label class="col-form-label col-form-label-sm">Claims:</label>
+									<ul class="list-unstyled">
+										@foreach (var claim in SelectedRole?.Claims!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check"/> @claim.ClaimType:@claim.ClaimValue</li>
+										}
+									</ul>
+								</div>
+							</div>
+						}
+					</form>
+					<hr />
+					<button type="button" class="btn btn-secondary" @onclick="() => ModalDialogInfo.Close()"><CIcon icon="x-circle" /> Close</button>
+				</div>
+			</div>
+		</CModal>
+
+		<CModal @ref="@ModalDialogDelete" title="Delete Role" centered="false" type="danger" size="large">
+			<div class="card">
+				<div class="card-body">
+					<CAlert type="warning"><span class="h6">Are you sure you want to delete the following role?</span></CAlert>
+					<form>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="roleId" placeholder="Id" disabled value="@(SelectedRole?.Id)">
+									<label for="roleId">Id</label>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-floating mb-1">
+									<input type="text" class="form-control" id="roleName" placeholder="Name" disabled value="@(SelectedRole?.Name)">
+									<label for="roleName">Name</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-floating mb-1">
+							<input type="text" class="form-control" id="roleDescription" placeholder="Description" disabled value="@(SelectedRole?.Description)">
+							<label for="roleDescription">Description</label>
+						</div>
+						@if (SelectedRole?.Claims is not null)
+						{
+							<hr />
+							<div class="row mb-1">
+								<div class="col-sm">
+									<label class="col-form-label col-form-label-sm">Claims:</label>
+									<ul class="list-unstyled">
+										@foreach (var claim in SelectedRole?.Claims!)
+										{
+											<li class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check"/> @claim.ClaimType:@claim.ClaimValue</li>
+										}
+									</ul>
+								</div>
+							</div>
+						}
+					</form>
+					<hr />
+					<button type="button" class="btn btn-secondary" @onclick="() => ModalDialogDelete.Close()"><CIcon icon="x-circle" /> Cancel</button>
+					<button type="button" class="btn btn-danger" @onclick="() => BtnClickDeleteConfirm()"><CIcon icon="x" /> Delete</button>
+				</div>
+			</div>
+		</CModal>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private const string PAGE_TITLE = "Roles";
+}
