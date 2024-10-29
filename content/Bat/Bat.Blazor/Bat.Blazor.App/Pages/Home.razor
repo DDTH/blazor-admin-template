@@ -1,5 +1,6 @@
 ﻿@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
+@using System.Reflection
 
 @attribute [Route(UIGlobals.ROUTE_HOME)]
 @inherits BaseComponent
@@ -78,6 +79,11 @@
                     Sample files included: README, LICENSE, RELEASE-NOTES and <code>.gitignore</code>.
                 </li>
             </ul>
+
+			@if (!string.IsNullOrWhiteSpace(releaseInfo)) {
+				<h5>This release:</h5>
+				@releaseInfo
+			}
         </div>
     </div>
 
@@ -141,3 +147,12 @@
 -->
 <!--<script src="@UIGlobals.COREUI_BASE/js/colors.js"></script>-->
 <!--<script src="@UIGlobals.COREUI_BASE/js/main.js"></script>-->
+
+@code {
+	private string releaseInfo { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync() {
+		await base.OnInitializedAsync();
+		// TODO: Load release info from a file or API
+	}
+}
