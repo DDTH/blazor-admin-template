@@ -1,0 +1,158 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using System.Reflection
+
+@attribute [Route(UIGlobals.ROUTE_HOME)]
+@inherits BaseComponent
+
+<HeadContent>
+    <!-- Plugins and styles required by this page-->
+    <!--<link href="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/css/coreui-chartjs.css" rel="stylesheet">-->
+</HeadContent>
+
+<PageTitle>Home | @AppInfo?.Name</PageTitle>
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>Dashboard</span>
+    </li>
+</SectionContent>
+
+<div class="container-lg px-4">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="card-title">Welcome to the @AppInfo?.Name dashboard</h4>
+        </div>
+        <div class="card-body">
+            <p class="card-text">
+                Blazor Admin Template (BAT) is a template designed for rapidly building admin dashboard projects using .NET Blazor.
+            </p>
+            <h5>Features:</h5>
+            <ul>
+                <li>
+                    Rapid generation of a .NET solution, including:
+                    <ul>
+                        <li>
+                            A RESTful API project that can function independently to build an API server.
+                        </li>
+                        <li>
+                            Blazor Server and Blazor WebAssembly (WASM) projects configured with <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor/components/render-modes" target="_blank">interactive auto-rendering mode</a>.
+                        </li>
+                        <li>
+                            Shared projects for common code and resources.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    UI components and layouts built on <a href="https://coreui.io/product/free-bootstrap-admin-template/" target="_blank">CoreUI Free Bootstrap Admin Template</a>.
+                </li>
+                <li>
+                    Authentication and authorization using JWT and <a href="https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity" target="_blank">ASP.NET Core Identity</a>.
+                </li>
+                <li>
+                    Sample database access implementation with <a href="https://learn.microsoft.com/en-us/ef/core/" target="_blank">Entity Framework</a>.
+                </li>
+                <li>
+                    GitHub Actions workflows:
+                    <ul>
+                        <li>
+                            <code>dependabot.yaml</code>, <code>automerge-dependabot.yaml</code>: Automatically update dependencies and merge PRs from Dependabot.
+                        </li>
+                        <li>
+                            <code>ci.yaml</code>: Automate builds, tests, and code coverage reporting.
+                        </li>
+                        <li>
+                            <code>release.yaml</code>: Automatically create new releases.
+                        </li>
+                        <li>
+                            <code>codeql.yaml</code>: Perform automated CodeQL security analysis.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Sample <a href="https://docs.docker.com/get-started/overview/" target="_blank">Dockerfiles</a> to build Docker images for both Linux and Windows environments.
+                </li>
+                <li>
+                    Sample files included: README, LICENSE, RELEASE-NOTES and <code>.gitignore</code>.
+                </li>
+            </ul>
+
+			@if (!string.IsNullOrWhiteSpace(releaseInfo)) {
+				<h5>This release:</h5>
+				@releaseInfo
+			}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5>Usage:</h5>
+            <p class="card-text">
+                Install (or update) the package from NuGet to make the template available:
+            </p>
+            <code>$ dotnet new install Ddth.Templates.Blazor</code>
+            <p class="card-text">
+                After the package is installed, create a new solution using the template:
+            </p>
+            <code>$ dotnet new bat -n MyApp</code>
+            <p class="card-text"><strong>Happy coding!</strong></p>
+            <p class="card-text">Detailed documentation can be found on the project's <a href="https://github.com/DDTH/blazor-admin-template/wiki" target="_blank">wiki</a>.</p>
+        </div>
+    </div>
+
+	<div class="card mb-4">
+        <div class="card-body">
+            <h5>Documents:</h5>
+			<p class="card-text">
+                <a class="nav-link" target="_blank" href="https://github.com/DDTH/blazor-admin-template">
+					<CIcon icon="cib-github" /> <u>Project Repository</u>
+				</a>
+            </p>
+            <p class="card-text">
+                <a class="nav-link" target="_blank" href="https://github.com/DDTH/blazor-admin-template/wiki">
+					<CIcon icon="cib-github" /> <u>Project Wiki</u>
+				</a>
+            </p>
+            <p class="card-text">
+                <a class="nav-link" target="_blank" href="https://coreui.io/demos/bootstrap/5.0/free/">
+					<CIcon icon="cib-coreui-c" /> <u>CoreUI Bootstrap Demo</u>
+				</a>
+            </p>
+            <p class="card-text">
+				<a class="nav-link" target="_blank" href="https://coreui.io/bootstrap/docs/getting-started/introduction/">
+					<CIcon icon="cib-coreui-c" /> <u>CoreUI Bootstrap Docs</u>
+				</a>
+			</p>
+			<p class="card-text">
+				<a class="nav-link" target="_blank" href="https://coreui.io/icons/">
+					<CIcon icon="cib-coreui-c" /> <u>CoreUI Icons</u>
+				</a>
+			</p>
+			<p class="card-text">
+				<a class="nav-link" target="_blank" href="https://icons.getbootstrap.com/">
+					<CIcon icon="cib-bootstrap" /> <u>Bootstrap Icons</u>
+				</a>
+			</p>
+        </div>
+    </div>
+</div>
+
+<!-- Plugins and scripts required by this page-->
+<!--
+<script src="@UIGlobals.COREUI_BASE/vendors/chart.js/js/chart.umd.js"></script>
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/chartjs/js/coreui-chartjs.js"></script>
+-->
+<!--<script src="@UIGlobals.COREUI_BASE/js/colors.js"></script>-->
+<!--<script src="@UIGlobals.COREUI_BASE/js/main.js"></script>-->
+
+@code {
+	private string releaseInfo { get; set; } = string.Empty;
+
+	protected override async Task OnInitializedAsync() {
+		await base.OnInitializedAsync();
+		// TODO: Load release info from a file or API
+	}
+}

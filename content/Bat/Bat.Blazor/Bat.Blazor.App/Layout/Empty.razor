@@ -1,0 +1,16 @@
+﻿<!--
+    Use this layout for pages that donot use the default layout (e.g. login page).
+-->
+
+@inherits BaseLayout
+
+<!-- cascading the layout instance down to components -->
+<!--
+    Components can utilize shared properties defined in the layout.
+-->
+<CascadingValue Value="this" Name="Layout">
+    @Body
+</CascadingValue>
+
+@code {
+}

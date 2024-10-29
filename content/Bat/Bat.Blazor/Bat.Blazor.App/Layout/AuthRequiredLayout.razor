@@ -1,0 +1,24 @@
+﻿@using Bat.Blazor.App.Shared
+@inherits BaseLayout
+
+<!--
+    Utility layout used for pages that require authentication/authorization.
+    To maximize flexibility and UX experience, we use <AuthorizeView> instead of the [Authorize] attribute.
+-->
+
+<!--
+    Cascading the layout instance down to components so that components can utilize shared properties defined in the layout.
+-->
+<CascadingValue Value="this" Name="Layout">
+    <AuthorizeView>
+        <Authorizing>
+            <AuthorizingView PageTitle="@($"{AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+        </Authorizing>
+        <Authorized>
+            @Body
+        </Authorized>
+        <NotAuthorized>
+            <NotAuthorizedView PageTitle="@($"{AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl"/>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingValue>

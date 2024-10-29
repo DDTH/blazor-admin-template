@@ -1,0 +1,226 @@
+﻿@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@inherits BaseLayout
+@layout AuthRequiredLayout
+
+<Sidebar />
+
+<div class="wrapper d-flex flex-column min-vh-100">
+    <header class="header header-sticky p-0 mb-4">
+        <div class="container-fluid border-bottom px-4">
+            <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
+                <CIcon icon="cil-menu" className="icon icon-lg" />
+            </button>
+            <ul class="header-nav d-none d-lg-flex">
+                <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_HOME">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_USERS">Users</a></li>
+                <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_ROLES">Roles</a></li>
+                <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a></li>
+            </ul>
+            <ul class="header-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <CIcon icon="cil-bell" className="icon icon-lg" />
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <CIcon icon="cil-list-rich" className="icon icon-lg" />
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <CIcon icon="cil-envelope-open" className="icon icon-lg" />
+                    </a>
+                </li>
+            </ul>
+            <ul class="header-nav">
+                <li class="nav-item py-1">
+                    <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                </li>
+                <li class="nav-item dropdown">
+                    <button class="btn btn-link nav-link py-2 px-2 d-flex align-items-center" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
+                        <CIcon icon="cil-contrast" className="icon icon-lg theme-icon-active" />
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="light">
+                                <CIcon icon="cil-sun" className="icon icon-lg me-3" />Light
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="dark">
+                                <CIcon icon="cil-moon" className="icon icon-lg me-3" />Dark
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item d-flex align-items-center active" type="button" data-coreui-theme-value="auto">
+                                <CIcon icon="cil-contrast" className="icon icon-lg me-3" />Auto
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item py-1">
+                    <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link py-0 pe-0" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                        <div class="avatar avatar-md"><img class="avatar-img" src="@UIGlobals.COREUI_BASE/assets/img/avatars/8.jpg" alt="user@email.com"></div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end pt-0">
+                        <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">Account</div>
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-bell" className="icon me-2" /> Updates<span class="badge badge-sm bg-info ms-2">42</span>
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-envelope-open" className="icon me-2" /> Messages<span class="badge badge-sm bg-success ms-2">42</span>
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-task" className="icon me-2" /> Tasks<span class="badge badge-sm bg-danger ms-2">42</span>
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-comment-square" className="icon me-2" /> Comments<span class="badge badge-sm bg-warning ms-2">42</span>
+                        </a>
+                        <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold my-2">
+                            <div class="fw-semibold">Settings</div>
+                        </div>
+                        <a class="dropdown-item" href="@UIGlobals.ROUTE_PROFILE">
+                            <CIcon icon="cil-user" className="icon me-2" /> Profile
+                        </a>
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-settings" className="icon me-2" /> Settings
+                        </a>
+                        <!--
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-credit-card" className="icon me-2" /> Payments<span class="badge badge-sm bg-secondary ms-2">42</span>
+                        </a>
+                        -->
+                        <!--
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-file" className="icon me-2" /> Projects<span class="badge badge-sm bg-primary ms-2">42</span>
+                        </a>
+                        -->
+                        <div class="dropdown-divider"></div>
+                        <!--
+                        <a class="dropdown-item" href="#">
+                            <CIcon icon="cil-lock-locked" className="icon me-2" /> Lock Account
+                        </a>
+                        -->
+                        <a class="dropdown-item" href="@UIGlobals.ROUTE_LOGOUT">
+                            <CIcon icon="cil-account-logout" className="icon me-2" /> Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="container-fluid px-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb my-0">
+                    <SectionOutlet SectionId="Breadcrumb" />
+                </ol>
+            </nav>
+        </div>
+    </header>
+
+    <div class="body flex-grow-1">
+        @Body
+    </div>
+    <footer class="footer px-4">
+        <div>@AppInfo?.Name v@(AppInfo?.Version)</div>
+        <div class="ms-auto">
+            Powered by <a href="https://github.com/DDTH/blazor-admin-template/">Blazor Admin Template</a>.
+            Templated by CoreUI <a href="https://coreui.io/product/free-bootstrap-admin-template/" target="_blank">Bootstrap Admin Template</a>.
+        </div>
+    </footer>
+</div>
+
+<!-- CoreUI and necessary plugins-->
+<script src="@UIGlobals.COREUI_BASE/js/config.js" defer></script>
+<script src="@UIGlobals.COREUI_BASE/js/color-modes.js" defer></script>
+
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/coreui/js/coreui.bundle.min.js" defer></script>
+<script src="@UIGlobals.COREUI_BASE/vendors/simplebar/js/simplebar.min.js" defer></script>
+<script>
+    const header = document.querySelector('header.header');
+    document.addEventListener('scroll', () => {
+        if (header) {
+            header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+        }
+    });
+</script>
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/utils/js/index.js" defer></script>
+<script>
+    // FIX the bug where coreui is not properly initialized with Blazor.
+    function CoreUIFix() {
+        if (typeof (coreui) === 'undefined' || typeof (coreui.Sidebar) === 'undefined') {
+            setTimeout(CoreUIFix, 10);
+            return;
+        }
+        CoreUIFixSidebar();
+        CoreUIFixThemeSwitcher();
+    }
+
+    function CoreUIFixSidebar() {
+        // fix the sidar toggler
+        let element = document.querySelector('#sidebar');
+        if (!coreui.Sidebar.getInstance(element)) {
+            console.log('[DEBUG] calling coreui.Sidebar.getOrCreateInstance(element)...')
+            coreui.Sidebar.getOrCreateInstance(element);
+        }
+    }
+
+    function CoreUIFixThemeSwitcher() {
+        // fix the theme switcher
+        const THEME = 'coreui-free-bootstrap-admin-template-theme';
+        const getStoredTheme = () => localStorage.getItem(THEME);
+        const setStoredTheme = theme => localStorage.setItem(THEME, theme);
+        const getPreferredTheme = () => {
+            const storedTheme = getStoredTheme();
+            if (storedTheme) {
+                return storedTheme;
+            }
+            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        };
+        const setTheme = theme => {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-coreui-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-coreui-theme', theme);
+            }
+            const event = new Event('ColorSchemeChange');
+            document.documentElement.dispatchEvent(event);
+        };
+        setTheme(getPreferredTheme());
+        const showActiveTheme = theme => {
+            const activeThemeIcon = document.querySelector('.theme-icon-active use');
+            const btnToActive = document.querySelector(`[data-coreui-theme-value="${theme}"]`);
+            const svgOfActiveBtn = btnToActive.querySelector('svg use').getAttribute('xlink:href');
+            for (const element of document.querySelectorAll('[data-coreui-theme-value]')) {
+                element.classList.remove('active');
+            }
+            btnToActive.classList.add('active');
+            activeThemeIcon.setAttribute('xlink:href', svgOfActiveBtn);
+        };
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            const storedTheme = getStoredTheme();
+            if (storedTheme !== 'light' || storedTheme !== 'dark') {
+                setTheme(getPreferredTheme());
+            }
+        });
+        showActiveTheme(getPreferredTheme());
+        for (const toggle of document.querySelectorAll('[data-coreui-theme-value]')) {
+            toggle.addEventListener('click', () => {
+                const theme = toggle.getAttribute('data-coreui-theme-value');
+                setStoredTheme(theme);
+                setTheme(theme);
+                showActiveTheme(theme);
+            });
+        }
+    }
+
+    CoreUIFix();
+</script>
+
+@code {
+    internal static object Breadcrumb = new();
+}

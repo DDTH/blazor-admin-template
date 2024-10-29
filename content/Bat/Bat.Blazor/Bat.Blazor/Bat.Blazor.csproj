@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- TODO: temporarily suspend error on duplicate publish output files; will be removed once the issue is resolved -->
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Bat.Api\Bat.Api.csproj" />
+    <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
+    <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
+  </ItemGroup>
+
+  <!-- Prevents duplicated files from other projects from being copied to the output directory -->
+  <!-- <ItemGroup>
+    <Content Include="..\..\Bat.Api\appsettings.json">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+    <Content Remove="..\..\Bat.Api\appsettings.json;..\..\Bat.Api\appsettings.Development.json" />
+    <None Remove="..\..\Bat.Api\appsettings.json;..\..\Bat.Api\appsettings.Development.json" />
+    <Compile Remove="..\..\Bat.Api\appsettings.json;..\..\Bat.Api\appsettings.Development.json" />
+    <EmbeddedResource Remove="..\..\Bat.Api\appsettings.json;..\..\Bat.Api\appsettings.Development.json" />
+  </ItemGroup> -->
+
+  <!-- Prevent other development setting files from being copied to the output directory -->
+  <!-- <ItemGroup>
+    <Content Update="..\Bat.Blazor.Client\wwwroot\appsettings.Development.json;appsettings.Development.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup> -->
+</Project>

@@ -1,0 +1,122 @@
+@using Bat.Blazor.App.Layout
+@using Bat.Blazor.App.Shared
+@using Bat.Shared.Identity
+@using Microsoft.AspNetCore.Components.WebAssembly
+
+@attribute [Route(UIGlobals.ROUTE_IDENTITY_USERS_MODIFY)]
+@inherits BaseComponent
+
+<SectionContent SectionId="MainLayout.Breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+    </li>
+	<li class="breadcrumb-item">
+        <a href="@UIGlobals.ROUTE_IDENTITY_ROLES">Users</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <span>@PAGE_TITLE</span>
+    </li>
+</SectionContent>
+
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_ROLE_PERM">
+    <Authorizing>
+        <AuthorizingView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Authorizing...")" />
+    </Authorizing>
+    <NotAuthorized>
+        <NotAuthorizedView PageTitle="@($"{PAGE_TITLE} | {AppInfo?.Name} v{AppInfo?.Version} - Not Authorized")" LoginUrl="@LoginUrl" />
+    </NotAuthorized>
+    <Authorized>
+        <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
+        <div class="container-lg px-4">
+            <div class="card border-top-3 mb-4">
+                <div class="card-header">
+                    <h4 class="card-title">@PAGE_TITLE</h4>
+                </div>
+                <div class="card-body">
+					@if (!string.IsNullOrEmpty(AlertMessage))
+					{
+						<CAlert type="@AlertType">
+							@AlertMessage
+						</CAlert>
+					}
+					@if (!HideUI)
+					{
+						<form>
+							<div class="form-floating mb-2">
+								<input type="text" class="form-control" id="userName" placeholder="Username" @bind-value="UserName">
+								<label for="userName">Username ([a-z0-9_] (must be unique) (*)</label>
+							</div>
+							<div class="form-floating mb-2">
+								<input type="email" class="form-control" id="userEmail" placeholder="Email" @bind-value="UserEmail">
+								<label for="userEmail">Email (must be unique) (*)</label>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-floating mb-2">
+										<input type="text" class="form-control" id="userFamilyName" placeholder="Family Name" @bind-value="UserFamilyName">
+										<label for="userFamilyName">Family Name</label>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-floating mb-2">
+										<input type="text" class="form-control" id="userGivenName" placeholder="Given Name" @bind-value="UserGivenName">
+										<label for="userGivenName">Given Name</label>
+									</div>
+								</div>
+							</div>
+							<hr />
+							<div class="row">
+								<div class="col-sm-6">
+									@if (RoleList is not null)
+									{
+										<label class="col-form-label col-form-label-sm"><BIcon icon="bi-person-lines-fill" /> Roles:</label>
+										@foreach (var role in RoleList!)
+										{
+											<div class="form-check form-control-sm">
+												<input class="form-check-input" type="checkbox"
+													id="role-@role.Id"
+													value="@role.Id"
+													checked="@RoleSelectedMap.ContainsKey(role.Id)"
+													@onchange="(()=>OnRoleChanged(role.Id))">
+												<label class="form-check-label" for="role-@role.Id"><abbr title="@role.Description">@role.Name</abbr></label>
+											</div>
+										}
+									}
+								</div>
+								<div class="col-sm-6">
+									@if (ClaimList is not null)
+									{
+										<label class="col-form-label col-form-label-sm"><BIcon icon="bi-shield-check" /> Claims:</label>
+										@foreach (var claim in ClaimList!)
+										{
+											<div class="form-check form-control-sm">
+												<input class="form-check-input" type="checkbox"
+													id="claim-@claim.ClaimType-@claim.ClaimValue"
+													value="@claim.ClaimType:@claim.ClaimValue"
+													checked="@ClaimSelectedMap.ContainsKey($"{claim.ClaimType}:{claim.ClaimValue}")"
+													@onchange="(()=>OnClaimChanged(claim.ClaimType, claim.ClaimValue))">
+												<label class="form-check-label" for="claim-@claim.ClaimType-@claim.ClaimValue">@claim.ClaimType:@claim.ClaimValue</label>
+											</div>
+										}
+									}
+								</div>
+							</div>
+						</form>
+					}
+                </div>
+				<div class="card-footer">
+					<button class="btn btn-secondary" @onclick="(()=>BtnClickCancel())"><CIcon icon="cil-x-circle" /> Cancel</button>
+					@if (!HideUI)
+					{
+						<button class="btn btn-primary ms-2" @onclick="(()=>BtnClickSave())"><CIcon icon="cil-save" /> Save</button>
+					}
+				</div>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private const string PAGE_TITLE = "Modify User";
+}
