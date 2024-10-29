@@ -1,9 +1,7 @@
-﻿using Bat.Blazor.App.Helpers;
-using Bat.Blazor.App.Shared;
+﻿using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -24,9 +22,7 @@ public partial class RolesAdd
 		if (firstRender)
 		{
 			ClaimSelectedMap.Clear();
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var result = await ApiClient.GetAllClaimsAsync(authToken ?? "", NavigationManager.BaseUri);
+			var result = await ApiClient.GetAllClaimsAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 			if (result.Status == 200)
 			{
 				ClaimList = result.Data;
@@ -74,21 +70,16 @@ public partial class RolesAdd
 			Description = RoleDescription.Trim(),
 			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.CreateRoleAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.CreateRoleAsync(req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "Role created successfully. Navigating to roles list...");
-			var passAlertMessage = $"Role '{req.Name}' created successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_ROLES}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "Role created successfully. Navigating to roles list...");
+		var passAlertMessage = $"Role '{req.Name}' created successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_ROLES}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

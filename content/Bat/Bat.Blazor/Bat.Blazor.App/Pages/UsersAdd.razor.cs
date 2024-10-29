@@ -1,9 +1,7 @@
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -42,7 +40,7 @@ public partial class UsersAdd
 	{
 		ShowAlert("info", "Loading roles, please wait...");
 		RoleSelectedMap.Clear();
-		var result = await ApiClient.GetAllRolesAsync(authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAllRolesAsync(authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			RoleList = result.Data;
@@ -54,7 +52,7 @@ public partial class UsersAdd
 	{
 		ShowAlert("info", "Loading claims, please wait...");
 		ClaimSelectedMap.Clear();
-		var result = await ApiClient.GetAllClaimsAsync(authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAllClaimsAsync(authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			ClaimList = result.Data;
@@ -67,17 +65,14 @@ public partial class UsersAdd
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-
-			var roleResult = await GetAllRolesAsync(authToken ?? "");
+			var roleResult = await GetAllRolesAsync(await GetAuthTokenAsync());
 			if (roleResult.Status != 200)
 			{
 				ShowAlert("danger", roleResult.Message!);
 				return;
 			}
 
-			var claimResult = await GetAllClaimsAsync(authToken ?? "");
+			var claimResult = await GetAllClaimsAsync(await GetAuthTokenAsync());
 			if (claimResult.Status != 200)
 			{
 				ShowAlert("danger", claimResult.Message!);
@@ -153,21 +148,16 @@ public partial class UsersAdd
 			Roles = RoleSelectedMap.Keys.Select(k => k),
 			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.CreateUserAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.CreateUserAsync(req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "User created successfully. Navigating to users list...");
-			var passAlertMessage = $"User '{req.Username}' created successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_USERS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "User created successfully. Navigating to users list...");
+		var passAlertMessage = $"User '{req.Username}' created successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_USERS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

@@ -3,12 +3,19 @@ using System.Net.Http.Json;
 
 namespace Bat.Blazor.App.Services;
 
-public class ApiClient(HttpClient httpClient) : IApiClient
+public class ApiClient : IApiClient
 {
+	private readonly HttpClient defaultHttpClient;
+
+	public ApiClient(HttpClient httpClient)
+	{
+		defaultHttpClient = httpClient;
+	}
+
 	private void UsingBaseUrlAndHttpClient(string? baseUrl, HttpClient? requestHttpClient, out string usingBaseUrl, out HttpClient usingHttpClient)
 	{
-		usingBaseUrl = string.IsNullOrEmpty(baseUrl) ? Globals.ApiBaseUrl ?? string.Empty : baseUrl;
-		usingHttpClient = requestHttpClient ?? httpClient;
+		usingBaseUrl = string.IsNullOrEmpty(baseUrl) ? (Globals.ApiBaseUrl ?? string.Empty) : baseUrl;
+		usingHttpClient = requestHttpClient ?? defaultHttpClient;
 	}
 
 	private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken, object? requestData)

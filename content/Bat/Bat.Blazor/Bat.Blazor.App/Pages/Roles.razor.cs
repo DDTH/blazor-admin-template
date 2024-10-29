@@ -1,8 +1,6 @@
-﻿using Bat.Blazor.App.Helpers;
-using Bat.Blazor.App.Shared;
+﻿using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -42,9 +40,7 @@ public partial class Roles
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading roles...");
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var result = await ApiClient.GetAllRolesAsync(authToken ?? "", NavigationManager.BaseUri);
+			var result = await ApiClient.GetAllRolesAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 			if (result.Status == 200)
 			{
 				HideUI = false;
@@ -92,9 +88,7 @@ public partial class Roles
 		ModalDialogDelete.Close();
 		HideUI = true;
 		ShowAlert("info", $"Deleting role '{SelectedRole?.Name}', please wait...");
-		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-		var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		var result = await ApiClient.DeleteRoleAsync(SelectedRole?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
+		var result = await ApiClient.DeleteRoleAsync(SelectedRole?.Id ?? string.Empty, await GetAuthTokenAsync(), ApiBaseUrl);
 		HideUI = false;
 		if (result.Status == 200)
 		{

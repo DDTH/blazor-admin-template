@@ -17,30 +17,37 @@ public abstract class BaseComponent : ComponentBase
 	[Inject]
 	protected virtual NavigationManager NavigationManager { get; init; } = default!;
 
-	[Inject]
-	protected virtual LocalStorageHelper LocalStorage { get; init; } = default!;
-
+	/// <summary>
+	/// Cascading the layout instance down to components.
+	/// </summary>
+	/// <remarks>
+	/// Components can utilize shared properties defined in the layout.
+	/// </remarks>
 	[CascadingParameter(Name = "Layout")]
 	protected virtual BaseLayout Layout { get; init; } = default!;
 
+	// Demo: Accessing shared properties from the cascading layout instance.
+	protected virtual bool IsBrowser => Layout.IsBrowser;
+
+	// Demo: Accessing shared properties from the cascading layout instance.
 	protected virtual AppInfo? AppInfo => Layout.AppInfo;
 
-	protected virtual IApiClient ApiClient
-	{
-		get
-		{
-			return ServiceProvider.GetRequiredService<IApiClient>();
-		}
-	}
+	// Demo: Accessing shared properties from the cascading layout instance.
+	protected virtual IApiClient ApiClient => Layout.ApiClient;
+
+	// Demo: Accessing shared properties from the cascading layout instance.
+	protected virtual string ApiBaseUrl => Layout.ApiBaseUrl;
 
 	/// <summary>
-	/// Convenience property to get the base URL for the API server.
+	/// Convenience method to obtain the authentication token from local storage.
 	/// </summary>
-	protected virtual string ApiBaseUrl
+	/// <returns>The authentication token, or an empty string if not found.</returns>
+	protected virtual async Task<string> GetAuthTokenAsync()
 	{
-		get
+		using (var scope = ServiceProvider.CreateScope())
 		{
-			return Globals.ApiBaseUrl ?? NavigationManager.BaseUri;
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			return await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
 		}
 	}
 

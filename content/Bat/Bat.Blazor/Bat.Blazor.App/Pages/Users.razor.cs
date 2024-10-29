@@ -1,9 +1,6 @@
-using System.Text.Json;
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -43,9 +40,7 @@ public partial class Users
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading users...");
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var result = await ApiClient.GetAllUsersAsync(authToken ?? "", NavigationManager.BaseUri);
+			var result = await ApiClient.GetAllUsersAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 			if (result.Status == 200)
 			{
 				HideUI = false;
@@ -93,9 +88,7 @@ public partial class Users
 		ModalDialogDelete.Close();
 		HideUI = true;
 		ShowAlert("info", $"Deleting user '{SelectedUser?.Username}', please wait...");
-		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-		var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		var result = await ApiClient.DeleteUserAsync(SelectedUser?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
+		var result = await ApiClient.DeleteUserAsync(SelectedUser?.Id ?? string.Empty, await GetAuthTokenAsync(), ApiBaseUrl);
 		HideUI = false;
 		if (result.Status == 200)
 		{

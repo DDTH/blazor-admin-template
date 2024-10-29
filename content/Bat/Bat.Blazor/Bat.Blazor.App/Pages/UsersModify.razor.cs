@@ -1,9 +1,7 @@
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -32,7 +30,7 @@ public partial class UsersModify
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading user details. Please wait...");
-		var result = await ApiClient.GetUserAsync(id, authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetUserAsync(id, authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			return result.Data;
@@ -46,7 +44,7 @@ public partial class UsersModify
 		HideUI = true;
 		ShowAlert("info", "Loading claims, please wait...");
 		ClaimSelectedMap.Clear();
-		var result = await ApiClient.GetAllClaimsAsync(authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAllClaimsAsync(authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			ClaimList = result.Data;
@@ -59,7 +57,7 @@ public partial class UsersModify
 		HideUI = true;
 		ShowAlert("info", "Loading roles, please wait...");
 		RoleSelectedMap.Clear();
-		var result = await ApiClient.GetAllRolesAsync(authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAllRolesAsync(authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			RoleList = result.Data;
@@ -74,10 +72,8 @@ public partial class UsersModify
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading role details. Please wait...");
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
 
-			SelectedUser = await LoadUserAsync(Id, authToken ?? "");
+			SelectedUser = await LoadUserAsync(Id, await GetAuthTokenAsync());
 			if (SelectedUser == null)
 			{
 				return;
@@ -87,7 +83,7 @@ public partial class UsersModify
 			UserFamilyName = SelectedUser?.FamilyName ?? string.Empty;
 			UserGivenName = SelectedUser?.GivenName ?? string.Empty;
 
-			var roleResult = await LoadAllRolesAsync(authToken ?? "");
+			var roleResult = await LoadAllRolesAsync(await GetAuthTokenAsync());
 			if (roleResult.Status != 200)
 			{
 				ShowAlert("danger", roleResult.Message!);
@@ -101,7 +97,7 @@ public partial class UsersModify
 				}
 			}
 
-			var claimResult = await LoadAllClaimsAsync(authToken ?? "");
+			var claimResult = await LoadAllClaimsAsync(await GetAuthTokenAsync());
 			if (claimResult.Status != 200)
 			{
 				ShowAlert("danger", claimResult.Message!);
@@ -185,21 +181,16 @@ public partial class UsersModify
 			Roles = RoleSelectedMap.Keys.Select(k => k),
 			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.UpdateUserAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateUserAsync(Id, req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "User updated successfully. Navigating to users list...");
-			var passAlertMessage = $"User '{Id}' updated successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_USERS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "User updated successfully. Navigating to users list...");
+		var passAlertMessage = $"User '{Id}' updated successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_USERS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

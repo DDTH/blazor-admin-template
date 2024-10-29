@@ -1,6 +1,5 @@
 ﻿using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,34 +17,19 @@ public abstract class BaseLayout : LayoutComponentBase
 	[Inject]
 	protected virtual NavigationManager NavigationManager { get; init; } = default!;
 
-	[Inject]
-	protected virtual ILocalStorageService LocalStorage { get; init; } = default!;
-
 	/// <summary>
 	/// Check if the component is rendered in WASM mode.
 	/// </summary>
 	public virtual bool IsBrowser { get => OperatingSystem.IsBrowser(); }
 
-	public virtual AppInfo? AppInfo => Globals.AppInfo;
+	public virtual AppInfo? AppInfo { get => Globals.AppInfo; }
 
-	protected virtual IApiClient ApiClient
-	{
-		get
-		{
-			return ServiceProvider.GetRequiredService<IApiClient>();
-		}
-	}
+	public virtual IApiClient ApiClient { get => ServiceProvider.GetRequiredService<IApiClient>(); }
 
 	/// <summary>
-	/// Convenience property to get the base URL for the API server.
+	/// Convenience property to obtain the API's base URL.
 	/// </summary>
-	protected virtual string ApiBaseUrl
-	{
-		get
-		{
-			return Globals.ApiBaseUrl ?? NavigationManager.BaseUri;
-		}
-	}
+	public virtual string ApiBaseUrl { get => Globals.ApiBaseUrl ?? NavigationManager.BaseUri; }
 
 	protected override async Task OnInitializedAsync()
 	{

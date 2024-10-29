@@ -1,8 +1,6 @@
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -24,7 +22,7 @@ public partial class ApplicationsModify
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading application details. Please wait...");
-		var result = await ApiClient.GetAppAsync(id, authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAppAsync(id, authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			return result.Data;
@@ -39,10 +37,7 @@ public partial class ApplicationsModify
 		if (firstRender)
 		{
 			HideUI = true;
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-
-			SelectedApp = await LoadAppAsync(Id, authToken ?? "");
+			SelectedApp = await LoadAppAsync(Id, await GetAuthTokenAsync());
 			if (SelectedApp == null)
 			{
 				return;
@@ -88,22 +83,17 @@ public partial class ApplicationsModify
 			DisplayName = AppName.Trim(),
 			PublicKeyPEM = AppPublicKeyPEM.Trim(),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.UpdateAppAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateAppAsync(Id, req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				HideUI = false;
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "Application updated successfully. Navigating to applications list...");
-			var passAlertMessage = $"Application '{req.DisplayName}' updated successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			HideUI = false;
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "Application updated successfully. Navigating to applications list...");
+		var passAlertMessage = $"Application '{req.DisplayName}' updated successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

@@ -1,8 +1,6 @@
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -42,9 +40,7 @@ public partial class Applications
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading applications...");
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var result = await ApiClient.GetAllAppsAsync(authToken ?? "", NavigationManager.BaseUri);
+			var result = await ApiClient.GetAllAppsAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 			if (result.Status == 200)
 			{
 				HideUI = false;
@@ -92,9 +88,7 @@ public partial class Applications
 		ModalDialogDelete.Close();
 		HideUI = true;
 		ShowAlert("info", $"Deleting application '{SelectedApp?.DisplayName}', please wait...");
-		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-		var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		var result = await ApiClient.DeleteAppAsync(SelectedApp?.Id ?? "", authToken ?? "", NavigationManager.BaseUri);
+		var result = await ApiClient.DeleteAppAsync(SelectedApp?.Id ?? string.Empty, await GetAuthTokenAsync(), ApiBaseUrl);
 		HideUI = false;
 		if (result.Status == 200)
 		{

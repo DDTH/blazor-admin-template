@@ -1,8 +1,6 @@
-using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -45,22 +43,17 @@ public partial class ApplicationsAdd
 			DisplayName = DisplayName.Trim(),
 			PublicKeyPEM = PublicKeyPEM.Trim(),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.CreateAppAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.CreateAppAsync(req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				HideUI = false;
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "Application created successfully. Navigating to applications list...");
-			var passAlertMessage = $"Application '{req.DisplayName}' created successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			HideUI = false;
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "Application created successfully. Navigating to applications list...");
+		var passAlertMessage = $"Application '{req.DisplayName}' created successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

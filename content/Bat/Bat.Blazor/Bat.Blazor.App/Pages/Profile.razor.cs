@@ -30,16 +30,11 @@ public partial class Profile
 
 	protected override async Task OnInitializedAsync()
 	{
-		using (var scope = ServiceProvider.CreateScope())
-		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			var respUser = await ApiClient.GetMyInfoAsync(authToken!, NavigationManager.BaseUri);
-			User = respUser.Data;
-			GivenName = User?.GivenName ?? string.Empty;
-			FamilyName = User?.FamilyName ?? string.Empty;
-			NewEmail = User?.Email ?? string.Empty;
-		}
+		var respUser = await ApiClient.GetMyInfoAsync(await GetAuthTokenAsync(), ApiBaseUrl);
+		User = respUser.Data;
+		GivenName = User?.GivenName ?? string.Empty;
+		FamilyName = User?.FamilyName ?? string.Empty;
+		NewEmail = User?.Email ?? string.Empty;
 	}
 
 	private void CloseAlert()
@@ -78,23 +73,18 @@ public partial class Profile
 			GivenName = GivenName,
 			FamilyName = FamilyName
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.UpdateMyProfileAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
+		DisableUpdateProfile = false;
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateMyProfileAsync(req, authToken, NavigationManager.BaseUri);
-			DisableUpdateProfile = false;
-			if (resp.Status != 200)
-			{
-				ShowAlert("profile", "danger", resp.Message!);
-				return;
-			}
-			User = resp.Data;
-			GivenName = User?.GivenName ?? string.Empty;
-			FamilyName = User?.FamilyName ?? string.Empty;
-			NewEmail = User?.Email ?? string.Empty;
-			ShowAlert("profile", "success", "Profile updated successfully.");
+			ShowAlert("profile", "danger", resp.Message!);
+			return;
 		}
+		User = resp.Data;
+		GivenName = User?.GivenName ?? string.Empty;
+		FamilyName = User?.FamilyName ?? string.Empty;
+		NewEmail = User?.Email ?? string.Empty;
+		ShowAlert("profile", "success", "Profile updated successfully.");
 	}
 
 	private async void BtnClickedChangeEmail()
@@ -105,23 +95,18 @@ public partial class Profile
 		{
 			Email = NewEmail,
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.UpdateMyProfileAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
+		DisableChangeEmail = false;
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateMyProfileAsync(req, authToken, NavigationManager.BaseUri);
-			DisableChangeEmail = false;
-			if (resp.Status != 200)
-			{
-				ShowAlert("email", "danger", resp.Message!);
-				return;
-			}
-			User = resp.Data;
-			GivenName = User?.GivenName ?? string.Empty;
-			FamilyName = User?.FamilyName ?? string.Empty;
-			NewEmail = User?.Email ?? string.Empty;
-			ShowAlert("email", "success", "Email updated successfully.");
+			ShowAlert("email", "danger", resp.Message!);
+			return;
 		}
+		User = resp.Data;
+		GivenName = User?.GivenName ?? string.Empty;
+		FamilyName = User?.FamilyName ?? string.Empty;
+		NewEmail = User?.Email ?? string.Empty;
+		ShowAlert("email", "success", "Email updated successfully.");
 	}
 
 	private async void BtnClickedChangePassword()
@@ -144,14 +129,12 @@ public partial class Profile
 		ShowAlert("password", "info", "Updating password, please wait...");
 		using (var scope = ServiceProvider.CreateScope())
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
 			var req = new ChangePasswordReq
 			{
 				CurrentPassword = CurrentPwd,
 				NewPassword = NewPwd
 			};
-			var resp = await ApiClient.ChangeMyPasswordAsync(req, authToken, NavigationManager.BaseUri);
+			var resp = await ApiClient.ChangeMyPasswordAsync(req, await GetAuthTokenAsync(), ApiBaseUrl);
 			DisableChangePassword = false;
 			if (resp.Status != 200)
 			{
@@ -159,6 +142,9 @@ public partial class Profile
 				return;
 			}
 			CurrentPwd = NewPwd = ConfirmPwd = string.Empty;
+
+			// changing password also changes the authentication token, so we need to store the new token
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, resp.Data.Token);
 			ShowAlert("password", "success", "Password updated successfully.");
 		}

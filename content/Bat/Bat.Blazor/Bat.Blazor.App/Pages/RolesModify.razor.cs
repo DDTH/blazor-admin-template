@@ -1,9 +1,7 @@
-﻿using Bat.Blazor.App.Helpers;
-using Bat.Blazor.App.Shared;
+﻿using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -27,7 +25,7 @@ public partial class RolesModify
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading role details. Please wait...");
-		var result = await ApiClient.GetRoleAsync(id, authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetRoleAsync(id, authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			return result.Data;
@@ -40,7 +38,7 @@ public partial class RolesModify
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading claims. Please wait...");
-		var result = await ApiClient.GetAllClaimsAsync(authToken, NavigationManager.BaseUri);
+		var result = await ApiClient.GetAllClaimsAsync(authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			return result.Data;
@@ -56,10 +54,8 @@ public partial class RolesModify
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading role details. Please wait...");
-			var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
 
-			SelectedRole = await LoadRoleAsync(Id, authToken ?? "");
+			SelectedRole = await LoadRoleAsync(Id, await GetAuthTokenAsync());
 			if (SelectedRole == null)
 			{
 				return;
@@ -67,7 +63,7 @@ public partial class RolesModify
 			RoleName = SelectedRole?.Name ?? string.Empty;
 			RoleDescription = SelectedRole?.Description ?? string.Empty;
 
-			ClaimList = await LoadAllClaimsAsync(authToken ?? "");
+			ClaimList = await LoadAllClaimsAsync(await GetAuthTokenAsync());
 			if (ClaimList == null)
 			{
 				return;
@@ -131,21 +127,16 @@ public partial class RolesModify
 			Description = RoleDescription.Trim(),
 			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
-		using (var scope = ServiceProvider.CreateScope())
+		var resp = await ApiClient.UpdateRoleAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);
+		if (resp.Status != 200)
 		{
-			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
-			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
-			var resp = await ApiClient.UpdateRoleAsync(Id, req, authToken, NavigationManager.BaseUri);
-			if (resp.Status != 200)
-			{
-				ShowAlert("danger", resp.Message!);
-				return;
-			}
-			ShowAlert("success", "Role updated successfully. Navigating to roles list...");
-			var passAlertMessage = $"Role '{req.Name}' updated successfully.";
-			var passAlertType = "success";
-			await Task.Delay(500);
-			NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_ROLES}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+			ShowAlert("danger", resp.Message!);
+			return;
 		}
+		ShowAlert("success", "Role updated successfully. Navigating to roles list...");
+		var passAlertMessage = $"Role '{req.Name}' updated successfully.";
+		var passAlertType = "success";
+		await Task.Delay(500);
+		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_IDENTITY_ROLES}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }
