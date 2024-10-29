@@ -213,7 +213,7 @@ jobs:
           outputs: type=image,name=${{ env.DOCKER_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
           context: ${{ env.TEMPLATE_ROOT }}
-          tags: ${{ env.DOCKER_IMAGE }}:dev, ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev
+          tags: ${{ env.DOCKER_IMAGE }}:dev, ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev, ${{ env.DOCKER_IMAGE }}:latest
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
@@ -293,7 +293,7 @@ jobs:
           platform: ${{ matrix.platforms }}
           registry: docker.io
           image: ${{ env.DOCKER_IMAGE }}-windows
-          tags: dev, ${{ env.VERSION }}-dev
+          tags: dev, ${{ env.VERSION }}-dev, latest
           pushImage: true
           dockerfile: ${{ env.TEMPLATE_ROOT }}/Dockerfile.win
           directory: ${{ env.TEMPLATE_ROOT }}/

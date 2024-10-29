@@ -62,8 +62,15 @@ sealed class IdentityInitializer(
 				if (user == null)
 				{
 					var generatedPassword = RandomPasswordGenerator.GenerateRandomPassword(identityOptions?.Password);
-					logger.LogWarning("User '{user}' does not exist. Creating one with a random password: {password}", u.UserName, generatedPassword);
+					logger.LogWarning("User '{user}' does not exist. Creating one with email '{email}' and a random password: {password}", u.UserName, u.Email, generatedPassword);
 					logger.LogWarning("PLEASE REMEMBER THIS PASSWORD AS IT WILL NOT BE DISPLAYED AGAIN!");
+
+					// for demo purpose: store the generated password in environment variables
+					if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+					{
+						Environment.SetEnvironmentVariable($"USER_SECRET_{u.UserName}", generatedPassword);
+						Environment.SetEnvironmentVariable($"USER_SECRET_{u.Email}", generatedPassword);
+					}
 
 					if (string.IsNullOrEmpty(u.Id))
 					{

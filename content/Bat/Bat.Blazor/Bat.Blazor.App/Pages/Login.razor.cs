@@ -2,6 +2,7 @@
 using Bat.Blazor.App.Services;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
+using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
@@ -46,6 +47,17 @@ public partial class Login : BaseComponent
 		ShowAlert("info", "Please wait...");
 		await base.OnInitializedAsync();
 		CloseAlert();
+
+		// for demo purpose: auto fill email and password if running in container
+		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		{
+			var u = BatUser.ALL_BUILTIN_USERS.First();
+			if (u is not null)
+			{
+				Email = u.Email ?? string.Empty;
+				Password = Environment.GetEnvironmentVariable($"USER_SECRET_{u.Email}") ?? string.Empty;
+			}
+		}
 	}
 
 	private async void BtnClickLogin()

@@ -30,11 +30,18 @@ public partial class Profile
 
 	protected override async Task OnInitializedAsync()
 	{
+		await base.OnInitializedAsync();
 		var respUser = await ApiClient.GetMyInfoAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 		User = respUser.Data;
 		GivenName = User?.GivenName ?? string.Empty;
 		FamilyName = User?.FamilyName ?? string.Empty;
 		NewEmail = User?.Email ?? string.Empty;
+
+		// for demo purpose: auto fill password if running in container
+		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		{
+			CurrentPwd = Environment.GetEnvironmentVariable($"USER_SECRET_{User?.Email}") ?? string.Empty;
+		}
 	}
 
 	private void CloseAlert()
@@ -141,6 +148,13 @@ public partial class Profile
 				ShowAlert("password", "danger", resp.Message!);
 				return;
 			}
+
+			// for demo purpose: store the new password in environment variables if running in container
+			if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+			{
+				Environment.SetEnvironmentVariable($"USER_SECRET_{User?.Email}", NewPwd);
+			}
+
 			CurrentPwd = NewPwd = ConfirmPwd = string.Empty;
 
 			// changing password also changes the authentication token, so we need to store the new token
