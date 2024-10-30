@@ -183,6 +183,8 @@ jobs:
     name: Build Docker image(s) - Linux - Dev Branch
     env:
       VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
+    outputs:
+      VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -230,11 +232,10 @@ jobs:
 
   PublishDockerImagesLinuxMerge:
     runs-on: ubuntu-latest
-    needs:
-      - PublishDockerImagesLinuxBuild
+    needs: PublishDockerImagesLinuxBuild
     name: Merge & Publish Docker image(s) - Linux
     env:
-      VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
+      VERSION: ${{ needs.PublishDockerImagesLinuxBuild.outputs.VERSION }}
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -257,11 +258,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
-          echo Command: docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKER_IMAGE }}@sha256:%s ' *)
-          echo Command: docker buildx imagetools create -t ${{ env.DOCKER_IMAGE }}:dev -t ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev -t ${{ env.DOCKER_IMAGE }}:latest \
-            $(printf '${{ env.DOCKER_IMAGE }}@sha256:%s ' *)
-          docker buildx imagetools create -t ${{ env.DOCKER_IMAGE }}:dev -t ${{ env.DOCKER_IMAGE }}:latest \
+          docker buildx imagetools create -t ${{ env.DOCKER_IMAGE }}:dev -t ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev -t ${{ env.DOCKER_IMAGE }}:latest \
             $(printf '${{ env.DOCKER_IMAGE }}@sha256:%s ' *)
       - name: Inspect image
         run: |
