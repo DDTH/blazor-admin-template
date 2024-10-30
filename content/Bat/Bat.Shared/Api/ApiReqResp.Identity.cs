@@ -104,6 +104,9 @@ public struct UserResp
 	[JsonPropertyName("email")]
 	public string Email { get; set; }
 
+	[JsonPropertyName("password")]
+	public string? Password { get; set; }
+
 	[JsonPropertyName("given_name")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? GivenName { get; set; }

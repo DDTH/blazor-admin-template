@@ -361,4 +361,20 @@ public class ApiClient : IApiClient
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
 		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
 	}
+
+	/*----------------------------------------------------------------------*/
+
+	/* FOR DEMO PURPOSES ONLY! */
+	public async Task<ApiResp<IEnumerable<UserResp>>> GetSeedUsersAsync(string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, "/api/demo/seed_users",
+			NoAuth,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<UserResp>>>(cancellationToken);
+		return result ?? new ApiResp<IEnumerable<UserResp>> { Status = 500, Message = "Invalid response from server." };
+	}
 }

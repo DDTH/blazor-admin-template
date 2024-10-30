@@ -1,6 +1,8 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Shared.Api;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -28,6 +30,9 @@ public partial class Profile
 	private string PasswordAlertMessage { get; set; } = string.Empty;
 	private bool DisableChangePassword { get; set; } = false;
 
+	[Inject]
+	private ILogger<Profile> Logger { get; set; } = default!;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -37,10 +42,14 @@ public partial class Profile
 		FamilyName = User?.FamilyName ?? string.Empty;
 		NewEmail = User?.Email ?? string.Empty;
 
-		// for demo purpose: auto fill password if running in container
+		// FIXME: NOT TO USE THIS IN PRODUCTION!
+		// for demo purpose: automatically fill the password field
 		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
 		{
-			CurrentPwd = Environment.GetEnvironmentVariable($"USER_SECRET_{User?.Email}") ?? string.Empty;
+			Logger.LogCritical("Running in container - automatically fill the password field. DO NOT USE THIS IN PRODUCTION!");
+			var seedUsers = await ApiClient.GetSeedUsersAsync(ApiBaseUrl);
+			var user = seedUsers.Data?.FirstOrDefault(u => u.Email == User?.Email);
+			CurrentPwd = user?.Password ?? string.Empty;
 		}
 	}
 
@@ -147,12 +156,6 @@ public partial class Profile
 			{
 				ShowAlert("password", "danger", resp.Message!);
 				return;
-			}
-
-			// for demo purpose: store the new password in environment variables if running in container
-			if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
-			{
-				Environment.SetEnvironmentVariable($"USER_SECRET_{User?.Email}", NewPwd);
 			}
 
 			CurrentPwd = NewPwd = ConfirmPwd = string.Empty;

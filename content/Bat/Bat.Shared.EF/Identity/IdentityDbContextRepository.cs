@@ -57,6 +57,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	public async ValueTask<IdentityResult> CreateIfNotExistsAsync(BatUser user, CancellationToken cancellationToken = default)
 	{
 		if (await GetUserByIDAsync(user.Id, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetUserByUserNameAsync(user.UserName??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetUserByEmailAsync(user.Email??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
 		return await CreateAsync(user, cancellationToken);
 	}
 
@@ -289,6 +291,7 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	public async ValueTask<IdentityResult> CreateIfNotExistsAsync(BatRole role, CancellationToken cancellationToken = default)
 	{
 		if (await GetRoleByIDAsync(role.Id, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetRoleByNameAsync(role.Name??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
 		return await CreateAsync(role, cancellationToken);
 	}
 

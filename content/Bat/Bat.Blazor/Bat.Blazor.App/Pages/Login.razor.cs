@@ -1,12 +1,13 @@
-﻿using Bat.Blazor.App.Helpers;
+﻿using System.Text.Json;
+using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Services;
 using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
-using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Bat.Blazor.App.Pages;
 
@@ -42,21 +43,25 @@ public partial class Login : BaseComponent
 		StateHasChanged();
 	}
 
+	[Inject]
+	private ILogger<Login> Logger { get; set; } = default!;
+
 	protected override async Task OnInitializedAsync()
 	{
 		ShowAlert("info", "Please wait...");
 		await base.OnInitializedAsync();
 		CloseAlert();
 
-		// for demo purpose: auto fill email and password if running in container
+		// FIXME: NOT TO USE THIS IN PRODUCTION!
+		// for demo purpose: automatically fill the login form
 		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
 		{
-			var u = BatUser.ALL_BUILTIN_USERS.First();
-			if (u is not null)
-			{
-				Email = u.Email ?? string.Empty;
-				Password = Environment.GetEnvironmentVariable($"USER_SECRET_{u.Email}") ?? string.Empty;
-			}
+			Logger.LogCritical("Running in container - automatically fill the login form. DO NOT USE THIS IN PRODUCTION!");
+			var seedUsers = await ApiClient.GetSeedUsersAsync(ApiBaseUrl);
+			Logger.LogCritical("Seed users: {users}", JsonSerializer.Serialize(seedUsers));
+			var user = seedUsers.Data?.FirstOrDefault();
+			Email = user?.Email ?? string.Empty;
+			Password = user?.Password ?? string.Empty;
 		}
 	}
 
