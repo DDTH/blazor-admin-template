@@ -172,13 +172,15 @@ jobs:
           directory: ${{ env.TEMPLATE_ROOT }}/
 
   PublishDockerImagesLinuxBuild:
-    if: needs.ReleaseDryRun.outputs.RESULT == 'SUCCESS'
+    if: |
+      needs.ReleaseDryRun.outputs.RESULT == 'SUCCESS' &&
+      github.ref == 'refs/heads/dev'
     needs: [ReleaseDryRun, TestDockerfileLinuxTemplate]
     runs-on: ubuntu-latest
     strategy:
       matrix:
         platforms: [ 'linux/amd64', 'linux/arm64' ]
-    name: Build Docker image(s) - Linux - Non-release Branch
+    name: Build Docker image(s) - Linux - Dev Branch
     env:
       VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
     steps:
@@ -230,7 +232,9 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - PublishDockerImagesLinuxBuild
-    name: Merge & Publish Docker image(s) - Linux - Non-release Branch
+    name: Merge & Publish Docker image(s) - Linux
+    env:
+      VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
@@ -262,13 +266,15 @@ jobs:
           docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.version }}
 
   PublishDockerImagesWindows:
-    if: needs.ReleaseDryRun.outputs.RESULT == 'SUCCESS'
+    if: |
+      needs.ReleaseDryRun.outputs.RESULT == 'SUCCESS' &&
+      github.ref == 'refs/heads/dev'
     needs: [ReleaseDryRun, TestDockerfileWindowsTemplate]
     runs-on: windows-2022
     strategy:
       matrix:
         platforms: [ 'windows/amd64' ]
-    name: Publishing Docker image(s) - Windows - Non-release Branch
+    name: Publishing Docker image(s) - Windows - Dev Branch
     env:
       VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
     steps:
