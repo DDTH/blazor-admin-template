@@ -253,14 +253,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var userClaims = user.Claims ?? await GetClaimsAsync(user, cancellationToken);
-		foreach (var uc in userClaims)
-		{
-			if (claimsList.Any(c => c.UserId == user.Id && c.ClaimType == uc.ClaimType && c.ClaimValue == uc.ClaimValue))
-			{
-				UserClaims.Remove(uc);
-			}
-		}
-
+		var claimsToRemove = userClaims.Where(uc => claimsList.Any(c => c.UserId == user.Id && c.ClaimType == uc.ClaimType && c.ClaimValue == uc.ClaimValue));
+		UserClaims.RemoveRange(claimsToRemove);
 		var result = await SaveChangesAsync(cancellationToken);
 		return result > 0 ? IdentityResult.Success : IIdentityRepository.NoChangesSaved;
 	}
@@ -371,14 +365,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var roleClaims = role.Claims ?? await GetClaimsAsync(role, cancellationToken);
-		foreach (var rc in roleClaims)
-		{
-			if (claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == rc.ClaimType && c.ClaimValue == rc.ClaimValue))
-			{
-				RoleClaims.Remove(rc);
-			}
-		}
-
+		var claimsToRemove = roleClaims.Where(rc => claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == rc.ClaimType && c.ClaimValue == rc.ClaimValue));
+		RoleClaims.RemoveRange(claimsToRemove);
 		var result = await SaveChangesAsync(cancellationToken);
 		return result > 0 ? IdentityResult.Success : IIdentityRepository.NoChangesSaved;
 	}

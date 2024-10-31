@@ -1,8 +1,8 @@
-﻿using Bat.Api.Controllers;
+﻿using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bat.Shared.Api;
+namespace Bat.Api.Controllers;
 
 /// <summary>
 /// For demonstration purposes only!
@@ -28,23 +28,17 @@ public class DemoController : ApiBaseController
 		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
 		{
 			var seedUsers = appConfig.GetSection("SeedingData:Identity:Users").Get<IEnumerable<SeedingUser>>() ?? [];
-			foreach (var u in seedUsers)
+			result.AddRange(seedUsers.Select(su =>
 			{
-				var email = u.Email?.ToLower().Trim() ?? string.Empty;
-				var user = await identityRepository.GetUserByEmailAsync(email);
-				if (user != null)
-				{
-					var password = Environment.GetEnvironmentVariable($"USER_SECRET_I_{user.Id}") ?? string.Empty;
-					logger.LogCritical("DO NOT USE THIS IN PRODUCTION! Returning user '{id}': {secret}", $"USER_SECRET_I_{user.Id}", password);
-					result.Add(new UserResp
-					{
-						Id = user.Id,
-						Username = user.UserName!,
-						Email = user.Email!,
-						Password = password,
-					});
-				}
-			}
+				var email = su.Email?.ToLower().Trim() ?? string.Empty;
+				return identityRepository.GetUserByEmailAsync(email).Result;
+			}).Where(u => u != null).Select(u => new UserResp
+			{
+				Id = u!.Id,
+				Username = u!.UserName!,
+				Email = u!.Email!,
+				Password = Environment.GetEnvironmentVariable($"USER_SECRET_I_{u.Id}") ?? string.Empty,
+			}));
 		}
 		return ResponseOk(result);
 	}
