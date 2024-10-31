@@ -88,8 +88,10 @@ public partial class AppsController : ApiBaseController
 			// Validate public key PEM
 			try
 			{
-				var rsa = new RSACryptoServiceProvider();
-				rsa.ImportFromPem(req.PublicKeyPEM);
+				using (var rsa = new RSACryptoServiceProvider())
+				{
+					rsa.ImportFromPem(req.PublicKeyPEM);
+				}
 			}
 			catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException)
 			{
@@ -148,8 +150,10 @@ public partial class AppsController : ApiBaseController
 			// Validate public key PEM
 			try
 			{
-				var rsa = new RSACryptoServiceProvider();
-				rsa.ImportFromPem(req.PublicKeyPEM);
+				using (var rsa = new RSACryptoServiceProvider())
+				{
+					rsa.ImportFromPem(req.PublicKeyPEM);
+				}
 			}
 			catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException)
 			{
