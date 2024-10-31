@@ -14,7 +14,7 @@ public partial class UsersController : ApiBaseController
 	{
 		if (authenticator == null && authenticatorAsync == null)
 		{
-			throw new ArgumentNullException("No authenticator defined.");
+			return (ResponseNoData(403, "No authenticator defined."), null!);
 		}
 
 		var jwtToken = GetAuthToken();
