@@ -1,10 +1,8 @@
-﻿using Bat.Api.Services;
-using Bat.Shared.Api;
+﻿using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Security.Claims;
 
 namespace Bat.Api.Controllers;
@@ -14,18 +12,17 @@ public partial class UsersController
 	/// <summary>
 	/// Gets all available roles.
 	/// </summary>
-	/// <param name="identityRepository"></param>
 	/// <returns></returns>
 	[HttpGet(IApiClient.API_ENDPOINT_USERS)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
-	public async Task<ActionResult<ApiResp<IEnumerable<UserResp>>>> GetAllUsers(IIdentityRepository identityRepository)
+	public async Task<ActionResult<ApiResp<IEnumerable<UserResp>>>> GetAllUsers()
 	{
-		var users = identityRepository.AllUsersAsync();
+		var users = IdentityRepository.AllUsersAsync();
 		var result = new List<UserResp>();
 		await foreach (var user in users)
 		{
-			user.Roles ??= await identityRepository.GetRolesAsync(user);
-			user.Claims ??= await identityRepository.GetClaimsAsync(user);
+			user.Roles ??= await IdentityRepository.GetRolesAsync(user);
+			user.Claims ??= await IdentityRepository.GetClaimsAsync(user);
 			result.Add(UserResp.BuildFromUser(user));
 		}
 		return ResponseOk(result);
@@ -35,19 +32,18 @@ public partial class UsersController
 	/// Gets a user by id.
 	/// </summary>
 	/// <param name="id"></param>
-	/// <param name="identityRepository"></param>
 	/// <returns></returns>
 	[HttpGet(IApiClient.API_ENDPOINT_USERS_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_USER_MANAGER)]
-	public async Task<ActionResult<ApiResp<UserResp>>> GetUser([FromRoute] string id, IIdentityRepository identityRepository)
+	public async Task<ActionResult<ApiResp<UserResp>>> GetUser([FromRoute] string id)
 	{
-		var user = await identityRepository.GetUserByIDAsync(id, UserFetchOptions.DEFAULT.FetchRoles().FetchClaims());
+		var user = await IdentityRepository.GetUserByIDAsync(id, UserFetchOptions.DEFAULT.FetchRoles().FetchClaims());
 		if (user == null)
 		{
 			return ResponseNoData(404, $"User '{id}' not found.");
 		}
-		user.Roles ??= await identityRepository.GetRolesAsync(user);
-		user.Claims ??= await identityRepository.GetClaimsAsync(user);
+		user.Roles ??= await IdentityRepository.GetRolesAsync(user);
+		user.Claims ??= await IdentityRepository.GetClaimsAsync(user);
 		return ResponseOk(UserResp.BuildFromUser(user));
 	}
 
@@ -55,13 +51,9 @@ public partial class UsersController
 	/// Creates a new user.
 	/// </summary>
 	/// <param name="req"></param>
-	/// <param name="identityOptions"></param>
-	/// <param name="identityRepository"></param>
 	/// <param name="lookupNormalizer"></param>
 	/// <param name="passwordValidator"></param>
 	/// <param name="passwordHasher"></param>
-	/// <param name="authenticator"></param>
-	/// <param name="authenticatorAsync"></param>
 	/// <param name="userManager"></param>
 	/// <returns></returns>
 	/// <response code="200">User created successfully.</response>
@@ -72,23 +64,16 @@ public partial class UsersController
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_USER_PERM)]
 	public async Task<ActionResult<ApiResp<UserResp>>> CreateUser(
 		CreateOrUpdateUserReq req,
-		IOptions<IdentityOptions> identityOptions,
-		IIdentityRepository identityRepository,
 		ILookupNormalizer lookupNormalizer,
 		IPasswordValidator<BatUser> passwordValidator,
 		IPasswordHasher<BatUser> passwordHasher,
-		IAuthenticator? authenticator,
-		IAuthenticatorAsync? authenticatorAsync,
 		UserManager<BatUser> userManager)
 	{
-		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
-			identityRepository,
-			identityOptions.Value,
-			authenticator, authenticatorAsync);
-		if (vAuthTokenResult != null)
+		var (authErrorResult, _) = await VerifyAuthTokenAndCurrentUser();
+		if (authErrorResult != null)
 		{
 			// current auth token and signed-in user should all be valid
-			return vAuthTokenResult;
+			return authErrorResult;
 		}
 
 		// validate the username
@@ -118,14 +103,14 @@ public partial class UsersController
 		}
 
 		// check if the username is already taken
-		var existingUserName = await identityRepository.GetUserByUserNameAsync(username);
+		var existingUserName = await IdentityRepository.GetUserByUserNameAsync(username);
 		if (existingUserName != null)
 		{
 			return ResponseNoData(400, $"User '{username}' already exists.");
 		}
 
 		// check if the email is already taken
-		var existingUserEmail = await identityRepository.GetUserByEmailAsync(email);
+		var existingUserEmail = await IdentityRepository.GetUserByEmailAsync(email);
 		if (existingUserEmail != null)
 		{
 			return ResponseNoData(400, $"Email '{email}' has been used by another user.");
@@ -140,7 +125,7 @@ public partial class UsersController
 		}
 
 		// verify if the roles are valid
-		var uniqueRoles = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, identityRepository.GetRoleByIDAsync(r).Result)).ToList();
+		var uniqueRoles = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, IdentityRepository.GetRoleByIDAsync(r).Result)).ToList();
 		var invalidRole = uniqueRoles.Where(r => r.Value == null).First();
 		if (invalidRole.Value != null)
 		{
@@ -158,21 +143,21 @@ public partial class UsersController
 			FamilyName = req.FamilyName?.Trim(),
 			GivenName = req.GivenName?.Trim(),
 		};
-		var iresultCreate = await identityRepository.CreateAsync(user);
+		var iresultCreate = await IdentityRepository.CreateAsync(user);
 		if (!iresultCreate.Succeeded)
 		{
 			return ResponseNoData(500, $"Failed to create user: {iresultCreate}");
 		}
 
 		// then add the claims
-		var iresultAddClaims = await identityRepository.AddClaimsAsync(user, uniqueClaims);
+		var iresultAddClaims = await IdentityRepository.AddClaimsAsync(user, uniqueClaims);
 		if (!iresultAddClaims.Succeeded)
 		{
 			return ResponseNoData(509, $"Failed to add claims to user: {iresultAddClaims} / Note: User has been created.");
 		}
 
 		// then add the roles
-		var iresultAddRoles = await identityRepository.AddToRolesAsync(user, uniqueRoles.Select(r => r.Value!));
+		var iresultAddRoles = await IdentityRepository.AddToRolesAsync(user, uniqueRoles.Select(r => r.Value!));
 		if (!iresultAddRoles.Succeeded)
 		{
 			return ResponseNoData(509, $"Failed to add roles to user: {iresultAddRoles} / Note: User has been created.");
@@ -186,11 +171,7 @@ public partial class UsersController
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="req"></param>
-	/// <param name="identityOptions"></param>
-	/// <param name="identityRepository"></param>
 	/// <param name="lookupNormalizer"></param>
-	/// <param name="authenticator"></param>
-	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
 	/// <response code="200">User updated successfully.</response>
 	/// <response code="400">Input validation failed (e.g. user's name already used by another one).</response>
@@ -202,23 +183,16 @@ public partial class UsersController
 	public async Task<ActionResult<ApiResp<UserResp>>> UpdateUser(
 		[FromRoute] string id,
 		CreateOrUpdateUserReq req,
-		IOptions<IdentityOptions> identityOptions,
-		IIdentityRepository identityRepository,
-		ILookupNormalizer lookupNormalizer,
-		IAuthenticator? authenticator,
-		IAuthenticatorAsync? authenticatorAsync)
+		ILookupNormalizer lookupNormalizer)
 	{
-		var (vAuthTokenResult, _) = await VerifyAuthTokenAndCurrentUser(
-			identityRepository,
-			identityOptions.Value,
-			authenticator, authenticatorAsync);
-		if (vAuthTokenResult != null)
+		var (authErrorResult, _) = await VerifyAuthTokenAndCurrentUser();
+		if (authErrorResult != null)
 		{
 			// current auth token and signed-in user should all be valid
-			return vAuthTokenResult;
+			return authErrorResult;
 		}
 
-		var targetUser = await identityRepository.GetUserByIDAsync(id, UserFetchOptions.DEFAULT.FetchRoles().FetchClaims());
+		var targetUser = await IdentityRepository.GetUserByIDAsync(id, UserFetchOptions.DEFAULT.FetchRoles().FetchClaims());
 		if (targetUser == null)
 		{
 			return ResponseNoData(404, $"User '{id}' not found.");
@@ -227,7 +201,7 @@ public partial class UsersController
 		var username = req.Username?.ToLower().Trim() ?? targetUser.UserName; // if not provided, keep the original username
 		if (!string.IsNullOrWhiteSpace(username))
 		{
-			var existingUserName = await identityRepository.GetUserByUserNameAsync(username);
+			var existingUserName = await IdentityRepository.GetUserByUserNameAsync(username);
 			if (existingUserName != null && !existingUserName.Id.Equals(targetUser.Id, StringComparison.InvariantCulture))
 			{
 				return ResponseNoData(400, $"Username '{username}' already exists.");
@@ -237,7 +211,7 @@ public partial class UsersController
 		var email = req.Email?.ToLower().Trim() ?? targetUser.Email; // if not provided, keep the original email
 		if (!string.IsNullOrWhiteSpace(email))
 		{
-			var existingUserEmail = await identityRepository.GetUserByEmailAsync(email);
+			var existingUserEmail = await IdentityRepository.GetUserByEmailAsync(email);
 			if (existingUserEmail != null && !existingUserEmail.Id.Equals(targetUser.Id, StringComparison.InvariantCulture))
 			{
 				return ResponseNoData(400, $"Email '{email}' has been used by another user.");
@@ -253,7 +227,7 @@ public partial class UsersController
 		}
 
 		// verify if the roles are valid
-		var uniqueRolesNew = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, identityRepository.GetRoleByIDAsync(r).Result)).ToList();
+		var uniqueRolesNew = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, IdentityRepository.GetRoleByIDAsync(r).Result)).ToList();
 		var invalidRole = uniqueRolesNew.Where(r => r.Value == null).First();
 		if (invalidRole.Value != null)
 		{
@@ -267,7 +241,7 @@ public partial class UsersController
 		targetUser.NormalizedEmail = lookupNormalizer.NormalizeEmail(email);
 		targetUser.FamilyName = req.FamilyName?.Trim() ?? targetUser.FamilyName; // if not provided, keep the original family name
 		targetUser.GivenName = req.GivenName?.Trim() ?? targetUser.GivenName; // if not provided, keep the original given name
-		var iresultUpdate = await identityRepository.UpdateAsync(targetUser);
+		var iresultUpdate = await IdentityRepository.UpdateAsync(targetUser);
 		if (iresultUpdate == null)
 		{
 			return ResponseNoData(500, $"Failed to update user.");
@@ -278,13 +252,13 @@ public partial class UsersController
 		{
 			if (targetUser.Roles != null)
 			{
-				var iresultRemoveRoles = await identityRepository.RemoveFromRolesAsync(targetUser, targetUser.Roles);
+				var iresultRemoveRoles = await IdentityRepository.RemoveFromRolesAsync(targetUser, targetUser.Roles);
 				if (!iresultRemoveRoles.Succeeded)
 				{
 					return ResponseNoData(509, $"Failed to update user's roles: {iresultRemoveRoles} / Note: User's data was updated.");
 				}
 			}
-			var iresultAddRoles = await identityRepository.AddToRolesAsync(targetUser, uniqueRolesNew.Select(r => r.Value!));
+			var iresultAddRoles = await IdentityRepository.AddToRolesAsync(targetUser, uniqueRolesNew.Select(r => r.Value!));
 			if (!iresultAddRoles.Succeeded)
 			{
 				return ResponseNoData(509, $"Failed to update user's roles: {iresultAddRoles} / Note: User's data was updated.");
@@ -296,13 +270,13 @@ public partial class UsersController
 		{
 			if (targetUser.Claims != null)
 			{
-				var iresultRemoveClaims = await identityRepository.RemoveClaimsAsync(targetUser, targetUser.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
+				var iresultRemoveClaims = await IdentityRepository.RemoveClaimsAsync(targetUser, targetUser.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
 				if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemoveClaims))
 				{
 					return ResponseNoData(509, $"Failed to update user's claims: {iresultRemoveClaims} / Note: User's data was updated.");
 				}
 			}
-			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetUser, uniqueClaimsNew);
+			var iresultAddClaims = await IdentityRepository.AddClaimsAsync(targetUser, uniqueClaimsNew);
 			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
 			{
 				return ResponseNoData(509, $"Failed to update user's claims: {iresultAddClaims} / Note: User's data was updated.");
@@ -316,31 +290,19 @@ public partial class UsersController
 	/// Deletes a user by id.
 	/// </summary>
 	/// <param name="id"></param>
-	/// <param name="identityOptions"></param>
-	/// <param name="identityRepository"></param>
-	/// <param name="authenticator"></param>
-	/// <param name="authenticatorAsync"></param>
 	/// <returns></returns>
 	[HttpDelete(IApiClient.API_ENDPOINT_USERS_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_DELETE_USER_PERM)]
-	public async Task<ActionResult<ApiResp<UserResp>>> DeleteUser(
-		[FromRoute] string id,
-		IOptions<IdentityOptions> identityOptions,
-		IIdentityRepository identityRepository,
-		IAuthenticator? authenticator,
-		IAuthenticatorAsync? authenticatorAsync)
+	public async Task<ActionResult<ApiResp<UserResp>>> DeleteUser([FromRoute] string id)
 	{
-		var (vAuthTokenResult, currentUser) = await VerifyAuthTokenAndCurrentUser(
-			identityRepository,
-			identityOptions.Value,
-			authenticator, authenticatorAsync);
-		if (vAuthTokenResult != null)
+		var (authErrorResult, currentUser) = await VerifyAuthTokenAndCurrentUser();
+		if (authErrorResult != null)
 		{
 			// current auth token and signed-in user should all be valid
-			return vAuthTokenResult;
+			return authErrorResult;
 		}
 
-		var user = await identityRepository.GetUserByIDAsync(id);
+		var user = await IdentityRepository.GetUserByIDAsync(id);
 		if (user == null)
 		{
 			return ResponseNoData(404, $"User '{id}' not found.");
@@ -349,7 +311,7 @@ public partial class UsersController
 		{
 			return ResponseNoData(400, "You cannot delete yourself.");
 		}
-		var iresult = await identityRepository.DeleteAsync(user);
+		var iresult = await IdentityRepository.DeleteAsync(user);
 		if (!iresult.Succeeded)
 		{
 			return ResponseNoData(500, $"Failed to delete user: {iresult}");

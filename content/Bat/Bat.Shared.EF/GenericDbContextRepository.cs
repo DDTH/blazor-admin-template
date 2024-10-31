@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Bat.Shared.Models;
+﻿using Bat.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bat.Shared.EF;
