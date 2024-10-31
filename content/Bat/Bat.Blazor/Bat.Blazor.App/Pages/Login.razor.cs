@@ -62,6 +62,8 @@ public partial class Login : BaseComponent
 			var user = seedUsers.Data?.FirstOrDefault();
 			Email = user?.Email ?? string.Empty;
 			Password = user?.Password ?? string.Empty;
+
+			ShowAlert("info", "DEMO ENV: The login form is automatically filled for your convenience.");
 		}
 	}
 

@@ -258,11 +258,25 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
-          docker buildx imagetools create -t ${{ env.DOCKER_IMAGE }}:dev -t ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev -t ${{ env.DOCKER_IMAGE }}:latest \
+          docker buildx imagetools create \
+            -t ${{ env.DOCKER_IMAGE }}:dev \
+            -t ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}-dev \
+            -t ${{ env.DOCKER_IMAGE }}:latest \
+            -t ${{ env.DOCKER_IMAGE }}:${{ github.sha }} \
             $(printf '${{ env.DOCKER_IMAGE }}@sha256:%s ' *)
       - name: Inspect image
         run: |
           docker buildx imagetools inspect ${{ env.DOCKER_IMAGE }}:${{ steps.meta.outputs.version }}
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy to demo environment
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          containerAppName: ${{ secrets.AZURE_CONTAINER_APP }}
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          imageToDeploy: docker.io/${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
   PublishDockerImagesWindows:
     if: |
