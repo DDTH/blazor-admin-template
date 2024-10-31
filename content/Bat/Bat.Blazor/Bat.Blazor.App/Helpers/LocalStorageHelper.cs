@@ -1,10 +1,11 @@
 ﻿using Blazored.LocalStorage;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace Bat.Blazor.App.Helpers;
 
-public class LocalStorageHelper(ILocalStorageService localStorageService)
+public class LocalStorageHelper(ILocalStorageService localStorageService, ILogger<LocalStorageHelper> logger)
 {
 	private static readonly ConcurrentDictionary<string, string> Entries = new();
 
@@ -28,8 +29,9 @@ public class LocalStorageHelper(ILocalStorageService localStorageService)
 		{
 			await localStorageService.SetItemAsync(key, data, cancellationToken);
 		}
-		catch (InvalidOperationException)
+		catch (InvalidOperationException ex)
 		{
+			logger.LogWarning(ex, "Failed to set item in local storage, key: {key}", key);
 		}
 	}
 
@@ -40,8 +42,9 @@ public class LocalStorageHelper(ILocalStorageService localStorageService)
 		{
 			await localStorageService.RemoveItemAsync(key, cancellationToken);
 		}
-		catch (InvalidOperationException)
+		catch (InvalidOperationException ex)
 		{
+			logger.LogWarning(ex, "Failed to remove item from local storage, key: {key}", key);
 		}
 	}
 
@@ -55,8 +58,9 @@ public class LocalStorageHelper(ILocalStorageService localStorageService)
 		{
 			await localStorageService.RemoveItemsAsync(keys, cancellationToken);
 		}
-		catch (InvalidOperationException)
+		catch (InvalidOperationException ex)
 		{
+			logger.LogWarning(ex, "Failed to remove items in local storage, key: {keys}", keys);
 		}
 	}
 }

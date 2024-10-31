@@ -75,28 +75,34 @@ public class CacheBootstrapper
 			case CacheType.INMEMORY or CacheType.MEMORY:
 				var cacheSizeLimit = cacheConf.SizeLimit > 0 ? cacheConf.SizeLimit : CacheConf.DEFAULT_SIZE_LIMIT;
 				logger.LogInformation("Using in-memory cache for {domain}, with SizeLimit = {SizeLimit}...", keyedServiceName, cacheSizeLimit);
-				var memoryCache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions()
+				appBuilder.Services.AddKeyedSingleton<IDistributedCache>(keyedServiceName, (sp, key) =>
 				{
-					SizeLimit = cacheSizeLimit
-				}));
-				appBuilder.Services.AddKeyedSingleton<IDistributedCache>(keyedServiceName, memoryCache);
+					var options = new MemoryDistributedCacheOptions()
+					{
+						SizeLimit = cacheSizeLimit
+					};
+					return new MemoryDistributedCache(Options.Create(options));
+				});
 				return cacheConf;
 			case CacheType.REDIS:
 				if (string.IsNullOrWhiteSpace(cacheConf.ConnectionString))
 				{
 					throw new InvalidDataException($"No connection string name found at key {confKeyBase}:ConnectionString in the configurations.");
 				}
-				var connStr = appBuilder.Configuration.GetConnectionString(cacheConf.ConnectionString) ?? "";
+				var connStr = appBuilder.Configuration.GetConnectionString(cacheConf.ConnectionString) ?? string.Empty;
 				if (string.IsNullOrWhiteSpace(connStr))
 				{
 					throw new InvalidDataException($"No connection string {cacheConf.ConnectionString} defined in the ConnectionStrings section in the configurations.");
 				}
 				logger.LogInformation("Using Redis cache for {domain}...", keyedServiceName);
-				var redisCache = new RedisCache(Options.Create(new RedisCacheOptions()
+				appBuilder.Services.AddKeyedSingleton<IDistributedCache>(keyedServiceName, (sp, key) =>
 				{
-					Configuration = connStr
-				}));
-				appBuilder.Services.AddKeyedSingleton<IDistributedCache>(keyedServiceName, redisCache);
+					var options = new RedisCacheOptions()
+					{
+						Configuration = connStr
+					};
+					return new RedisCache(Options.Create(options));
+				});
 				return cacheConf;
 			default:
 				logger.LogInformation("No cache configured for {domain}, or invalid cache type '{cacheType}'.", keyedServiceName, cacheConf.Type);

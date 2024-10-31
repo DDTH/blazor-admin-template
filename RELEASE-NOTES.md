@@ -1,5 +1,17 @@
 # Blazor Admin Template release notes
 
+## 2024-10-31 - v1.1.0
+
+### Added/Refactoring
+
+- Refactor: control seeding data via appsettings.json
+- Feature: add landing page
+
+### Fixed/Improvement
+
+- Improvement: integrate user avatars from Gravatar.com
+- Fix(CodeQL): CodeQL warnings and recommendations
+
 ## 2024-10-29 - v1.0.0
 
 ### Added/Refactoring

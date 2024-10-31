@@ -117,9 +117,9 @@ public abstract class ApiBaseController : ControllerBase
 	/// Retrieve the auth token from the request headers.
 	/// </summary>
 	/// <returns></returns>
-	protected string? GetAuthToken()
+	protected string GetAuthToken()
 	{
-		return HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+		return HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last() ?? string.Empty;
 	}
 
 	/// <summary>

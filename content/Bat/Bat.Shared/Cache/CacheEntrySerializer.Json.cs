@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Bat.Shared.Cache;
 
@@ -52,7 +53,10 @@ public class JsonCacheEntrySerializer : ICacheEntrySerializer
 	{
 		try
 		{
-			return await JsonSerializer.DeserializeAsync<T>(new MemoryStream(bytes), Options.SerializerOptions, token);
+			using (var ms = new MemoryStream(bytes))
+			{
+				return await JsonSerializer.DeserializeAsync<T>(ms, Options.SerializerOptions, token);
+			}
 		}
 		catch (Exception e) when (e is JsonException || e is IOException)
 		{
