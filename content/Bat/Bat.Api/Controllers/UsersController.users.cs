@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
-using Bat.Api.Services;
+﻿using Bat.Api.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 
 namespace Bat.Api.Controllers;
 
@@ -132,29 +132,19 @@ public partial class UsersController
 		}
 
 		// verify if the claims are valid
-		var uniqueClaims = req.Claims?.Distinct() ?? [];
-		var claims = new List<Claim>();
-		foreach (var uc in uniqueClaims)
+		var uniqueClaims = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
+		var invalidClaim = uniqueClaims.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		if (invalidClaim != null)
 		{
-			var claim = new Claim(uc.Type, uc.Value);
-			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
-			{
-				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
-			}
-			claims.Add(claim);
+			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");
 		}
 
 		// verify if the roles are valid
-		var uniqueRoles = req.Roles?.Distinct() ?? [];
-		var roles = new List<BatRole>();
-		foreach (var ur in uniqueRoles)
+		var uniqueRoles = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, identityRepository.GetRoleByIDAsync(r).Result)).ToList();
+		var invalidRole = uniqueRoles.Where(r => r.Value == null).First();
+		if (invalidRole.Value != null)
 		{
-			var role = await identityRepository.GetRoleByIDAsync(ur);
-			if (role == null)
-			{
-				return ResponseNoData(400, $"Role '{ur}' does not exist.");
-			}
-			roles.Add(role);
+			return ResponseNoData(400, $"Role '{invalidRole.Key}' does not exist.");
 		}
 
 		// first, create the user
@@ -175,14 +165,14 @@ public partial class UsersController
 		}
 
 		// then add the claims
-		var iresultAddClaims = await identityRepository.AddClaimsAsync(user, claims);
+		var iresultAddClaims = await identityRepository.AddClaimsAsync(user, uniqueClaims);
 		if (!iresultAddClaims.Succeeded)
 		{
 			return ResponseNoData(509, $"Failed to add claims to user: {iresultAddClaims} / Note: User has been created.");
 		}
 
 		// then add the roles
-		var iresultAddRoles = await identityRepository.AddToRolesAsync(user, roles);
+		var iresultAddRoles = await identityRepository.AddToRolesAsync(user, uniqueRoles.Select(r => r.Value!));
 		if (!iresultAddRoles.Succeeded)
 		{
 			return ResponseNoData(509, $"Failed to add roles to user: {iresultAddRoles} / Note: User has been created.");
@@ -255,29 +245,19 @@ public partial class UsersController
 		}
 
 		// verify if the claims are valid
-		var uniqueClaimsNew = req.Claims?.Distinct() ?? [];
-		var claimsNew = new List<Claim>();
-		foreach (var uc in uniqueClaimsNew)
+		var uniqueClaimsNew = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
+		var invalidClaim = uniqueClaimsNew.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		if (invalidClaim != null)
 		{
-			var claim = new Claim(uc.Type, uc.Value);
-			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
-			{
-				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
-			}
-			claimsNew.Add(claim);
+			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");
 		}
 
 		// verify if the roles are valid
-		var uniqueRolesNew = req.Roles?.Distinct() ?? [];
-		var rolesNew = new List<BatRole>();
-		foreach (var ur in uniqueRolesNew)
+		var uniqueRolesNew = (req.Roles?.Distinct() ?? []).Select(r => new KeyValuePair<string, BatRole?>(r, identityRepository.GetRoleByIDAsync(r).Result)).ToList();
+		var invalidRole = uniqueRolesNew.Where(r => r.Value == null).First();
+		if (invalidRole.Value != null)
 		{
-			var role = await identityRepository.GetRoleByIDAsync(ur);
-			if (role == null)
-			{
-				return ResponseNoData(400, $"Role '{ur}' does not exist.");
-			}
-			rolesNew.Add(role);
+			return ResponseNoData(400, $"Role '{invalidRole.Key}' does not exist.");
 		}
 
 		// first, update the user
@@ -287,7 +267,7 @@ public partial class UsersController
 		targetUser.NormalizedEmail = lookupNormalizer.NormalizeEmail(email);
 		targetUser.FamilyName = req.FamilyName?.Trim() ?? targetUser.FamilyName; // if not provided, keep the original family name
 		targetUser.GivenName = req.GivenName?.Trim() ?? targetUser.GivenName; // if not provided, keep the original given name
-		var iresultUpdate	 = await identityRepository.UpdateAsync(targetUser);
+		var iresultUpdate = await identityRepository.UpdateAsync(targetUser);
 		if (iresultUpdate == null)
 		{
 			return ResponseNoData(500, $"Failed to update user.");
@@ -304,7 +284,7 @@ public partial class UsersController
 					return ResponseNoData(509, $"Failed to update user's roles: {iresultRemoveRoles} / Note: User's data was updated.");
 				}
 			}
-			var iresultAddRoles = await identityRepository.AddToRolesAsync(targetUser, rolesNew);
+			var iresultAddRoles = await identityRepository.AddToRolesAsync(targetUser, uniqueRolesNew.Select(r => r.Value!));
 			if (!iresultAddRoles.Succeeded)
 			{
 				return ResponseNoData(509, $"Failed to update user's roles: {iresultAddRoles} / Note: User's data was updated.");
@@ -322,7 +302,7 @@ public partial class UsersController
 					return ResponseNoData(509, $"Failed to update user's claims: {iresultRemoveClaims} / Note: User's data was updated.");
 				}
 			}
-			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetUser, claimsNew);
+			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetUser, uniqueClaimsNew);
 			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
 			{
 				return ResponseNoData(509, $"Failed to update user's claims: {iresultAddClaims} / Note: User's data was updated.");

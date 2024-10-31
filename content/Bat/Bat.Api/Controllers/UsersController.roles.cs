@@ -98,16 +98,11 @@ public partial class UsersController
 		}
 
 		// verify if the claims are valid
-		var uniqueClaims = req.Claims?.Distinct() ?? [];
-		var claims = new List<Claim>();
-		foreach (var uc in uniqueClaims)
+		var uniqueClaims = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
+		var invalidClaim = uniqueClaims.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		if (invalidClaim != null)
 		{
-			var claim = new Claim(uc.Type, uc.Value);
-			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
-			{
-				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
-			}
-			claims.Add(claim);
+			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");
 		}
 
 		// first, create the role
@@ -124,7 +119,7 @@ public partial class UsersController
 		}
 
 		// then add the claims
-		iresult = await identityRepository.AddClaimsAsync(role, claims);
+		iresult = await identityRepository.AddClaimsAsync(role, uniqueClaims);
 		if (!iresult.Succeeded)
 		{
 			return ResponseNoData(509, $"Failed to add claims to role: {iresult} / Note: Role has been created.");
@@ -187,16 +182,11 @@ public partial class UsersController
 		}
 
 		// verify if the claims are valid
-		var uniqueClaimsNew = req.Claims?.Distinct() ?? [];
-		var claimsNew = new List<Claim>();
-		foreach (var uc in uniqueClaimsNew)
+		var uniqueClaimsNew = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
+		var invalidClaim = uniqueClaimsNew.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		if (invalidClaim != null)
 		{
-			var claim = new Claim(uc.Type, uc.Value);
-			if (!BuiltinClaims.ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE))
-			{
-				return ResponseNoData(400, $"Claim '{claim.Type}:{claim.Value}' is not valid.");
-			}
-			claimsNew.Add(claim);
+			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");
 		}
 
 		// first, update the role
@@ -220,7 +210,7 @@ public partial class UsersController
 					return ResponseNoData(509, $"Failed to update role's claims: {iresultRemoveClaims} / Note: Role's data was updated.");
 				}
 			}
-			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetRole, claimsNew);
+			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetRole, uniqueClaimsNew);
 			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
 			{
 				return ResponseNoData(509, $"Failed to update role's claims: {iresultAddClaims} / Note: Role's data was updated.");
