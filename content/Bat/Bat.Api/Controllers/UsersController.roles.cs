@@ -120,14 +120,14 @@ public partial class UsersController
 		var iresult = await identityRepository.CreateAsync(role);
 		if (!iresult.Succeeded)
 		{
-			return ResponseNoData(500, $"Failed to create role: {iresult.ToString()}");
+			return ResponseNoData(500, $"Failed to create role: {iresult}");
 		}
 
 		// then add the claims
 		iresult = await identityRepository.AddClaimsAsync(role, claims);
 		if (!iresult.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add claims to role: {iresult.ToString()} / Note: Role has been created.");
+			return ResponseNoData(509, $"Failed to add claims to role: {iresult} / Note: Role has been created.");
 		}
 
 		return ResponseOk(RoleResp.BuildFromRole(role));
@@ -217,13 +217,13 @@ public partial class UsersController
 				var iresultRemoveClaims = await identityRepository.RemoveClaimsAsync(targetRole, targetRole.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
 				if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemoveClaims))
 				{
-					return ResponseNoData(509, $"Failed to update role's claims: {iresultRemoveClaims.ToString()} / Note: Role's data was updated.");
+					return ResponseNoData(509, $"Failed to update role's claims: {iresultRemoveClaims} / Note: Role's data was updated.");
 				}
 			}
 			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetRole, claimsNew);
 			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
 			{
-				return ResponseNoData(509, $"Failed to update role's claims: {iresultAddClaims.ToString()} / Note: Role's data was updated.");
+				return ResponseNoData(509, $"Failed to update role's claims: {iresultAddClaims} / Note: Role's data was updated.");
 			}
 		}
 
@@ -266,7 +266,7 @@ public partial class UsersController
 		var iresult = await identityRepository.DeleteAsync(role);
 		if (!iresult.Succeeded)
 		{
-			return ResponseNoData(500, $"Failed to delete role: {iresult.ToString()}");
+			return ResponseNoData(500, $"Failed to delete role: {iresult}");
 		}
 		return ResponseOk(RoleResp.BuildFromRole(role));
 	}

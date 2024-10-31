@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Bat.Api.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Identity;
@@ -171,21 +171,21 @@ public partial class UsersController
 		var iresultCreate = await identityRepository.CreateAsync(user);
 		if (!iresultCreate.Succeeded)
 		{
-			return ResponseNoData(500, $"Failed to create user: {iresultCreate.ToString()}");
+			return ResponseNoData(500, $"Failed to create user: {iresultCreate}");
 		}
 
 		// then add the claims
 		var iresultAddClaims = await identityRepository.AddClaimsAsync(user, claims);
 		if (!iresultAddClaims.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add claims to user: {iresultAddClaims.ToString()} / Note: User has been created.");
+			return ResponseNoData(509, $"Failed to add claims to user: {iresultAddClaims} / Note: User has been created.");
 		}
 
 		// then add the roles
 		var iresultAddRoles = await identityRepository.AddToRolesAsync(user, roles);
 		if (!iresultAddRoles.Succeeded)
 		{
-			return ResponseNoData(509, $"Failed to add roles to user: {iresultAddRoles.ToString()} / Note: User has been created.");
+			return ResponseNoData(509, $"Failed to add roles to user: {iresultAddRoles} / Note: User has been created.");
 		}
 
 		return ResponseOk(UserResp.BuildFromUser(user));
@@ -301,13 +301,13 @@ public partial class UsersController
 				var iresultRemoveRoles = await identityRepository.RemoveFromRolesAsync(targetUser, targetUser.Roles);
 				if (!iresultRemoveRoles.Succeeded)
 				{
-					return ResponseNoData(509, $"Failed to update user's roles: {iresultRemoveRoles.ToString()} / Note: User's data was updated.");
+					return ResponseNoData(509, $"Failed to update user's roles: {iresultRemoveRoles} / Note: User's data was updated.");
 				}
 			}
 			var iresultAddRoles = await identityRepository.AddToRolesAsync(targetUser, rolesNew);
 			if (!iresultAddRoles.Succeeded)
 			{
-				return ResponseNoData(509, $"Failed to update user's roles: {iresultAddRoles.ToString()} / Note: User's data was updated.");
+				return ResponseNoData(509, $"Failed to update user's roles: {iresultAddRoles} / Note: User's data was updated.");
 			}
 		}
 
@@ -319,13 +319,13 @@ public partial class UsersController
 				var iresultRemoveClaims = await identityRepository.RemoveClaimsAsync(targetUser, targetUser.Claims.Select(c => new Claim(c.ClaimType!, c.ClaimValue!)));
 				if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultRemoveClaims))
 				{
-					return ResponseNoData(509, $"Failed to update user's claims: {iresultRemoveClaims.ToString()} / Note: User's data was updated.");
+					return ResponseNoData(509, $"Failed to update user's claims: {iresultRemoveClaims} / Note: User's data was updated.");
 				}
 			}
 			var iresultAddClaims = await identityRepository.AddClaimsAsync(targetUser, claimsNew);
 			if (!IIdentityRepository.IsSucceededOrNoChangesSaved(iresultAddClaims))
 			{
-				return ResponseNoData(509, $"Failed to update user's claims: {iresultAddClaims.ToString()} / Note: User's data was updated.");
+				return ResponseNoData(509, $"Failed to update user's claims: {iresultAddClaims} / Note: User's data was updated.");
 			}
 		}
 
@@ -372,7 +372,7 @@ public partial class UsersController
 		var iresult = await identityRepository.DeleteAsync(user);
 		if (!iresult.Succeeded)
 		{
-			return ResponseNoData(500, $"Failed to delete user: {iresult.ToString()}");
+			return ResponseNoData(500, $"Failed to delete user: {iresult}");
 		}
 		return ResponseOk(UserResp.BuildFromUser(user));
 	}

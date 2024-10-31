@@ -230,7 +230,7 @@
 </script>
 
 @code {
-    internal static object Breadcrumb = new();
+    internal static readonly object Breadcrumb = new();
 
 	private string GravatarUrl { get; set; } = string.Empty;
 
@@ -240,9 +240,9 @@
 		var respUser = await ApiClient.GetMyInfoAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 		var email = respUser?.Data.Email.Trim().ToLower() ?? string.Empty;
 		var inputBytes = System.Text.Encoding.UTF8.GetBytes(email);
-		var hashBytes = MD5.ComputeHash(inputBytes);
-		GravatarUrl = $"https://www.gravatar.com/avatar/{Convert.ToHexString(hashBytes).ToLower()}?s=64&d=identicon";
-	}
+        GravatarUrl = $"https://www.gravatar.com/avatar/{MD5.ComputeHashString(inputBytes).ToLower()}?s=64&d=identicon";
+
+    }
 
 	// ref: https://stackoverflow.com/a/76734976
 	// Since MD5 is not available in Blazor WASM, we implement it ourselves.
@@ -388,7 +388,7 @@
 		}
 		public static string ComputeHashString(byte[] input) => string.Join("", ComputeHash(input).Select(o => o.ToString("x2")));
 
-		private static int[] s = new int[64]
+		private static readonly int[] s = new int[64]
 		{
 			7, 12, 17, 22, 7, 12, 17, 22, 7, 12,
 			17, 22, 7, 12, 17, 22, 5, 9, 14, 20,
@@ -399,7 +399,7 @@
 			6, 10, 15, 21
 		};
 
-		private static uint[] K = new uint[64]
+		private static readonly uint[] K = new uint[64]
 		{
 			3614090360u, 3905402710u, 606105819u, 3250441966u, 4118548399u, 1200080426u, 2821735955u, 4249261313u, 1770035416u, 2336552879u,
 			4294925233u, 2304563134u, 1804603682u, 4254626195u, 2792965006u, 1236535329u, 4129170786u, 3225465664u, 643717713u, 3921069994u,
