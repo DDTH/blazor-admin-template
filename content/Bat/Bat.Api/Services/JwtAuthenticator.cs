@@ -1,5 +1,4 @@
-﻿using Bat.Api.Controllers;
-using Bat.Shared.Api;
+﻿using Bat.Shared.Api;
 using Bat.Shared.Identity;
 using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Identity;
@@ -84,8 +83,7 @@ public sealed class SampleJwtAuthenticator(
 			var user = await FetchUserFirstNonEmpty(identityRepo, req.Id, req.Name, req.Email);
 			if (user == null)
 			{
-				var ustr = FirstNonEmpty(req.Id, req.Name, req.Email);
-				logger.LogError("Authentication failed: user '{user}' not found.", ustr);
+				logger.LogError("Authentication failed - user not found. Id: {id} / Username: {username} / Email: {email}", req.Id, req.Name, req.Email);
 				return AuthResp.AuthFailed;
 			}
 			var pwdHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher<BatUser>>();
