@@ -23,6 +23,8 @@ Template to quickly create admin control panel projects with .NET Blazor.
 - Sample [Dockerfiles](https://docs.docker.com/get-started/overview/) to build Docker images for both Linux and Windows environments.
 - Sample files included: README, LICENSE, RELEASE-NOTES and .gitignore.
 
+### 👉 LIVE DEMO: https://demo-bat.gpvcloud.com/
+
 ## Usage
 
 Install (or update) the package from NuGet to make the template available:
@@ -57,6 +59,6 @@ This template is licensed under the MIT License - see the [LICENSE.md](LICENSE.m
 
 ## Contributing & Support
 
-Feel free to create [pull requests](https://github.com/btnguyen2k/dotnet-webapi-template/compare/contribution_queue...) or [issues](https://github.com/btnguyen2k/dotnet-webapi-template/issues) to report bugs or suggest new features.
+Feel free to create [pull requests](https://github.com/DDTH/blazor-admin-template/compare/contribution_queue...) or [issues](https://github.com/DDTH/blazor-admin-template/issues) to report bugs or suggest new features.
 
 > Please create PRs against the `contribution_queue` branch.
