@@ -253,11 +253,11 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var userClaims = user.Claims ?? await GetClaimsAsync(user, cancellationToken);
-		foreach (var c in userClaims)
+		foreach (var uc in userClaims)
 		{
-			if (claimsList.Any(c => c.UserId == user.Id && c.ClaimType == c.ClaimType && c.ClaimValue == c.ClaimValue))
+			if (claimsList.Any(c => c.UserId == user.Id && c.ClaimType == uc.ClaimType && c.ClaimValue == uc.ClaimValue))
 			{
-				UserClaims.Remove(c);
+				UserClaims.Remove(uc);
 			}
 		}
 
@@ -371,11 +371,11 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var roleClaims = role.Claims ?? await GetClaimsAsync(role, cancellationToken);
-		foreach (var c in roleClaims)
+		foreach (var rc in roleClaims)
 		{
-			if (claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == c.ClaimType && c.ClaimValue == c.ClaimValue))
+			if (claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == rc.ClaimType && c.ClaimValue == rc.ClaimValue))
 			{
-				RoleClaims.Remove(c);
+				RoleClaims.Remove(rc);
 			}
 		}
 
