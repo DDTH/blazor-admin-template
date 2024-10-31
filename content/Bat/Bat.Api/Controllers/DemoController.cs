@@ -21,7 +21,7 @@ public class DemoController : ApiBaseController
 	/// </summary>
 	/// <returns></returns>
 	[HttpGet("/api/demo/seed_users")]
-	public async Task<ActionResult<ApiResp<IEnumerable<UserResp>>>> GetSeedUsers(ILogger<DemoController> logger, IConfiguration appConfig, IIdentityRepository identityRepository)
+	public ActionResult<ApiResp<IEnumerable<UserResp>>> GetSeedUsers(IConfiguration appConfig, IIdentityRepository identityRepository)
 	{
 		var result = new List<UserResp>();
 
@@ -40,6 +40,7 @@ public class DemoController : ApiBaseController
 				Password = Environment.GetEnvironmentVariable($"USER_SECRET_I_{u.Id}") ?? string.Empty,
 			}));
 		}
+
 		return ResponseOk(result);
 	}
 }

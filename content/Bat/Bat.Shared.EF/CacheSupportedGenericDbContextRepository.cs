@@ -9,7 +9,7 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 	where TEntity : Entity<TKey>, new()
 	where TKey : IEquatable<TKey>
 {
-	protected virtual ICacheFacade<TEntity>? Cache { get; set; }
+	protected ICacheFacade<TEntity>? Cache { get; set; }
 
 	public CacheSupportedGenericDbContextRepository(DbContextOptions<T> options)
 		: this(options, default) { }
@@ -22,7 +22,7 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 		IEntityTypeConfiguration<TEntity>? entityTypeConfiguration,
 		ICacheFacade<TEntity>? cache) : base(options, entityTypeConfiguration)
 	{
-		this.Cache = cache;
+		Cache = cache;
 
 		ChangeTracker.StateChanged += async (sender, args) =>
 		{

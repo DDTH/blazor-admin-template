@@ -9,8 +9,8 @@ public abstract class GenericDbContextRepository<T, TEntity, TKey> : DbContext, 
 	where TEntity : Entity<TKey>, new()
 	where TKey : IEquatable<TKey>
 {
-	protected virtual DbSet<TEntity> DbSet { get; set; } = default!;
-	protected virtual IEntityTypeConfiguration<TEntity>? EntityTypeConfiguration { get; set; }
+	protected DbSet<TEntity> DbSet { get; set; } = default!;
+	protected IEntityTypeConfiguration<TEntity>? EntityTypeConfiguration { get; set; }
 
 	public GenericDbContextRepository(DbContextOptions<T> options) : this(options, default) { }
 
@@ -18,7 +18,7 @@ public abstract class GenericDbContextRepository<T, TEntity, TKey> : DbContext, 
 		DbContextOptions<T> options,
 		IEntityTypeConfiguration<TEntity>? entityTypeConfiguration) : base(options)
 	{
-		this.EntityTypeConfiguration = entityTypeConfiguration;
+		EntityTypeConfiguration = entityTypeConfiguration;
 	}
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
