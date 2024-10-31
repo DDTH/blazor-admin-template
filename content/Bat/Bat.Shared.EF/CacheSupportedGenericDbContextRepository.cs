@@ -23,7 +23,14 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 		ICacheFacade<TEntity>? cache) : base(options, entityTypeConfiguration)
 	{
 		Cache = cache;
+		TrackStateChange();
+	}
 
+	/// <summary>
+	/// Tracks changes in the entity state and updates the cache accordingly.
+	/// </summary>
+	protected virtual void TrackStateChange()
+	{
 		ChangeTracker.StateChanged += async (sender, args) =>
 		{
 			if (args.Entry.Entity is TEntity entity)
@@ -35,22 +42,33 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 						{
 							entity.Touch();
 						}
-						if (cache != null)
-							await cache.SetAsync(entity.Id.ToString()!, entity, default!);
+						if (Cache != null)
+							await Cache.SetAsync(entity.Id.ToString()!, entity, default!);
 						break;
 					default:
-						if (cache != null)
-							await cache.RemoveAsync(entity.Id.ToString()!);
+						if (Cache != null)
+							await Cache.RemoveAsync(entity.Id.ToString()!);
 						break;
 				}
 			}
 		};
 	}
+
+	/// <summary>
+	/// Called when a cache hit occurs.
+	/// </summary>
+	/// <param name="cached"></param>
+	/// <returns></returns>
 	protected virtual TEntity CacheHit(TEntity cached)
 	{
 		return Attach(cached).Entity;
 	}
 
+	/// <summary>
+	/// Called when a cache miss occurs, via non-async methods.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
 	protected virtual TEntity? CacheMiss(TEntity? item)
 	{
 		if (item != null && Cache != null)
@@ -60,6 +78,12 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 		return item;
 	}
 
+	/// <summary>
+	/// Called when a cache miss occurs, via async methods.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
 	protected virtual async ValueTask<TEntity?> CacheMissAsync(TEntity? item, CancellationToken cancellationToken = default)
 	{
 		if (item != null && Cache != null)

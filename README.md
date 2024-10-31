@@ -14,7 +14,7 @@ Template to quickly create admin control panel projects with .NET Blazor.
   - Shared projects for common code and resources.
 - UI components and layouts built on [CoreUI Free Bootstrap Admin Template](https://coreui.io/product/free-bootstrap-admin-template/).
 - Authentication and authorization using JWT and [ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity).
-- Sample database access implementation with [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).
+- Sample database access implementation using [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).
 - GitHub Actions workflows:
   - `dependabot.yaml`, `automerge-dependabot.yaml`: Automatically update dependencies and merge PRs from Dependabot.
   - `ci.yaml`: Automate builds, tests, and code coverage reporting.
