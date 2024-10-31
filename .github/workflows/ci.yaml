@@ -190,8 +190,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Update version metadata
         run: |
-          sed -i -E "s/^(\s*\"Version\"\s*:\s*)\"[^\"]+\"/\1\"${{ env.VERSION }}\"/" content/Bat/Bat.Api/appsettings.json
-          sed -i -E "s/^(\s*\"Version\"\s*:\s*)\"[^\"]+\"/\1\"${{ env.VERSION }}\"/" content/Bat/Bat.Blazor/Bat.Blazor/appsettings.json
+          sed -i -E "s/^(\s*\"Version\"\s*:\s*)\"[^\"]+\"/\1\"${{ env.VERSION }}-${{ github.sha }}\"/" content/Bat/Bat.Api/appsettings.json
+          sed -i -E "s/^(\s*\"Version\"\s*:\s*)\"[^\"]+\"/\1\"${{ env.VERSION }}-${{ github.sha }}\"/" content/Bat/Bat.Blazor/Bat.Blazor/appsettings.json
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to Docker Hub
