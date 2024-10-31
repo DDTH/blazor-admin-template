@@ -260,4 +260,9 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<AppResp>> UpdateAppAsync(string id, CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/*----------------------------------------------------------------------*/
+
+	/* FOR DEMO PURPOSES ONLY! */
+	public Task<ApiResp<IEnumerable<UserResp>>> GetSeedUsersAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 }

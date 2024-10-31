@@ -57,6 +57,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	public async ValueTask<IdentityResult> CreateIfNotExistsAsync(BatUser user, CancellationToken cancellationToken = default)
 	{
 		if (await GetUserByIDAsync(user.Id, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetUserByUserNameAsync(user.UserName??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetUserByEmailAsync(user.Email??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
 		return await CreateAsync(user, cancellationToken);
 	}
 
@@ -251,14 +253,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var userClaims = user.Claims ?? await GetClaimsAsync(user, cancellationToken);
-		foreach (var c in userClaims)
-		{
-			if (claimsList.Any(c => c.UserId == user.Id && c.ClaimType == c.ClaimType && c.ClaimValue == c.ClaimValue))
-			{
-				UserClaims.Remove(c);
-			}
-		}
-
+		var claimsToRemove = userClaims.Where(uc => claimsList.Any(c => c.UserId == user.Id && c.ClaimType == uc.ClaimType && c.ClaimValue == uc.ClaimValue));
+		UserClaims.RemoveRange(claimsToRemove);
 		var result = await SaveChangesAsync(cancellationToken);
 		return result > 0 ? IdentityResult.Success : IIdentityRepository.NoChangesSaved;
 	}
@@ -289,6 +285,7 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	public async ValueTask<IdentityResult> CreateIfNotExistsAsync(BatRole role, CancellationToken cancellationToken = default)
 	{
 		if (await GetRoleByIDAsync(role.Id, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
+		if (await GetRoleByNameAsync(role.Name??string.Empty, cancellationToken: cancellationToken) != null) return IdentityResult.Success;
 		return await CreateAsync(role, cancellationToken);
 	}
 
@@ -368,14 +365,8 @@ public sealed class IdentityDbContextRepository : IdentityDbContext<BatUser, Bat
 	{
 		var claimsList = claims.ToList(); // Convert to list to avoid multiple enumerations
 		var roleClaims = role.Claims ?? await GetClaimsAsync(role, cancellationToken);
-		foreach (var c in roleClaims)
-		{
-			if (claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == c.ClaimType && c.ClaimValue == c.ClaimValue))
-			{
-				RoleClaims.Remove(c);
-			}
-		}
-
+		var claimsToRemove = roleClaims.Where(rc => claimsList.Any(c => c.RoleId == role.Id && c.ClaimType == rc.ClaimType && c.ClaimValue == rc.ClaimValue));
+		RoleClaims.RemoveRange(claimsToRemove);
 		var result = await SaveChangesAsync(cancellationToken);
 		return result > 0 ? IdentityResult.Success : IIdentityRepository.NoChangesSaved;
 	}

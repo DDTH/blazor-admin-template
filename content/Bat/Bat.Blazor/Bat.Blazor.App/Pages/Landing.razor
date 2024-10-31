@@ -1,0 +1,115 @@
+@using Bat.Blazor.App.Shared
+
+@attribute [Route(UIGlobals.ROUTE_LANDING)]
+@layout Layout.Empty
+@inherits BaseComponent
+
+<!--
+https://startbootstrap.com/template/heroic-features
+Heroic Features - A Bootstrap home page template featuring a hero unit and a grid of thumbnail features.
+-->
+
+<PageTitle>@AppInfo?.Name - v@(AppInfo?.Version)</PageTitle>
+
+<HeadContent>
+	<link rel="icon" type="image/x-icon" href="@(UIGlobals.ASSET_ROOT)/assets/favicon.ico" />
+	<link href="@(UIGlobals.ASSET_ROOT)/landing-heroic-features-startbootstrap/css/styles.css" rel="stylesheet" />
+</HeadContent>
+
+<!-- Responsive navbar-->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<div class="container px-lg-5">
+		<a class="navbar-brand" href="@UIGlobals.ROUTE_LANDING">@AppInfo?.Name - v@(AppInfo?.Version)</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+				class="navbar-toggler-icon"></span></button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+				<li class="nav-item"><a class="nav-link active" aria-current="page" href="@UIGlobals.ROUTE_HOME">Dashboard</a></li>
+				<li class="nav-item"><a class="nav-link" href="https://github.com/DDTH/blazor-admin-template" target="_blank">GitHub</a></li>
+				<li class="nav-item"><a class="nav-link" href="https://github.com/DDTH/blazor-admin-template/wiki" target="_blank">Docs</a></li>
+			</ul>
+		</div>
+	</div>
+</nav>
+
+<!-- Header-->
+<header class="py-5">
+	<div class="container px-lg-5">
+		<div class="p-4 p-lg-5 bg-light rounded-3 text-center">
+			<div class="m-4 m-lg-5">
+				<h1 class="display-5 fw-bold">Blazor Admin Template</h1>
+				<p class="fs-4">Template to quickly create admin control panel projects with .NET Blazor.</p>
+				<a class="btn btn-primary btn-lg" href="@UIGlobals.ROUTE_HOME">Getting started</a>
+			</div>
+		</div>
+	</div>
+</header>
+
+<!-- Page Content-->
+<section class="pt-4">
+	<div class="container px-lg-5">
+		<!-- Page Features-->
+		<div class="row gx-lg-5">
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-bootstrap"></i></div>
+						<h2 class="fs-4 fw-bold">Responsive Layout</h2>
+						<p class="mb-0">UI components and layouts built with the CoreUI Free Bootstrap Admin Template, fully responsive using Bootstrap 5.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-code-slash"></i></div>
+						<h2 class="fs-4 fw-bold">.NET 8 Blazor</h2>
+						<p class="mb-0">.NET 8 Blazor (Server and WebAssembly) for the frontend, with a RESTful API backend server.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-database-check"></i></div>
+						<h2 class="fs-4 fw-bold">Entity Framework</h2>
+						<p class="mb-0">Database access implementation using Entity Framework and Repository pattern.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-people"></i></div>
+						<h2 class="fs-4 fw-bold">ASP.NET Core Identity</h2>
+						<p class="mb-0">Authentication and authorization using JWT and ASP.NET Core Identity.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-github"></i></div>
+						<h2 class="fs-4 fw-bold">GitHub Actions</h2>
+						<p class="mb-0">Include GitHub Actions worklfows for automated dependency updates, CodeQL security analysis, and more.</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-6 col-xxl-4 mb-5">
+				<div class="card bg-light border-0 h-100">
+					<div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+						<div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-collection"></i></div>
+						<h2 class="fs-4 fw-bold">Dockerfiles</h2>
+						<p class="mb-0">Sample Dockerfiles for building Docker images in both Linux and Windows environments.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Footer-->
+<footer class="py-5 bg-dark">
+	<div class="container"><p class="m-0 text-center text-white"><a href="https://github.com/DDTH/blazor-admin-template" target="_blank" class="nav-link">Blazor Admin Template by DDTH/Thanh Nguyen</a></p></div>
+</footer>

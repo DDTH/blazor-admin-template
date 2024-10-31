@@ -20,6 +20,6 @@ public partial class Logout : BaseComponent
 		await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
 		((JwtAuthenticationStateProvider)AuthenticationStateProvider).NotifyStageChanged();
 
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_HOME, forceLoad: false);
+		NavigationManager.NavigateTo(UIGlobals.ROUTE_LANDING, forceLoad: true);
 	}
 }

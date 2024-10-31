@@ -32,8 +32,14 @@ public abstract class Entity<TKey> where TKey : IEquatable<TKey>
 	}
 
 	/// <inheritdoc/>
-	public override bool Equals(object? obj) => obj is Entity<TKey> other
-		&& (ReferenceEquals(this, other) || EqualityComparer<TKey>.Default.Equals(Id, other.Id));
+	public override bool Equals(object? obj)
+	{
+		if (obj == null || GetType() != obj.GetType())
+		{
+			return false;
+		}
+		return ReferenceEquals(this, obj) || EqualityComparer<TKey>.Default.Equals(Id, ((Entity<TKey>)obj).Id);
+	}
 
 	/// <inheritdoc/>
 	public override int GetHashCode()

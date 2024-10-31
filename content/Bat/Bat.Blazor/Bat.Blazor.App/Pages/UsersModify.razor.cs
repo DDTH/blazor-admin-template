@@ -178,7 +178,7 @@ public partial class UsersModify
 			Email = UserEmail.ToLower().Trim(),
 			GivenName = UserGivenName.Trim(),
 			FamilyName = UserFamilyName.Trim(),
-			Roles = RoleSelectedMap.Keys.Select(k => k),
+			Roles = RoleSelectedMap.Keys,
 			Claims = ClaimSelectedMap.Keys.Select(k => new IdentityClaim { Type = k.Split(':')[0], Value = k.Split(':')[1], }),
 		};
 		var resp = await ApiClient.UpdateUserAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);

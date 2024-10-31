@@ -1,15 +1,13 @@
 ﻿using Bat.Shared.Bootstrap;
 using Bat.Shared.EF.Identity;
 using Bat.Shared.Identity;
-using Ddth.Utilities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace Bat.Api.Bootstrap;
 
 sealed class Defaults
 {
-	public static PasswordOptions passwordOptions = new()
+	public static readonly PasswordOptions passwordOptions = new()
 	{
 		RequiredLength = 12,
 		RequiredUniqueChars = 5,
@@ -19,7 +17,7 @@ sealed class Defaults
 		RequireNonAlphanumeric = false,
 	};
 
-	public static ClaimsIdentityOptions claimsIdentityOptions = new()
+	public static readonly ClaimsIdentityOptions claimsIdentityOptions = new()
 	{
 		EmailClaimType = "ema",
 		RoleClaimType = "rol",

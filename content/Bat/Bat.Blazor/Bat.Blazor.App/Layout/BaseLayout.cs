@@ -1,4 +1,5 @@
-﻿using Bat.Blazor.App.Services;
+﻿using Bat.Blazor.App.Helpers;
+using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,19 @@ public abstract class BaseLayout : LayoutComponentBase
 	/// Convenience property to obtain the API's base URL.
 	/// </summary>
 	public virtual string ApiBaseUrl { get => Globals.ApiBaseUrl ?? NavigationManager.BaseUri; }
+
+	/// <summary>
+	/// Convenience method to obtain the authentication token from local storage.
+	/// </summary>
+	/// <returns>The authentication token, or an empty string if not found.</returns>
+	protected virtual async Task<string> GetAuthTokenAsync()
+	{
+		using (var scope = ServiceProvider.CreateScope())
+		{
+			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
+			return await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN) ?? string.Empty;
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{

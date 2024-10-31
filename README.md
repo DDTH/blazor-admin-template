@@ -14,7 +14,7 @@ Template to quickly create admin control panel projects with .NET Blazor.
   - Shared projects for common code and resources.
 - UI components and layouts built on [CoreUI Free Bootstrap Admin Template](https://coreui.io/product/free-bootstrap-admin-template/).
 - Authentication and authorization using JWT and [ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity).
-- Sample database access implementation with [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).
+- Sample database access implementation using [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).
 - GitHub Actions workflows:
   - `dependabot.yaml`, `automerge-dependabot.yaml`: Automatically update dependencies and merge PRs from Dependabot.
   - `ci.yaml`: Automate builds, tests, and code coverage reporting.
@@ -22,6 +22,8 @@ Template to quickly create admin control panel projects with .NET Blazor.
   - `codeql.yaml`: Perform automated CodeQL security analysis.
 - Sample [Dockerfiles](https://docs.docker.com/get-started/overview/) to build Docker images for both Linux and Windows environments.
 - Sample files included: README, LICENSE, RELEASE-NOTES and .gitignore.
+
+### 👉 LIVE DEMO: https://demo-bat.gpvcloud.com/
 
 ## Usage
 
@@ -57,6 +59,6 @@ This template is licensed under the MIT License - see the [LICENSE.md](LICENSE.m
 
 ## Contributing & Support
 
-Feel free to create [pull requests](https://github.com/btnguyen2k/dotnet-webapi-template/compare/contribution_queue...) or [issues](https://github.com/btnguyen2k/dotnet-webapi-template/issues) to report bugs or suggest new features.
+Feel free to create [pull requests](https://github.com/DDTH/blazor-admin-template/compare/contribution_queue...) or [issues](https://github.com/DDTH/blazor-admin-template/issues) to report bugs or suggest new features.
 
 > Please create PRs against the `contribution_queue` branch.

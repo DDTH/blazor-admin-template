@@ -2,12 +2,13 @@
 using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace Bat.Blazor.App.Services;
 
-public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : AuthenticationStateProvider
+public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider, ILogger<JwtAuthenticationStateProvider> logger) : AuthenticationStateProvider
 {
 	private readonly ClaimsPrincipal Unauthenticated = new(new ClaimsIdentity());
 
@@ -26,11 +27,11 @@ public class JwtAuthenticationStateProvider(IServiceProvider serviceProvider) : 
 					var principles = jwtService.ValidateToken(authToken, out _);
 					if (principles != null)
 					{
-						// principles.Claims.ToList().ForEach(c => Console.WriteLine($"[DEBUG] JwtAuthenticationStateProvider/GetAuthenticationStateAsync/User claim: {c.Type} = {c.Value}"));
 						return new(principles);
 					}
 				} catch (Exception ex) when (ex is SecurityTokenException or SecurityTokenArgumentException)
 				{
+					logger.LogWarning(ex, "Failed to validate JWT token.");
 				}
 			}
 			return new(Unauthenticated);

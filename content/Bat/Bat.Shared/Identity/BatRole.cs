@@ -2,7 +2,7 @@
 
 namespace Bat.Shared.Identity;
 
-public sealed partial class BatRole : IdentityRole
+public sealed class BatRole : IdentityRole
 {
 	public IEnumerable<IdentityRoleClaim<string>>? Claims { get; set; } = default!;
 

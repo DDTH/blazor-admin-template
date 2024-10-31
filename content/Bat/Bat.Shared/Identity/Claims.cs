@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bat.Shared.Identity;
 
@@ -8,6 +9,17 @@ namespace Bat.Shared.Identity;
 /// </summary>
 public struct IdentityClaim
 {
+	/// <summary>
+	/// Convenience method to create a new instance of <see cref="IdentityClaim"/>.
+	/// </summary>
+	/// <param name="typeAndValue">the claim type and value in format claim-type:claim-value</param>
+	/// <returns>null is returned in the input is invalid</returns>
+	public static IdentityClaim? CreateFrom(string typeAndValue)
+	{
+		var parts = typeAndValue.Split(':');
+		return parts.Length != 2 ? null : new IdentityClaim{ Type = parts[0], Value = parts[1] };
+	}
+
 	[JsonPropertyName("type")]
 	public string Type { get; set; }
 
@@ -97,6 +109,57 @@ public sealed class BuiltinClaims
 	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
 
 	public static readonly IEnumerable<Claim> ALL_CLAIMS = ALL_CLAIMS_ROLES.Concat(ALL_CLAIMS_PERMS);
+
+	/// <summary>
+	/// Convenience method to check if a claim exists/is valid.
+	/// </summary>
+	/// <param name="type"></param>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	public static bool ClaimExists(string type, string value)
+	{
+		return ALL_CLAIMS.Any(c => c.Type.Equals(type, Globals.StringComparison) && c.Value.Equals(value, Globals.StringComparison));
+	}
+
+	/// <summary>
+	/// Convenience method to check if a claim exists/is valid.
+	/// </summary>
+	/// <param name="claim"></param>
+	/// <returns></returns>
+	public static bool ClaimExists(Claim claim)
+	{
+		return ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE);
+	}
+
+	/// <summary>
+	/// Convenience method to check if a claim exists/is valid.
+	/// </summary>
+	/// <param name="claim"></param>
+	/// <returns></returns>
+	public static bool ClaimExists(IdentityClaim claim)
+	{
+		return ClaimExists(claim.Type, claim.Value);
+	}
+
+	/// <summary>
+	/// Convenience method to check if a claim exists/is valid.
+	/// </summary>
+	/// <param name="claim"></param>
+	/// <returns></returns>
+	public static bool ClaimExists(IdentityRoleClaim<string> claim)
+	{
+		return ClaimExists(claim.ClaimType??string.Empty, claim.ClaimValue??string.Empty);
+	}
+
+	/// <summary>
+	/// Convenience method to check if a claim exists/is valid.
+	/// </summary>
+	/// <param name="claim"></param>
+	/// <returns></returns>
+	public static bool ClaimExists(IdentityUserClaim<string> claim)
+	{
+		return ClaimExists(claim.ClaimType??string.Empty, claim.ClaimValue??string.Empty);
+	}
 }
 
 public class ClaimEqualityComparer : IEqualityComparer<Claim>
