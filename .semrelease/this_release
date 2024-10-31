@@ -3,4 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Refactor: control seeding data via appsettings.json.
 - Improvement: use avatar from Gravatar.com.
-- Fix(CodeQL): User-controlled bypass of sensitive method.
+- Fix(CodeQL): warnings and recommendations from CodeQL.
