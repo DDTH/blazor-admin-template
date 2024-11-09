@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.1.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.0" />
   </ItemGroup>
 
 </Project>
