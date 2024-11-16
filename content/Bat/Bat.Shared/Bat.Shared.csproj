@@ -9,10 +9,10 @@
   <ItemGroup>
     <PackageReference Include="Ddth.Utilities" Version="0.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0">
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
