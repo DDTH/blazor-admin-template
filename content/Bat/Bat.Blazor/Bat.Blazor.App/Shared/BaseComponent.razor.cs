@@ -1,5 +1,6 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Layout;
+using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,10 +13,13 @@ namespace Bat.Blazor.App.Shared;
 public abstract class BaseComponent : ComponentBase
 {
 	[Inject]
-	protected virtual IServiceProvider ServiceProvider { get; init; } = default!;
+	protected IServiceProvider ServiceProvider { get; init; } = default!;
 
 	[Inject]
-	protected virtual NavigationManager NavigationManager { get; init; } = default!;
+	protected NavigationManager NavigationManager { get; init; } = default!;
+
+	[Inject]
+	protected StateContainer StateContainer { get; init; } = default!;
 
 	/// <summary>
 	/// Cascading the layout instance down to components.
@@ -24,24 +28,27 @@ public abstract class BaseComponent : ComponentBase
 	/// Components can utilize shared properties defined in the layout.
 	/// </remarks>
 	[CascadingParameter(Name = "Layout")]
-	protected virtual BaseLayout Layout { get; init; } = default!;
+	protected BaseLayout Layout { get; init; } = default!;
 
 	// Demo: Accessing shared properties from the cascading layout instance.
-	protected virtual bool IsBrowser => Layout.IsBrowser;
+	protected bool IsBrowser => Layout.IsBrowser;
 
 	// Demo: Accessing shared properties from the cascading layout instance.
-	protected virtual AppInfo? AppInfo => Layout.AppInfo;
+	protected AppInfo? AppInfo => Layout.AppInfo;
 
 	// Demo: Accessing shared properties from the cascading layout instance.
-	protected virtual IApiClient ApiClient => Layout.ApiClient;
+	protected IApiClient ApiClient => Layout.ApiClient;
 
 	// Demo: Accessing shared properties from the cascading layout instance.
-	protected virtual string ApiBaseUrl => Layout.ApiBaseUrl;
+	protected string ApiBaseUrl => Layout.ApiBaseUrl;
+
+	// Demo: Accessing shared properties from the cascading layout instance.
+	protected string HostEnvironment => Layout.HostEnvironment;
 
 	/// <summary>
 	/// Convenience property to construct the login url that will redirect to the current page after login.
 	/// </summary>
-	protected virtual string LoginUrl => $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
+	protected string LoginUrl => $"{UIGlobals.ROUTE_LOGIN}?returnUrl=/{System.Net.WebUtility.UrlEncode(NavigationManager.ToBaseRelativePath(NavigationManager.Uri))}";
 
 	/// <summary>
 	/// Convenience method to obtain the authentication token from local storage.
@@ -56,9 +63,16 @@ public abstract class BaseComponent : ComponentBase
 		}
 	}
 
+	public void Dispose()
+	{
+		StateContainer.OnChange -= StateHasChanged;
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		StateContainer.OnChange += StateHasChanged;
+
 		// Add your logic here
 	}
 

@@ -21,11 +21,12 @@ public class DemoController : ApiBaseController
 	/// </summary>
 	/// <returns></returns>
 	[HttpGet("/api/demo/seed_users")]
-	public ActionResult<ApiResp<IEnumerable<UserResp>>> GetSeedUsers(IConfiguration appConfig, IIdentityRepository identityRepository)
+	public ActionResult<ApiResp<IEnumerable<UserResp>>> GetSeedUsers(IConfiguration appConfig, IIdentityRepository identityRepository, IWebHostEnvironment environment)
 	{
 		var result = new List<UserResp>();
 
-		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		// if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		if (environment.IsDevelopment())
 		{
 			var seedUsers = appConfig.GetSection("SeedingData:Identity:Users").Get<IEnumerable<SeedingUser>>() ?? [];
 			result.AddRange(seedUsers.Select(su =>
