@@ -2,6 +2,8 @@
 using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,7 +35,12 @@ public abstract class BaseLayout : LayoutComponentBase
 	/// <summary>
 	/// Convenience property to obtain the API's base URL.
 	/// </summary>
-	public virtual string ApiBaseUrl { get => Globals.ApiBaseUrl ?? NavigationManager.BaseUri; }
+	public string ApiBaseUrl { get => Globals.ApiBaseUrl ?? NavigationManager.BaseUri; }
+
+	/// <summary>
+	/// Convenience property to obtain the host environment (Development, Staging, Production).
+	/// </summary>
+	public string HostEnvironment { get; protected set; } = default!;
 
 	/// <summary>
 	/// Convenience method to obtain the authentication token from local storage.
@@ -57,17 +64,30 @@ public abstract class BaseLayout : LayoutComponentBase
 	{
 		await base.OnInitializedAsync();
 		StateContainer.OnChange += StateHasChanged;
+		if (IsBrowser)
+		{
+			var env = ServiceProvider.GetService<IWebAssemblyHostEnvironment>();
+			HostEnvironment = env?.Environment ?? "Unknown";
+		}
+		else
+		{
+			var env = ServiceProvider.GetService<IHostingEnvironment>();
+			HostEnvironment = env?.EnvironmentName ?? "Unknown";
+		}
 
 		if (!IsBrowser)
 		{
 			var taskExecutor = ServiceProvider.GetRequiredService<ITaskExecutor>();
-			await taskExecutor.ExecuteOnlyOnceAsync("FetchAppInfo", () =>
+			await InvokeAsync(async () =>
 			{
-				// Get the app info from the configuration, once, if in Blazor Server mode
-				// In WASM mode, the app info is automatically fetched from the server and stored in <see cref="Globals.AppInfo"/>
-				var conf = ServiceProvider.GetRequiredService<IConfiguration>();
-				Globals.AppInfo = conf.GetSection("App").Get<AppInfo>();
-				StateContainer.NotifyStateChanged();
+				await taskExecutor.ExecuteOnlyOnceAsync("FetchAppInfo", () =>
+				{
+					// Get the app info from the configuration, once, if in Blazor Server mode
+					// In WASM mode, the app info is automatically fetched from the server and stored in <see cref="Globals.AppInfo"/>
+					var conf = ServiceProvider.GetRequiredService<IConfiguration>();
+					Globals.AppInfo = conf.GetSection("App").Get<AppInfo>();
+					StateContainer.NotifyStateChanged();
+				});
 			});
 		}
 		// Add your logic here

@@ -3,3 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Fix(deps): Prevent dependencies from jumping to .NET 9.
 - Improvement: Notify stage changed when AppInfo is fetched.
+- Fix(dev/demo): Login/Profile info are automatically filled on Development env.

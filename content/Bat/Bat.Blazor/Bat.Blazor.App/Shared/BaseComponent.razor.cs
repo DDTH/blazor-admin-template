@@ -42,6 +42,9 @@ public abstract class BaseComponent : ComponentBase
 	// Demo: Accessing shared properties from the cascading layout instance.
 	protected string ApiBaseUrl => Layout.ApiBaseUrl;
 
+	// Demo: Accessing shared properties from the cascading layout instance.
+	protected string HostEnvironment => Layout.HostEnvironment;
+
 	/// <summary>
 	/// Convenience property to construct the login url that will redirect to the current page after login.
 	/// </summary>
