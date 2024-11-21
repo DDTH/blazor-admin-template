@@ -1,5 +1,13 @@
 # Blazor Admin Template release notes
 
+## 2024-11-21 - v1.1.1
+
+### Fixed/Improvement
+
+- Fix(deps): Prevent dependencies from jumping to .NET 9.
+- Improvement: Notify stage changed when AppInfo is fetched.
+- Fix(dev/demo): Login/Profile info are automatically filled on Development env.
+
 ## 2024-10-31 - v1.1.0
 
 ### Added/Refactoring
