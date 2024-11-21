@@ -5,7 +5,6 @@ using Bat.Blazor.App.Shared;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,8 +74,6 @@ public partial class Login : BaseComponent
 		ShowAlert("info", "Please wait...");
 		await base.OnInitializedAsync();
 		CloseAlert();
-
-		Console.WriteLine($"Env: {HostEnvironment}");
 	}
 
 	private async void BtnClickLogin()
