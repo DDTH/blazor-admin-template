@@ -1,4 +1,5 @@
 ﻿using Bat.Blazor.App.Helpers;
+using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
 using Microsoft.Extensions.DependencyInjection;
@@ -110,7 +111,8 @@ public abstract class BackgroundTimerService : IDisposable
 public sealed class InfoSyncService : BackgroundTimerService
 {
 	private static readonly TimeSpan initialDelay = TimeSpan.Zero; // TimeSpan.Zero means start immediately
-	private static readonly TimeSpan interval = TimeSpan.FromMinutes(60);
+
+	private static readonly TimeSpan interval = TimeSpan.FromMinutes(15);
 
 	private readonly IServiceProvider serviceProvider;
 	private readonly ILogger<InfoSyncService> logger;
@@ -125,7 +127,7 @@ public sealed class InfoSyncService : BackgroundTimerService
 
 	protected override async void DoWork(object? state)
 	{
-		logger.LogDebug("{service} - pinging server...", GetType().FullName);
+		logger.LogInformation("{service} - pinging server...", GetType().FullName);
 		using (var scope = serviceProvider.CreateScope())
 		{
 			var apiClient = scope.ServiceProvider.GetRequiredService<IApiClient>();
@@ -140,6 +142,8 @@ public sealed class InfoSyncService : BackgroundTimerService
 				Globals.ServerInfo = infoResp.Data?.Server;
 				Globals.CryptoInfo = infoResp.Data?.Crypto;
 				Globals.Ready = true;
+				var stateContainer = scope.ServiceProvider.GetRequiredService<StateContainer>();
+				stateContainer.NotifyStateChanged();
 			}
 		}
 	}

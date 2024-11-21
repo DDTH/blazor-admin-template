@@ -25,6 +25,7 @@ public class BlazorServicesBootstrapper
 		services.AddBlazoredLocalStorage();
 		services.AddScoped<LocalStorageHelper>();
 		services.AddSingleton<ITaskExecutor, TaskExecutor>();
+		services.AddSingleton<StateContainer>();
 
 		// https://stackoverflow.com/questions/52889827/remove-http-client-logging-handler-in-asp-net-core
 		services.RemoveAll<IHttpMessageHandlerBuilderFilter>();
