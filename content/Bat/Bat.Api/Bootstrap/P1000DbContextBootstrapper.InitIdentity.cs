@@ -127,9 +127,10 @@ sealed class IdentityInitializer(
 
 				// FIXME: NOT TO USE THIS IN PRODUCTION!
 				// for demo purpose: store the generated password in environment variables
-				if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+				// if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+				if (environment.IsDevelopment())
 				{
-					logger.LogCritical("Running in container - Storing the generated password in environment variables for demo purpose. DO NOT USE THIS IN PRODUCTION!");
+					logger.LogCritical("Storing the generated password in environment variables for demo purpose. DO NOT USE THIS IN PRODUCTION!");
 					Environment.SetEnvironmentVariable($"USER_SECRET_I_{id}", generatedPassword);
 					logger.LogCritical("User secret for '{id}': {secret}", $"USER_SECRET_I_{id}", generatedPassword);
 				}
