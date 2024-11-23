@@ -7,11 +7,14 @@
 
     <!-- TODO: temporarily suspend error on duplicate publish output files; will be removed once the issue is resolved -->
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+
+    <UserSecretsId>fa9f8b33-d379-4187-8cbb-604ddcb434e6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.2" />
   </ItemGroup>
 
   <ItemGroup>
