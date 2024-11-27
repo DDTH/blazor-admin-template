@@ -38,7 +38,7 @@ public class ApiClient : IApiClient
 	}
 
 	private static readonly string NoAuth = string.Empty;
-	private static readonly object?	NoData = null;
+	private static readonly object? NoData = null;
 
 	private async Task<HttpResponseMessage> BuildAndSendRequestAsync(HttpClient? requestHttpClient, HttpMethod method, string? baseUrl, string apiEndpoint, string? authToken, object? requestData, CancellationToken cancellationToken)
 	{
@@ -360,6 +360,50 @@ public class ApiClient : IApiClient
 		);
 		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
 		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/*----------------------------------------------------------------------*/
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<IEnumerable<string>>> GetExternalAuthProvidersAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			httpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_EXTERNAL_AUTH_PROVIDERS,
+			NoAuth,
+			NoData,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<string>>>(cancellationToken);
+		return result ?? new ApiResp<IEnumerable<string>> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<string>> GetExternalAuthUrlAsync(ExternalAuthUrlReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			httpClient,
+			HttpMethod.Post, baseUrl, IApiClient.API_ENDPOINT_EXTERNAL_AUTH_URL,
+			NoAuth,
+			req,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<string>>(cancellationToken);
+		return result ?? new ApiResp<string> { Status = 500, Message = "Invalid response from server." };
+	}
+
+	/// <inheritdoc/>
+	public async Task<ApiResp<ExternalAuthResp>> ExternalLoginAsync(ExternalAuthReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default)
+	{
+		var httpResult = await BuildAndSendRequestAsync(
+			httpClient,
+			HttpMethod.Post, baseUrl, IApiClient.API_ENDPOINT_EXTERNAL_AUTH_LOGIN,
+			NoAuth,
+			req,
+			cancellationToken
+		);
+		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<ExternalAuthResp>>(cancellationToken);
+		return result ?? new ApiResp<ExternalAuthResp> { Status = 500, Message = "Invalid response from server." };
 	}
 
 	/*----------------------------------------------------------------------*/

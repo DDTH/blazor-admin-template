@@ -99,11 +99,13 @@ public struct AuthResp
 	/// Authentication token, if successful.
 	/// </summary>
 	[JsonPropertyName("token")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public string? Token { get; set; }
 
 	/// <summary>
 	/// When the token expires.
 	/// </summary>
 	[JsonPropertyName("expiry")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
 	public DateTime? Expiry { get; set; }
 }
