@@ -3,3 +3,5 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Fix(CodeQL): Nested if statements.
 - Feature: Login with external account - Microsoft.
+- Refactor template structure - added new project `Libs`.
+
