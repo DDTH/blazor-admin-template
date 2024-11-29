@@ -112,7 +112,7 @@ public sealed class InfoSyncService : BackgroundTimerService
 {
 	private static readonly TimeSpan initialDelay = TimeSpan.Zero; // TimeSpan.Zero means start immediately
 
-	private static readonly TimeSpan interval = TimeSpan.FromMinutes(15);
+	private static readonly TimeSpan interval = TimeSpan.FromMinutes(30);
 
 	private readonly IServiceProvider serviceProvider;
 	private readonly ILogger<InfoSyncService> logger;
@@ -156,8 +156,8 @@ public sealed class InfoSyncService : BackgroundTimerService
 /// </summary>
 public sealed class AuthTokenRefresherService : BackgroundTimerService
 {
-	private static readonly TimeSpan initialDelay = TimeSpan.Zero; // TimeSpan.Zero means start immediately
-	private static readonly TimeSpan interval = TimeSpan.FromSeconds(15);
+	private static readonly TimeSpan initialDelay = TimeSpan.FromMinutes(5);
+	private static readonly TimeSpan interval = TimeSpan.FromMinutes(30);
 
 	private readonly IServiceProvider serviceProvider;
 	private readonly ILogger<AuthTokenRefresherService> logger;
@@ -172,12 +172,30 @@ public sealed class AuthTokenRefresherService : BackgroundTimerService
 
 	protected override async void DoWork(object? state)
 	{
-		logger.LogDebug("{service} - refreshing auth token...", GetType().FullName);
+		logger.LogInformation("{service} - refreshing auth token...", GetType().FullName);
 		using (var scope = serviceProvider.CreateScope())
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			logger.LogWarning("{service} - Auth Token: {token}", GetType().FullName, authToken);
+			if (string.IsNullOrEmpty(authToken)) return;
+			if (string.IsNullOrEmpty(Globals.ApiBaseUrl))
+			{
+				logger.LogWarning("{service} - API base URL is not set.", GetType().FullName);
+				return;
+			}
+			var apiClient = scope.ServiceProvider.GetRequiredService<IApiClient>();
+			var authResp = await apiClient.RefreshAsync(authToken, Globals.ApiBaseUrl);
+			if (authResp.Status != 200)
+			{
+				logger.LogWarning("{service} - error refreshing auth token: {result}", GetType().FullName, authResp.Message);
+				if (authResp.Status < 500)
+				{
+					await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+				}
+				return;
+			}
+			logger.LogInformation("{service} - auth token refreshed.", GetType().FullName);
+			await localStorage.SetItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN, authResp.Data.Token!);
 		}
 	}
 }

@@ -4,4 +4,4 @@
 - Fix(CodeQL): Nested if statements.
 - Feature: Login with external account - Microsoft.
 - Refactor template structure - added new project `Libs`.
-
+- Fix/Enhancement(WASM): Auto refresh auth token in the background.

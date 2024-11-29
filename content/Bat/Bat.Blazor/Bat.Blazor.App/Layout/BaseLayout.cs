@@ -1,5 +1,6 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Blazor.App.Services;
+using Bat.Libs.Opurator;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -77,7 +78,7 @@ public abstract class BaseLayout : LayoutComponentBase
 
 		if (!IsBrowser)
 		{
-			var taskExecutor = ServiceProvider.GetRequiredService<ITaskExecutor>();
+			var taskExecutor = ServiceProvider.GetRequiredService<ITaskOperator>();
 			await InvokeAsync(async () =>
 			{
 				await taskExecutor.ExecuteOnlyOnceAsync("FetchAppInfo", () =>
@@ -86,11 +87,11 @@ public abstract class BaseLayout : LayoutComponentBase
 					// In WASM mode, the app info is automatically fetched from the server and stored in <see cref="Globals.AppInfo"/>
 					var conf = ServiceProvider.GetRequiredService<IConfiguration>();
 					Globals.AppInfo = conf.GetSection("App").Get<AppInfo>();
-					// StateContainer.NotifyStateChanged();
 				});
-				StateHasChanged();
+				StateContainer.NotifyStateChanged();
 			});
 		}
+
 		// Add your logic here
 	}
 
