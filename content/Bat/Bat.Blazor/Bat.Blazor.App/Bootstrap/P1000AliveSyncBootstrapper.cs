@@ -2,6 +2,7 @@
 using Bat.Blazor.App.Services;
 using Bat.Shared.Api;
 using Bat.Shared.Bootstrap;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
@@ -177,7 +178,8 @@ public sealed class AuthTokenRefresherService : BackgroundTimerService
 		{
 			var localStorage = scope.ServiceProvider.GetRequiredService<LocalStorageHelper>();
 			var authToken = await localStorage.GetItemAsync<string>(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-			if (string.IsNullOrEmpty(authToken)) return;
+			if (string.IsNullOrEmpty(authToken)) return; // do nothing if auth token does not exist
+
 			if (string.IsNullOrEmpty(Globals.ApiBaseUrl))
 			{
 				logger.LogWarning("{service} - API base URL is not set.", GetType().FullName);
@@ -187,10 +189,13 @@ public sealed class AuthTokenRefresherService : BackgroundTimerService
 			var authResp = await apiClient.RefreshAsync(authToken, Globals.ApiBaseUrl);
 			if (authResp.Status != 200)
 			{
-				logger.LogWarning("{service} - error refreshing auth token: {result}", GetType().FullName, authResp.Message);
+				logger.LogError("{service} - error refreshing auth token: {result}", GetType().FullName, authResp.Message);
 				if (authResp.Status < 500)
 				{
+					// auth token is invalid, remove it from local storage
 					await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
+					var authenticationStateProvider = scope.ServiceProvider.GetRequiredService<AuthenticationStateProvider>();
+					((JwtAuthenticationStateProvider)authenticationStateProvider).NotifyStageChanged();
 				}
 				return;
 			}
