@@ -1,6 +1,7 @@
 ﻿using Bat.Shared.Cache;
 using Bat.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Bat.Shared.EF;
 
@@ -26,12 +27,26 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 		TrackStateChange();
 	}
 
+	protected CacheSupportedGenericDbContextRepository<T, TEntity, TKey> AddStateChangeHandler(EventHandler<EntityStateChangedEventArgs> eventHandler)
+	{
+		ChangeTracker.StateChanged += eventHandler;
+		return this;
+	}
+
+	protected CacheSupportedGenericDbContextRepository<T, TEntity, TKey> RemoveStateChangeHandler(EventHandler<EntityStateChangedEventArgs> eventHandler)
+	{
+		ChangeTracker.StateChanged -= eventHandler;
+		return this;
+	}
+
+	private EventHandler<EntityStateChangedEventArgs> StateChangedChangeTracker = default!;
+
 	/// <summary>
 	/// Tracks changes in the entity state and updates the cache accordingly.
 	/// </summary>
-	protected virtual void TrackStateChange()
+	private void TrackStateChange()
 	{
-		ChangeTracker.StateChanged += async (sender, args) =>
+		StateChangedChangeTracker = async (sender, args) =>
 		{
 			if (args.Entry.Entity is TEntity entity)
 			{
@@ -52,6 +67,7 @@ public abstract class CacheSupportedGenericDbContextRepository<T, TEntity, TKey>
 				}
 			}
 		};
+		ChangeTracker.StateChanged += StateChangedChangeTracker;
 	}
 
 	/// <summary>

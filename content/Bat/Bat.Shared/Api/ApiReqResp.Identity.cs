@@ -20,9 +20,11 @@ public struct ChangePasswordReq
 /// </summary>
 public struct ChangePasswordResp
 {
+	[JsonPropertyName("message")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? Message { get; set; }
 
+	[JsonPropertyName("token")]
 	public string Token { get; set; }
 }
 
@@ -34,12 +36,15 @@ public struct ChangePasswordResp
 public struct UpdateUserProfileReq
 {
 	[JsonPropertyName("given_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? GivenName { get; set; }
 
 	[JsonPropertyName("family_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? FamilyName { get; set; }
 
 	[JsonPropertyName("email")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? Email { get; set; }
 }
 
@@ -65,6 +70,7 @@ public struct CreateOrUpdateUserReq
 	public string? GivenName { get; set; }
 
 	[JsonPropertyName("family_name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? FamilyName { get; set; }
 
 	[JsonPropertyName("roles")]

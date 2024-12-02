@@ -25,8 +25,6 @@ public class BuiltinController : ApiBaseController
 		ArgumentNullException.ThrowIfNull(config, nameof(config));
 		ArgumentNullException.ThrowIfNull(env, nameof(env));
 		ArgumentNullException.ThrowIfNull(cryptoOptions, nameof(cryptoOptions));
-		ArgumentNullException.ThrowIfNull(authenticator, nameof(authenticator));
-
 		if (authenticator == null && authenticatorAsync == null)
 		{
 			throw new ArgumentNullException("No authenticator defined.", (Exception?)null);

@@ -63,9 +63,43 @@
                     <div class="card col-md-5 text-white bg-primary py-5">
                         <div class="card-body text-center">
                             <div>
-                                <h2>Sign up</h2>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                <button class="btn btn-lg btn-outline-light mt-3" type="button" @onclick="ShowModalNotImplemented">Register Now!</button>
+                                <h2>Login With</h2>
+								<div class="d-grid gap-2 col-6 mx-auto">
+									@foreach (var provider in ExternalAuthProviders)
+									{
+										<button class="btn btn-lg btn-outline-light mt-1 text-start" type="button" disabled="@DisableExternalLogin" @onclick="() => BtnClickExternalLogin(provider)">
+											@if (provider == "Microsoft")
+											{
+												<BIcon icon="bi-microsoft" />
+											}
+											@* else if (provider == "Google")
+											{
+												<BIcon icon="bi-google" />
+											}
+											else if (provider == "Facebook")
+											{
+												<BIcon icon="bi-facebook" />
+											}
+											else if (provider == "Twitter")
+											{
+												<BIcon icon="bi-twitter" />
+											}
+											else if (provider == "GitHub")
+											{
+												<BIcon icon="bi-github" />
+											} *@
+											else
+											{
+												<BIcon icon="bi-person" />
+											}
+											&nbsp;@provider
+										</button>
+									}
+								</div>
+                                <!--
+								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                <button class="btn btn-lg btn-outline-light mt-3" type="button" @onclick="() => BtnClickRegister()">Register Now!</button>
+								-->
                             </div>
                         </div>
                     </div>

@@ -48,26 +48,26 @@
                         <table class="table table-sm table-bordered border-primary table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="text-center">#</th>
-                                    <th scope="col" class="text-center">Id</th>
-                                    <th scope="col" class="text-center">User name</th>
-                                    <th scope="col" class="text-center">Email</th>
-									<th scope="col" class="text-center">Given name</th>
-									<th scope="col" class="text-center">Family name</th>
-                                    <th scope="col" class="text-center">Actions</th>
+                                    <th scope="col" class="text-center text-nowrap align-middle">#</th>
+                                    <th scope="col" class="text-center text-nowrap align-middle">Id</th>
+                                    <th scope="col" class="text-center text-nowrap align-middle">User name</th>
+                                    <th scope="col" class="text-center text-nowrap align-middle">Email</th>
+									<th scope="col" class="text-center text-nowrap align-middle">Given name</th>
+									<th scope="col" class="text-center text-nowrap align-middle">Family name</th>
+                                    <th scope="col" class="text-center text-nowrap align-middle">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in UserList)
                                 {
-                                    <tr>
-                                        <th scope="row" class="text-center">@(++UserIndex)</th>
-                                        <td>@item.Id</td>
-                                        <td>@item.Username</td>
-                                        <td>@item.Email</td>
-										<td>@item.GivenName</td>
-										<td>@item.FamilyName</td>
-                                        <td class="text-center">
+                                    <tr style="font-size: 90% !important;">
+                                        <th scope="row" class="text-center align-middle">@(++UserIndex)</th>
+                                        <td class="align-middle">@item.Id</td>
+                                        <td class="align-middle">@item.Username</td>
+                                        <td class="align-middle">@item.Email</td>
+										<td class="align-middle">@item.GivenName</td>
+										<td class="align-middle">@item.FamilyName</td>
+                                        <td class="text-center text-nowrap align-middle">
                                             <button class="btn btn-sm btn-outline-primary" @onclick="(()=>BtnClickInfo(item.Id))">
                                                 <CIcon icon="cil-info" />
                                             </button>

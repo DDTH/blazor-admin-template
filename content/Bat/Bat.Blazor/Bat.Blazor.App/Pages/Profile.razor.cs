@@ -1,6 +1,7 @@
 ﻿using Bat.Blazor.App.Helpers;
 using Bat.Shared.Api;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -44,9 +45,10 @@ public partial class Profile
 
 		// FIXME: NOT TO USE THIS IN PRODUCTION!
 		// for demo purpose: automatically fill the password field
-		if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		// if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+		if (HostEnvironment.Equals(EnvironmentName.Development, StringComparison.InvariantCultureIgnoreCase))
 		{
-			Logger.LogCritical("Running in container - automatically fill the password field. DO NOT USE THIS IN PRODUCTION!");
+			Logger.LogCritical("DevMode - automatically fill the password field. DO NOT USE THIS IN PRODUCTION!");
 			var seedUsers = await ApiClient.GetSeedUsersAsync(ApiBaseUrl);
 			var user = seedUsers.Data?.FirstOrDefault(u => u.Email == User?.Email);
 			CurrentPwd = user?.Password ?? string.Empty;

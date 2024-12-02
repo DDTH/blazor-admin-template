@@ -12,9 +12,11 @@ public class UIGlobals
 	public const string ROUTE_LOGOUT = "/logout";
 	public const string ROUTE_PROFILE = "/profile";
 
+	public const string ROUTE_LOGIN_EXTERNAL_MICROSOFT = "/external-auth/microsoft";
+
 	public const string ROUTE_BASE = "/admin";
 	public const string ROUTE_HOME = $"{ROUTE_BASE}/";
-	public const string ROUTE_CATCHALL = ROUTE_BASE+"/{*route:nonfile}";
+	public const string ROUTE_CATCHALL = ROUTE_BASE + "/{*route:nonfile}";
 
 	public const string ROUTE_IDENTITY_USERS = $"{ROUTE_BASE}/users";
 	public const string ROUTE_IDENTITY_USERS_ADD = $"{ROUTE_BASE}/users/add";
@@ -28,6 +30,6 @@ public class UIGlobals
 
 	public const string ROUTE_APPLICATIONS = $"{ROUTE_BASE}/applications";
 	public const string ROUTE_APPLICATIONS_ADD = $"{ROUTE_BASE}/applications/add";
-	public const string ROUTE_APPLICATIONS_DELETE =$"{ROUTE_BASE}/applications/delete/{{id}}";
+	public const string ROUTE_APPLICATIONS_DELETE = $"{ROUTE_BASE}/applications/delete/{{id}}";
 	public const string ROUTE_APPLICATIONS_MODIFY = $"{ROUTE_BASE}/applications/modify/{{id}}";
 }

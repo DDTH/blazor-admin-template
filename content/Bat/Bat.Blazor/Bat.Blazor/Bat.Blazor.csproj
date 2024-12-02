@@ -7,17 +7,21 @@
 
     <!-- TODO: temporarily suspend error on duplicate publish output files; will be removed once the issue is resolved -->
     <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+
+    <UserSecretsId>fa9f8b33-d379-4187-8cbb-604ddcb434e6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Bat.Api\Bat.Api.csproj" />
     <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
+    <ProjectReference Include="..\..\Bat.Libs\Bat.Libs.csproj" />
   </ItemGroup>
 
   <!-- Prevents duplicated files from other projects from being copied to the output directory -->
