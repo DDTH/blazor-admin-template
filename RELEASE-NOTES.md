@@ -1,5 +1,17 @@
 # Blazor Admin Template release notes
 
+## 2024-12-02 - v1.2.0
+
+### Added/Refactoring
+
+- Feature: Login with external account - Microsoft.
+- Refactor template structure - added new project `Libs`.
+
+### Fixed/Improvement
+
+- Fix(CodeQL): Nested if statements.
+- Fix(others): Minor bug fixes and improvements.
+
 ## 2024-11-21 - v1.1.1
 
 ### Fixed/Improvement

@@ -18,7 +18,7 @@ Sample usage:
 
 @code {
     /// <summary>
-    /// Alert type, one of "info", "warning", "danger", "success", "primary", "secondary". Default is "info".
+    /// Alert type, one of "wait" or "waiting", "info", "warning", "danger", "success", "primary", "secondary". Default is "info".
     /// The alert will display an icon corresponding to the type. The icon is taken from Bootstrap Icons.
     /// </summary>
     [Parameter]
@@ -35,6 +35,7 @@ Sample usage:
             "warning" => "bi-exclamation-triangle",
             "danger" => "x-circle-fill",
             "success" => "check-circle",
+			"wait" or "waiting" => "bi-hourglass-split",
             _ => "bi-info-circle"
         };
     }

@@ -1,5 +1,6 @@
-
 # syntax=docker/dockerfile:1
+## Sample build command:
+##     docker build --rm -t bat:dev -f Dockerfile.dev .
 
 ARG DOTNETVERSION=8.0
 ARG BASEIMAGE=alpine
