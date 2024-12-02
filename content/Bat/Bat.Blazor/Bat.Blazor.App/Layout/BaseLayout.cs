@@ -88,7 +88,8 @@ public abstract class BaseLayout : LayoutComponentBase
 					var conf = ServiceProvider.GetRequiredService<IConfiguration>();
 					Globals.AppInfo = conf.GetSection("App").Get<AppInfo>();
 				});
-				StateContainer.NotifyStateChanged();
+				StateHasChanged();
+				// StateContainer.NotifyStateChanged();
 			});
 		}
 
