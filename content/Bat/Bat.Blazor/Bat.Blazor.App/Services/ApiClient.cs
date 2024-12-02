@@ -46,11 +46,11 @@ public class ApiClient : IApiClient
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), apiEndpoint);
 		// Console.WriteLine($"[DEBUG] calling {method.ToString()}:{apiUri.ToString()}");
-		var httpReq = BuildRequest(method, apiUri, authToken, requestData);
+		using var httpReq = BuildRequest(method, apiUri, authToken, requestData);
 		return await usingHttpClient.SendAsync(httpReq, cancellationToken);
 	}
 
-	private static async Task<ApiResp<T>> ReadResponseAsync<T>(HttpResponseMessage httpResult, CancellationToken cancellationToken)
+	private static async Task<ApiResp<T>> ReadAndCloseResponseAsync<T>(HttpResponseMessage httpResult, CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -72,6 +72,10 @@ public class ApiClient : IApiClient
 			// Console.WriteLine($"[ERROR] Status: {statusCodes}, Type: {typeof(T).Name},\nContent: {content}");
 			return new ApiResp<T> { Status = 500, Message = ex.Message };
 		}
+		finally
+		{
+			httpResult.Dispose();
+		}
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -86,7 +90,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<InfoResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<InfoResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -101,7 +105,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AuthResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AuthResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -114,7 +118,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AuthResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AuthResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -129,7 +133,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -142,7 +146,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -155,7 +159,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<ChangePasswordResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<ChangePasswordResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -170,7 +174,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -183,7 +187,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -196,7 +200,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -209,7 +213,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -222,7 +226,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -235,7 +239,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<ClaimResp>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<ClaimResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -248,7 +252,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<RoleResp>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<RoleResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -261,7 +265,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -274,7 +278,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -287,7 +291,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -300,7 +304,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -315,7 +319,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<AppResp>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<AppResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -328,7 +332,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -341,7 +345,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -354,7 +358,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -367,7 +371,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -382,7 +386,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<string>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<string>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -395,7 +399,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<string>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<string>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -408,7 +412,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		return await ReadResponseAsync<ExternalAuthResp>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<ExternalAuthResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -423,6 +427,6 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		return await ReadResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
+		return await ReadAndCloseResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
 	}
 }
