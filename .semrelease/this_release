@@ -3,3 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Fix(CodeQL) - Severity: Note
 - Fix(CodeQL) - Severity: Warning
+- Fix(deps): Microsoft.EntityFrameworkCore reverted back to v8
