@@ -1,4 +1,3 @@
-
 # syntax=docker/dockerfile:1
 
 ARG DOTNETVERSION=8.0
