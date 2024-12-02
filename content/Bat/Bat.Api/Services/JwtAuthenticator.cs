@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Api;
+using Bat.Shared.ExternalLoginHelper;
 using Bat.Shared.Identity;
 using Bat.Shared.Jwt;
 using Microsoft.AspNetCore.Identity;
@@ -99,9 +100,35 @@ public sealed class SampleJwtAuthenticator(
 	}
 
 	/// <inheritdoc />
+	public async Task<AuthResp> AuthenticateAsync(ExternalUserProfile extProfile)
+	{
+		using (var scope = serviceProvider.CreateScope())
+		{
+			if (!extProfile.IsSuccessStatusCode) return AuthResp.AuthFailed;
+
+			var identityRepo = scope.ServiceProvider.GetRequiredService<IIdentityRepository>();
+			var user = await identityRepo.GetUserByEmailAsync(extProfile.Email!);
+			if (user == null)
+			{
+				logger.LogError("Authentication failed - user not found. Email: {email}", extProfile.Email);
+				return AuthResp.AuthFailed;
+			}
+
+			var expiry = DateTime.Now.AddSeconds(expirationSeconds);
+			return AuthResp.New(200, await GenerateJwtToken(identityRepo, user, expiry), expiry);
+		}
+	}
+
+	/// <inheritdoc />
 	public AuthResp Authenticate(AuthReq req)
 	{
 		return AuthenticateAsync(req).Result;
+	}
+
+	/// <inheritdoc />
+	public AuthResp Authenticate(ExternalUserProfile extProfile)
+	{
+		return AuthenticateAsync(extProfile).Result;
 	}
 
 	/// <inheritdoc />

@@ -25,6 +25,10 @@ public interface IApiClient
 	public const string API_ENDPOINT_APPS = "/api/apps";
 	public const string API_ENDPOINT_APPS_ID = "/api/apps/{id}";
 
+	public const string API_ENDPOINT_EXTERNAL_AUTH_PROVIDERS = "/api/external-auth/providers";
+	public const string API_ENDPOINT_EXTERNAL_AUTH_LOGIN = "/api/external-auth/login";
+	public const string API_ENDPOINT_EXTERNAL_AUTH_URL = "/api/external-auth/url";
+
 	/// <summary>
 	/// Calls the API <see cref="API_ENDPOINT_INFO"/> to get the backend information.
 	/// </summary>
@@ -35,7 +39,7 @@ public interface IApiClient
 	public Task<ApiResp<InfoResp>> InfoAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/// <summary>
-	/// Calls the API <see cref="API_ENDPOINT_AUTH_SIGNIN"/> to sign in a user.
+	/// Calls the API <see cref="API_ENDPOINT_AUTH_LOGIN"/> to sign in a user.
 	/// </summary>
 	/// <param name="req"></param>
 	/// <param name="baseUrl">The base URL of the API, optional.</param>
@@ -260,6 +264,36 @@ public interface IApiClient
 	/// <param name="cancellationToken"></param>
 	/// <returns></returns>
 	public Task<ApiResp<AppResp>> UpdateAppAsync(string id, CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_EXTERNAL_AUTH_PROVIDERS"/> to get the list of external authentication providers.
+	/// </summary>
+	/// <param name="baseUrl">The base URL of the API, optional.</param>
+	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<IEnumerable<string>>> GetExternalAuthProvidersAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_EXTERNAL_AUTH_URL"/> to get the authentication URL for the external provider.
+	/// </summary>
+	/// <param name="req"></param>
+	/// <param name="baseUrl">The base URL of the API, optional.</param>
+	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<string>> GetExternalAuthUrlAsync(ExternalAuthUrlReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
+
+
+	/// <summary>
+	/// Calls the API <see cref="API_ENDPOINT_EXTERNAL_AUTH_LOGIN"/> to sign in an external user.
+	/// </summary>
+	/// <param name="req"></param>
+	/// <param name="baseUrl">The base URL of the API, optional.</param>
+	/// <param name="httpClient">The <see cref="HttpClient"/> to use for the API call, optional.</param>
+	/// <param name="cancellationToken"></param>
+	/// <returns></returns>
+	public Task<ApiResp<ExternalAuthResp>> ExternalLoginAsync(ExternalAuthReq req, string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default);
 
 	/*----------------------------------------------------------------------*/
 

@@ -47,8 +47,8 @@ public class IdentityBootstrapper
 				opts.Password = Defaults.passwordOptions;
 				opts.ClaimsIdentity = Defaults.claimsIdentityOptions;
 			})
-			//.AddRoles<BatRole>()
-			//.AddSignInManager<SignInManager<BatUser>>()
+			// .AddRoles<BatRole>()
+			// .AddSignInManager<SignInManager<BatUser>>()
 			.AddEntityFrameworkStores<IdentityDbContextRepository>()
 			;
 	}
