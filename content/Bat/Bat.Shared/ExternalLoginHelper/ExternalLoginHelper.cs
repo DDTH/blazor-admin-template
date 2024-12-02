@@ -36,12 +36,9 @@ public sealed class ExternalLoginProviderConfig : Dictionary<string, string>
 
 	public bool TryGetValueAsBool(string key, out bool value)
 	{
-		if (TryGetValue(key, out var val))
+		if (TryGetValue(key, out var val) && bool.TryParse(val, out value))
 		{
-			if (bool.TryParse(val, out value))
-			{
-				return true;
-			}
+			return true;
 		}
 		value = false;
 		return false;
