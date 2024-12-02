@@ -107,5 +107,5 @@ public struct AuthResp
 	/// </summary>
 	[JsonPropertyName("expiry")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-	public DateTime? Expiry { get; set; }
+	public DateTimeOffset? Expiry { get; set; }
 }

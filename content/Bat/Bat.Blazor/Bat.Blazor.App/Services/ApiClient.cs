@@ -1,5 +1,6 @@
 ﻿using Bat.Shared.Api;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Bat.Blazor.App.Services;
 
@@ -44,8 +45,33 @@ public class ApiClient : IApiClient
 	{
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), apiEndpoint);
+		Console.WriteLine($"[DEBUG] calling {method.ToString()}:{apiUri.ToString()}");
 		var httpReq = BuildRequest(method, apiUri, authToken, requestData);
 		return await usingHttpClient.SendAsync(httpReq, cancellationToken);
+	}
+
+	private static async Task<ApiResp<T>> ReadResponseAsync<T>(HttpResponseMessage httpResult, CancellationToken cancellationToken)
+	{
+		try
+		{
+			var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<T>>(cancellationToken);
+			if (result == null)
+			{
+				// var statusCodes = (int)httpResult.StatusCode;
+				// var content = await httpResult.Content.ReadAsStringAsync(cancellationToken);
+				// Console.WriteLine($"[ERROR] Invalid response from server. Status: {statusCodes}, Type: {typeof(T).Name},\nContent: {content}");
+				return new ApiResp<T> { Status = 500, Message = "Invalid response from server." };
+			}
+			return result;
+		}
+		catch (Exception ex) when (ex is JsonException || ex is InvalidOperationException || ex is OperationCanceledException)
+		{
+			// Console.WriteLine($"[ERROR] Error reading response: {ex.Message}");
+			// var statusCodes = (int)httpResult.StatusCode;
+			// var content = await httpResult.Content.ReadAsStringAsync(cancellationToken);
+			// Console.WriteLine($"[ERROR] Status: {statusCodes}, Type: {typeof(T).Name},\nContent: {content}");
+			return new ApiResp<T> { Status = 500, Message = ex.Message };
+		}
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -53,11 +79,14 @@ public class ApiClient : IApiClient
 	/// <inheritdoc/>
 	public async Task<ApiResp<InfoResp>> InfoAsync(string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
 	{
-		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
-		var apiUri = new Uri(new Uri(usingBaseUrl), IApiClient.API_ENDPOINT_INFO);
-		// simple GET request, we don't need to build a request message
-		var result = await usingHttpClient.GetFromJsonAsync<ApiResp<InfoResp>>(apiUri, cancellationToken);
-		return result ?? new ApiResp<InfoResp> { Status = 500, Message = "Invalid response from server." };
+		var httpResult = await BuildAndSendRequestAsync(
+			requestHttpClient,
+			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_INFO,
+			NoAuth,
+			NoData,
+			cancellationToken
+		);
+		return await ReadResponseAsync<InfoResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -72,8 +101,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AuthResp>>(cancellationToken);
-		return result ?? new ApiResp<AuthResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AuthResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -86,8 +114,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AuthResp>>(cancellationToken);
-		return result ?? new ApiResp<AuthResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AuthResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -102,8 +129,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -116,8 +142,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -130,8 +155,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<ChangePasswordResp>>(cancellationToken);
-		return result ?? new ApiResp<ChangePasswordResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<ChangePasswordResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -146,8 +170,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<UserResp>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<UserResp>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -160,8 +183,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -174,8 +196,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -188,8 +209,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -202,8 +222,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<UserResp>>(cancellationToken);
-		return result ?? new ApiResp<UserResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<UserResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -216,8 +235,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<ClaimResp>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<ClaimResp>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<ClaimResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -230,8 +248,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<RoleResp>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<RoleResp>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<RoleResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -244,8 +261,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
-		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -258,8 +274,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
-		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -272,8 +287,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
-		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -286,8 +300,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<RoleResp>>(cancellationToken);
-		return result ?? new ApiResp<RoleResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<RoleResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -302,8 +315,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<AppResp>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<AppResp>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<AppResp>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -316,8 +328,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
-		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -330,8 +341,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
-		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -344,8 +354,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
-		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -358,8 +367,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<AppResp>>(cancellationToken);
-		return result ?? new ApiResp<AppResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<AppResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -374,8 +382,7 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<string>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<string>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<string>>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -388,8 +395,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<string>>(cancellationToken);
-		return result ?? new ApiResp<string> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<string>(httpResult, cancellationToken);
 	}
 
 	/// <inheritdoc/>
@@ -402,8 +408,7 @@ public class ApiClient : IApiClient
 			req,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<ExternalAuthResp>>(cancellationToken);
-		return result ?? new ApiResp<ExternalAuthResp> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<ExternalAuthResp>(httpResult, cancellationToken);
 	}
 
 	/*----------------------------------------------------------------------*/
@@ -418,7 +423,6 @@ public class ApiClient : IApiClient
 			NoData,
 			cancellationToken
 		);
-		var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<IEnumerable<UserResp>>>(cancellationToken);
-		return result ?? new ApiResp<IEnumerable<UserResp>> { Status = 500, Message = "Invalid response from server." };
+		return await ReadResponseAsync<IEnumerable<UserResp>>(httpResult, cancellationToken);
 	}
 }

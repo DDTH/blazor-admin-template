@@ -94,6 +94,7 @@ public struct ExternalAuthResp
 	/// Authentication token, if successful.
 	/// </summary>
 	[JsonPropertyName("token")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? Token { get; set; }
 
 	/// <summary>
