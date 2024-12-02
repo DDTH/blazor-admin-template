@@ -23,12 +23,9 @@ public sealed class ExternalLoginProviderConfig : Dictionary<string, string>
 	public ExternalLoginProviderConfig(string providerName, IConfigurationSection config)
 	{
 		ProviderName = providerName;
-		foreach (var conf in config.GetChildren())
+		foreach (var conf in config.GetChildren().Where(c => c.Value != null))
 		{
-			if (conf.Value != null)
-			{
-				this[conf.Key] = conf.Value;
-			}
+			this[conf.Key] = conf.Value!;
 		}
 	}
 
