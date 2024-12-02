@@ -1,3 +1,5 @@
+using System.Net.Http.Headers;
+
 namespace Bat.Shared.ExternalLoginHelper;
 
 /// <summary>
@@ -74,6 +76,23 @@ public sealed partial class ExternalLoginManager
 	public IEnumerable<string> GetProviderNames()
 	{
 		return Providers.Keys.OrderBy(k => k);
+	}
+
+	private static HttpRequestMessage BuildHttpRequestMessage(HttpMethod httpMethod, string requestUri, HttpContent? content = default, IDictionary<string, string>? headers = default)
+	{
+		var req = new HttpRequestMessage(httpMethod, requestUri);
+		if (content != null)
+		{
+			req.Content = content;
+		}
+		if (headers != null)
+		{
+			foreach (var header in headers)
+			{
+				req.Headers.Add(header.Key, header.Value);
+			}
+		}
+		return req;
 	}
 
 	/*----------------------------------------------------------------------*/

@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Bat.Shared.Helpers;
@@ -59,9 +58,8 @@ public sealed partial class ExternalLoginManager
 		authReq.TryGetValue("redirect_uri", out var redirectUri);
 
 		var tokenResult = new ExternalLoginResult();
-		var tokenReq = new HttpRequestMessage(HttpMethod.Post, $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token")
-		{
-			Content = new FormUrlEncodedContent(new Dictionary<string, string>
+		using var tokenReq = BuildHttpRequestMessage(HttpMethod.Post, $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token",
+			content: new FormUrlEncodedContent(new Dictionary<string, string>
 			{
 				{ "client_id", clientId },
 				{ "grant_type", "authorization_code" },
@@ -69,8 +67,8 @@ public sealed partial class ExternalLoginManager
 				{ "code", code ?? string.Empty},
 				{ "redirect_uri", redirectUri ?? string.Empty },
 				{ "client_secret", clientSecret },
-			}),
-		};
+			})
+		);
 		var tokenResp = await HttpClientHelper.HttpRequestThatReturnsJson(HttpClient, tokenReq);
 		tokenResult.StatusCode = tokenResp.StatusCode;
 		tokenResult.Provider = "Microsoft";
@@ -104,13 +102,12 @@ public sealed partial class ExternalLoginManager
 	async Task<ExternalUserProfile> GetUserProfileMicrosoftAsync(string accessToken)
 	{
 		var profileResult = new ExternalUserProfile();
-		var profileReq = new HttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me")
-		{
-			Headers =
+		using var profileReq = BuildHttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me",
+			headers: new Dictionary<string, string>
 			{
-				Authorization = new AuthenticationHeaderValue("Bearer", accessToken),
-			},
-		};
+				{ "Authorization", $"Bearer {accessToken}" }
+			}
+		);
 		var profileResp = await HttpClientHelper.HttpRequestThatReturnsJson(HttpClient, profileReq);
 		profileResult.StatusCode = profileResp.StatusCode;
 		profileResult.Provider = "Microsoft";
