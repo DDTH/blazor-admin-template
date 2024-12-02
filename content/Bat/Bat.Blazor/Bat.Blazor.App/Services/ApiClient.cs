@@ -45,7 +45,7 @@ public class ApiClient : IApiClient
 	{
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), apiEndpoint);
-		Console.WriteLine($"[DEBUG] calling {method.ToString()}:{apiUri.ToString()}");
+		// Console.WriteLine($"[DEBUG] calling {method.ToString()}:{apiUri.ToString()}");
 		var httpReq = BuildRequest(method, apiUri, authToken, requestData);
 		return await usingHttpClient.SendAsync(httpReq, cancellationToken);
 	}
