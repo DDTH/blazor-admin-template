@@ -15,12 +15,12 @@ Template to quickly create admin control panel projects with .NET Blazor.
 - UI components and layouts built on [CoreUI Free Bootstrap Admin Template](https://coreui.io/product/free-bootstrap-admin-template/).
 - JWT-based authentication and authorization, integrated with [ASP.NET Core Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity).
 - Authentication using external providers:
-  [ ] Apple
-  [ ] Facebook
-  [ ] GitHub
-  [ ] Google
-  [X] Microsoft
-  [ ] Twitter/X
+  - [ ] Apple
+  - [ ] Facebook
+  - [ ] GitHub
+  - [ ] Google
+  - [X] Microsoft
+  - [ ] Twitter/X
 - Sample database access implementation using [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).
 - Sample [Dockerfiles](https://docs.docker.com/get-started/overview/) to build Docker images for both Linux and Windows environments.
 - Sample files included: README, LICENSE, RELEASE-NOTES and `.gitignore`.
