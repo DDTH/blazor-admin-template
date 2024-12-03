@@ -7,26 +7,23 @@ namespace Bat.Shared.ExternalLoginHelper;
 
 public sealed partial class ExternalLoginManager
 {
-	static readonly ISet<string> MS_DEFAULT_SCOPES = new HashSet<string> { "offline_access", "User.Read" };
+	static readonly ISet<string> LINKEDIN_DEFAULT_SCOPES = new HashSet<string> { "openid", "email", "profile" };
 
-	const string MS_DEFAULT_TENANT = "common";
-	const string MS_PROVIDER_NAME = "Microsoft";
-	const string MS_CONF_TENANT_ID = "TenantId";
-	const string MS_CONF_CLIENT_ID = "ClientId";
-	const string MS_CONF_CLIENT_SECRET = "ClientSecret";
-	const string MS_URL_PARAM_CODE = "code";
-	const string MS_URL_PARAM_STATE = "state";
-	const string MS_URL_PARAM_REDIRECT_URI = "redirect_uri";
+	const string LINKEDIN_PROVIDER_NAME = "LinkedIn";
+	const string LINKEDIN_CONF_CLIENT_ID = "ClientId";
+	const string LINKEDIN_CONF_CLIENT_SECRET = "ClientSecret";
+	const string LINKEDIN_URL_PARAM_CODE = "code";
+	const string LINKEDIN_URL_PARAM_STATE = "state";
+	const string LINKEDIN_URL_PARAM_REDIRECT_URI = "redirect_uri";
 
-	static string BuildAuthenticationUrlMicrosoft(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
+	static string BuildAuthenticationUrlLinkedIn(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
 	{
-		var tenantId = providerConfig.GetValueOrDefault(MS_CONF_TENANT_ID, MS_DEFAULT_TENANT);
-		var clientId = providerConfig.GetValueOrDefault(MS_CONF_CLIENT_ID, string.Empty);
+		var clientId = providerConfig.GetValueOrDefault(LINKEDIN_CONF_CLIENT_ID, string.Empty);
 		var state = string.IsNullOrEmpty(req.State) ? Guid.NewGuid().ToString("N") : req.State;
 		var scopes = req.Scopes ?? new HashSet<string>();
-		scopes.UnionWith(MS_DEFAULT_SCOPES);
+		scopes.UnionWith(LINKEDIN_DEFAULT_SCOPES);
 
-		// encode all parameters and the state and scopes into the new "state" parameter
+		// encode all parameters and the state into the new "state" parameter
 		var uri = new Uri(req.RedirectUrl);
 		var queryParams = QueryHelpers.ParseQuery(uri.GetComponents(UriComponents.Query, UriFormat.UriEscaped));
 		var encodedStates = new Dictionary<string, object>();
@@ -35,43 +32,36 @@ public sealed partial class ExternalLoginManager
 			encodedStates[key] = value.FirstOrDefault() ?? string.Empty;
 		}
 		encodedStates["__state"] = state;
-		encodedStates["__scopes"] = scopes;
 		var jsStr = JsonSerializer.Serialize(encodedStates);
 		state = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsStr));
 		var redirectUri = uri.GetComponents(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.UriEscaped);
 
-		return QueryHelpers.AddQueryString($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize", new Dictionary<string, string>
+		return QueryHelpers.AddQueryString($"https://www.linkedin.com/oauth/v2/authorization", new Dictionary<string, string>
 		{
 			{ "client_id", clientId },
 			{ "response_type", "code" },
 			{ "redirect_uri", redirectUri },
 			{ "scope", string.Join(' ', scopes) },
-			{ "response_mode", "query" },
 			{ "state", state },
 		});
 	}
 
-	async Task<ExternalLoginResult> AuthenticateMicrosoftAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
+	async Task<ExternalLoginResult> AuthenticateLinkedInAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
 	{
-		var stateUtf8 = authReq.TryGetValue(MS_URL_PARAM_STATE, out var stateStr) ? Convert.FromBase64String(stateStr) : Encoding.UTF8.GetBytes("{}");
+		var stateUtf8 = authReq.TryGetValue(LINKEDIN_URL_PARAM_STATE, out var stateStr) ? Convert.FromBase64String(stateStr) : Encoding.UTF8.GetBytes("{}");
 		var stateData = JsonSerializer.Deserialize<Dictionary<string, object>>(stateUtf8) ?? [];
 
-		// scopes are encoded in state data
-		var scopes = stateData.TryGetValue("__scopes", out var scopesObj) ? ((JsonElement)scopesObj).Deserialize<ISet<string>>() ?? new HashSet<string>() : new HashSet<string>();
-
-		var tenantId = providerConfig.GetValueOrDefault(MS_CONF_TENANT_ID, MS_DEFAULT_TENANT);
-		var clientId = providerConfig.GetValueOrDefault(MS_CONF_CLIENT_ID, string.Empty);
-		var clientSecret = providerConfig.GetValueOrDefault(MS_CONF_CLIENT_SECRET, string.Empty);
-		authReq.TryGetValue(MS_URL_PARAM_CODE, out var code);
-		authReq.TryGetValue(MS_URL_PARAM_REDIRECT_URI, out var redirectUri);
+		var clientId = providerConfig.GetValueOrDefault(LINKEDIN_CONF_CLIENT_ID, string.Empty);
+		var clientSecret = providerConfig.GetValueOrDefault(LINKEDIN_CONF_CLIENT_SECRET, string.Empty);
+		authReq.TryGetValue(LINKEDIN_URL_PARAM_CODE, out var code);
+		authReq.TryGetValue(LINKEDIN_URL_PARAM_REDIRECT_URI, out var redirectUri);
 
 		var tokenResult = new ExternalLoginResult();
-		using var tokenReq = BuildHttpRequestMessage(HttpMethod.Post, $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token",
+		using var tokenReq = BuildHttpRequestMessage(HttpMethod.Post, $"https://www.linkedin.com/oauth/v2/accessToken",
 			content: new FormUrlEncodedContent(new Dictionary<string, string>
 			{
 				{ "client_id", clientId },
 				{ "grant_type", "authorization_code" },
-				{ "scope", string.Join(' ', scopes) },
 				{ "code", code ?? string.Empty},
 				{ "redirect_uri", redirectUri ?? string.Empty },
 				{ "client_secret", clientSecret },
@@ -79,7 +69,7 @@ public sealed partial class ExternalLoginManager
 		);
 		var tokenResp = await HttpClientHelper.HttpRequestThatReturnsJson(HttpClient, tokenReq);
 		tokenResult.StatusCode = tokenResp.StatusCode;
-		tokenResult.Provider = MS_PROVIDER_NAME;
+		tokenResult.Provider = LINKEDIN_PROVIDER_NAME;
 		if (tokenResp.Error != null)
 		{
 			tokenResult.ErrorType = tokenResp.Error.GetType().Name;
@@ -93,11 +83,15 @@ public sealed partial class ExternalLoginManager
 		else
 		{
 			tokenResult.TokenType = tokenResp.ContentJson!.RootElement.TryGetProperty("token_type", out var element) ? element.GetString() : null;
-			tokenResult.Scope = tokenResp.ContentJson!.RootElement.TryGetProperty("scope", out element) ? element.GetString() : null;
 			tokenResult.AccessToken = tokenResp.ContentJson!.RootElement.TryGetProperty("access_token", out element) ? element.GetString() : null;
-			tokenResult.RefreshToken = tokenResp.ContentJson!.RootElement.TryGetProperty("refresh_token", out element) ? element.GetString() : null;
 			tokenResult.ExpireIn = tokenResp.ContentJson!.RootElement.TryGetProperty("expires_in", out element) ? element.GetInt32() : 0;
-			tokenResult.ExpireAt = DateTimeOffset.Now.AddSeconds(tokenResult.ExpireIn);
+			tokenResult.ExpireAt = DateTimeOffset.UtcNow.AddSeconds(tokenResult.ExpireIn);
+
+			tokenResult.RefreshToken = tokenResp.ContentJson!.RootElement.TryGetProperty("refresh_token", out element) ? element.GetString() : null;
+			tokenResult.RefreshTokenExpireIn = tokenResp.ContentJson!.RootElement.TryGetProperty("refresh_token_expires_in", out element) ? element.GetInt32() : 0;
+			tokenResult.RefreshTokenExpireAt = DateTimeOffset.UtcNow.AddSeconds(tokenResult.RefreshTokenExpireIn);
+
+			tokenResult.Scope = tokenResp.ContentJson!.RootElement.TryGetProperty("scope", out element) ? element.GetString() : null;
 
 			if (stateData.TryGetValue("returnUrl", out var returnUrl))
 			{
@@ -108,10 +102,10 @@ public sealed partial class ExternalLoginManager
 		return tokenResult;
 	}
 
-	async Task<ExternalUserProfile> GetUserProfileMicrosoftAsync(string accessToken)
+	async Task<ExternalUserProfile> GetUserProfileLinkedInAsync(string accessToken)
 	{
 		var profileResult = new ExternalUserProfile();
-		using var profileReq = BuildHttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me",
+		using var profileReq = BuildHttpRequestMessage(HttpMethod.Get, "https://api.linkedin.com/v2/userinfo",
 			headers: new Dictionary<string, string>
 			{
 				{ "Authorization", $"Bearer {accessToken}" }
@@ -119,7 +113,7 @@ public sealed partial class ExternalLoginManager
 		);
 		var profileResp = await HttpClientHelper.HttpRequestThatReturnsJson(HttpClient, profileReq);
 		profileResult.StatusCode = profileResp.StatusCode;
-		profileResult.Provider = MS_PROVIDER_NAME;
+		profileResult.Provider = LINKEDIN_PROVIDER_NAME;
 		if (profileResp.Error != null)
 		{
 			profileResult.ErrorType = profileResp.Error.GetType().Name;
@@ -132,13 +126,11 @@ public sealed partial class ExternalLoginManager
 		}
 		else
 		{
-			profileResult.Id = profileResp.ContentJson!.RootElement.TryGetProperty("id", out var element) ? element.GetString() : null;
-			profileResult.GivenName = profileResp.ContentJson!.RootElement.TryGetProperty("givenName", out element) ? element.GetString() : null;
-			profileResult.FamilyName = profileResp.ContentJson!.RootElement.TryGetProperty("surname", out element) ? element.GetString() : null;
-			profileResult.DisplayName = profileResp.ContentJson!.RootElement.TryGetProperty("displayName", out element) ? element.GetString() : null;
-			profileResult.Email = profileResp.ContentJson!.RootElement.TryGetProperty("mail", out element)
-				? element.GetString()
-				: profileResp.ContentJson!.RootElement.TryGetProperty("userPrincipalName", out element) ? element.GetString() : null;
+			profileResult.Id = profileResp.ContentJson!.RootElement.TryGetProperty("sub", out var element) ? element.GetString() : null;
+			profileResult.GivenName = profileResp.ContentJson!.RootElement.TryGetProperty("given_name", out element) ? element.GetString() : null;
+			profileResult.FamilyName = profileResp.ContentJson!.RootElement.TryGetProperty("family_name", out element) ? element.GetString() : null;
+			profileResult.DisplayName = profileResp.ContentJson!.RootElement.TryGetProperty("name", out element) ? element.GetString() : null;
+			profileResult.Email = profileResp.ContentJson!.RootElement.TryGetProperty("email", out element) ? element.GetString() : null;
 		}
 
 		return profileResult;

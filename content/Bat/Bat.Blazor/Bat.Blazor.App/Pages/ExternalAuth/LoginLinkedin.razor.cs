@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages.ExternalAuth;
 
-public partial class LoginMicrosoft
+public partial class LoginLinkedin
 {
 	private string AlertType { get; set; } = string.Empty;
 	private string AlertMessage { get; set; } = string.Empty;
@@ -38,11 +38,11 @@ public partial class LoginMicrosoft
 
 		authData["redirect_uri"] = new UriBuilder(NavigationManager.BaseUri)
 		{
-			Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_MICROSOFT,
+			Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_LINKEDIN,
 		}.ToString();
 		var apiResult = await ApiClient.ExternalLoginAsync(new Bat.Shared.Api.ExternalAuthReq
 		{
-			Provider = "Microsoft",
+			Provider = "LinkedIn",
 			AuthData = authData
 		}, ApiBaseUrl);
 		if (apiResult.Status != 200)

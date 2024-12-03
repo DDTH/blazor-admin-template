@@ -116,6 +116,7 @@ public sealed partial class ExternalLoginManager
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => BuildAuthenticationUrlLinkedIn(providerConfig, req),
 			"MICROSOFT" => BuildAuthenticationUrlMicrosoft(providerConfig, req),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
@@ -140,6 +141,7 @@ public sealed partial class ExternalLoginManager
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => await AuthenticateLinkedInAsync(providerConfig, authReq),
 			"MICROSOFT" => await AuthenticateMicrosoftAsync(providerConfig, authReq),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
@@ -156,14 +158,10 @@ public sealed partial class ExternalLoginManager
 	/// <exception cref="ExternalLoginException">Thrown when an error occurs while getting the user profile.</exception>
 	public async Task<ExternalUserProfile> GetUserProfileAsync(string providerName, string accessToken)
 	{
-		// if (!Providers.TryGetValue(providerName, out var providerConfig))
-		// {
-		// 	throw new NoProviderException($"Provider '{providerName}' not found.");
-		// }
-
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => await GetUserProfileLinkedInAsync(accessToken),
 			"MICROSOFT" => await GetUserProfileMicrosoftAsync(accessToken),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};

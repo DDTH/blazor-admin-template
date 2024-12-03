@@ -87,26 +87,34 @@ public partial class Login : BaseComponent
 		var returnUrl = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query)
 			.TryGetValue("returnUrl", out var returnUrlValue) ? returnUrlValue.FirstOrDefault("/") : "/";
 
-		ApiResp<string> apiResult;
-		switch (provider)
+
+		UriBuilder uriBuilder;
+		switch (provider.ToUpper())
 		{
-			case "Microsoft":
-				var uriBuilder = new UriBuilder(NavigationManager.BaseUri)
+			case "LINKEDIN":
+				uriBuilder = new UriBuilder(NavigationManager.BaseUri)
+				{
+					Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_LINKEDIN,
+					Query = QueryHelpers.AddQueryString(string.Empty, "returnUrl", returnUrl)
+				};
+				break;
+			case "MICROSOFT":
+				uriBuilder = new UriBuilder(NavigationManager.BaseUri)
 				{
 					Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_MICROSOFT,
 					Query = QueryHelpers.AddQueryString(string.Empty, "returnUrl", returnUrl)
 				};
-				apiResult = await ApiClient.GetExternalAuthUrlAsync(new ExternalAuthUrlReq()
-				{
-					Provider = provider,
-					RedirectUrl = uriBuilder.ToString()
-				}, ApiBaseUrl);
 				break;
 			default:
 				HideLoginForm = DisableExternalLogin = false;
 				ShowModalNotImplemented();
 				return;
 		}
+		var apiResult = await ApiClient.GetExternalAuthUrlAsync(new ExternalAuthUrlReq()
+		{
+			Provider = provider,
+			RedirectUrl = uriBuilder.ToString()
+		}, ApiBaseUrl);
 
 		if (apiResult.Status != 200)
 		{

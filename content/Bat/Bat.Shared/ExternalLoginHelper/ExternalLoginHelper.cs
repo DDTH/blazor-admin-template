@@ -90,16 +90,23 @@ public sealed class ExternalLoginResult : BaseExternalProviderResp
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? AccessToken { get; set; }
 
-	[JsonPropertyName("refresh_token")]
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public string? RefreshToken { get; set; }
-
 	[JsonPropertyName("expire_in")]
 	public int ExpireIn { get; set; }
 
 	[JsonPropertyName("expire_at")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public DateTimeOffset? ExpireAt { get; set; }
+
+	[JsonPropertyName("refresh_token")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? RefreshToken { get; set; }
+
+	[JsonPropertyName("refresh_token_expire_in")]
+	public int RefreshTokenExpireIn { get; set; }
+
+	[JsonPropertyName("refresh_token_expire_at")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public DateTimeOffset? RefreshTokenExpireAt { get; set; }
 
 	[JsonPropertyName("redirect_url")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
