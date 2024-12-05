@@ -36,10 +36,15 @@ public partial class LoginLinkedin
 			return;
 		}
 
-		authData["redirect_uri"] = new UriBuilder(NavigationManager.BaseUri)
+		var uriBuilder = new UriBuilder(NavigationManager.BaseUri)
 		{
 			Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_LINKEDIN,
-		}.ToString();
+		};
+		if ((uriBuilder.Scheme == "http" && uriBuilder.Port == 80) || (uriBuilder.Scheme == "https" && uriBuilder.Port == 443))
+		{
+			uriBuilder.Port = -1;
+		}
+		authData["redirect_uri"] = uriBuilder.ToString();
 		var apiResult = await ApiClient.ExternalLoginAsync(new Bat.Shared.Api.ExternalAuthReq
 		{
 			Provider = "LinkedIn",
