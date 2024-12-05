@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 
 namespace Bat.Shared.ExternalLoginHelper;
 
@@ -18,7 +19,7 @@ public sealed partial class ExternalLoginManager
 	const string MS_URL_PARAM_STATE = "state";
 	const string MS_URL_PARAM_REDIRECT_URI = "redirect_uri";
 
-	static string BuildAuthenticationUrlMicrosoft(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
+	private string BuildAuthenticationUrlMicrosoft(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
 	{
 		var tenantId = providerConfig.GetValueOrDefault(MS_CONF_TENANT_ID, MS_DEFAULT_TENANT);
 		var clientId = providerConfig.GetValueOrDefault(MS_CONF_CLIENT_ID, string.Empty);
@@ -40,7 +41,7 @@ public sealed partial class ExternalLoginManager
 		state = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsStr));
 		var redirectUri = uri.GetComponents(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.UriEscaped);
 
-		return QueryHelpers.AddQueryString($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize", new Dictionary<string, string>
+		var result = QueryHelpers.AddQueryString($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/authorize", new Dictionary<string, string>
 		{
 			{ "client_id", clientId },
 			{ "response_type", "code" },
@@ -49,9 +50,13 @@ public sealed partial class ExternalLoginManager
 			{ "response_mode", "query" },
 			{ "state", state },
 		});
+		Logger.LogDebug("BuildAuthenticationUrlMicrosoft({providerConfig}, {req}): {result}",
+			JsonSerializer.Serialize(providerConfig), JsonSerializer.Serialize(req),
+			result);
+		return result;
 	}
 
-	async Task<ExternalLoginResult> AuthenticateMicrosoftAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
+	private async Task<ExternalLoginResult> AuthenticateMicrosoftAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
 	{
 		var stateUtf8 = authReq.TryGetValue(MS_URL_PARAM_STATE, out var stateStr) ? Convert.FromBase64String(stateStr) : Encoding.UTF8.GetBytes("{}");
 		var stateData = JsonSerializer.Deserialize<Dictionary<string, object>>(stateUtf8) ?? [];
@@ -105,10 +110,14 @@ public sealed partial class ExternalLoginManager
 			}
 		}
 
+		Logger.LogDebug("AuthenticateMicrosoftAsync({providerConfig}, {authReq}): {tokenResult}",
+			JsonSerializer.Serialize(providerConfig), JsonSerializer.Serialize(authReq),
+			JsonSerializer.Serialize(tokenResult));
+
 		return tokenResult;
 	}
 
-	async Task<ExternalUserProfile> GetUserProfileMicrosoftAsync(string accessToken)
+	private async Task<ExternalUserProfile> GetUserProfileMicrosoftAsync(string accessToken)
 	{
 		var profileResult = new ExternalUserProfile();
 		using var profileReq = BuildHttpRequestMessage(HttpMethod.Get, "https://graph.microsoft.com/v1.0/me",
@@ -140,6 +149,10 @@ public sealed partial class ExternalLoginManager
 				? element.GetString()
 				: profileResp.ContentJson!.RootElement.TryGetProperty("userPrincipalName", out element) ? element.GetString() : null;
 		}
+
+		Logger.LogDebug("GetUserProfileMicrosoftAsync({accessToken}): {profileResult}",
+			accessToken,
+			JsonSerializer.Serialize(profileResult));
 
 		return profileResult;
 	}

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 
 namespace Bat.Shared.ExternalLoginHelper;
 
@@ -16,7 +17,7 @@ public sealed partial class ExternalLoginManager
 	const string LINKEDIN_URL_PARAM_STATE = "state";
 	const string LINKEDIN_URL_PARAM_REDIRECT_URI = "redirect_uri";
 
-	static string BuildAuthenticationUrlLinkedIn(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
+	private string BuildAuthenticationUrlLinkedIn(ExternalLoginProviderConfig providerConfig, BuildAuthUrlReq req)
 	{
 		var clientId = providerConfig.GetValueOrDefault(LINKEDIN_CONF_CLIENT_ID, string.Empty);
 		var state = string.IsNullOrEmpty(req.State) ? Guid.NewGuid().ToString("N") : req.State;
@@ -36,7 +37,7 @@ public sealed partial class ExternalLoginManager
 		state = Convert.ToBase64String(Encoding.UTF8.GetBytes(jsStr));
 		var redirectUri = uri.GetComponents(UriComponents.Scheme | UriComponents.Host | UriComponents.Port | UriComponents.Path, UriFormat.UriEscaped);
 
-		return QueryHelpers.AddQueryString($"https://www.linkedin.com/oauth/v2/authorization", new Dictionary<string, string>
+		var result = QueryHelpers.AddQueryString($"https://www.linkedin.com/oauth/v2/authorization", new Dictionary<string, string>
 		{
 			{ "client_id", clientId },
 			{ "response_type", "code" },
@@ -44,9 +45,13 @@ public sealed partial class ExternalLoginManager
 			{ "scope", string.Join(' ', scopes) },
 			{ "state", state },
 		});
+		Logger.LogDebug("BuildAuthenticationUrlLinkedIn({providerConfig}, {req}): {result}",
+			JsonSerializer.Serialize(providerConfig), JsonSerializer.Serialize(req),
+			result);
+		return result;
 	}
 
-	async Task<ExternalLoginResult> AuthenticateLinkedInAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
+	private async Task<ExternalLoginResult> AuthenticateLinkedInAsync(ExternalLoginProviderConfig providerConfig, IDictionary<string, string> authReq)
 	{
 		var stateUtf8 = authReq.TryGetValue(LINKEDIN_URL_PARAM_STATE, out var stateStr) ? Convert.FromBase64String(stateStr) : Encoding.UTF8.GetBytes("{}");
 		var stateData = JsonSerializer.Deserialize<Dictionary<string, object>>(stateUtf8) ?? [];
@@ -99,10 +104,14 @@ public sealed partial class ExternalLoginManager
 			}
 		}
 
+		Logger.LogDebug("AuthenticateLinkedInAsync({providerConfig}, {authReq}): {tokenResult}",
+			JsonSerializer.Serialize(providerConfig), JsonSerializer.Serialize(authReq),
+			JsonSerializer.Serialize(tokenResult));
+
 		return tokenResult;
 	}
 
-	async Task<ExternalUserProfile> GetUserProfileLinkedInAsync(string accessToken)
+	private async Task<ExternalUserProfile> GetUserProfileLinkedInAsync(string accessToken)
 	{
 		var profileResult = new ExternalUserProfile();
 		using var profileReq = BuildHttpRequestMessage(HttpMethod.Get, "https://api.linkedin.com/v2/userinfo",
@@ -132,6 +141,10 @@ public sealed partial class ExternalLoginManager
 			profileResult.DisplayName = profileResp.ContentJson!.RootElement.TryGetProperty("name", out element) ? element.GetString() : null;
 			profileResult.Email = profileResp.ContentJson!.RootElement.TryGetProperty("email", out element) ? element.GetString() : null;
 		}
+
+		Logger.LogDebug("GetUserProfileLinkedInAsync({accessToken}): {profileResult}",
+			accessToken,
+			JsonSerializer.Serialize(profileResult));
 
 		return profileResult;
 	}
