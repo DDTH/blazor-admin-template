@@ -87,7 +87,6 @@ public partial class Login : BaseComponent
 		var returnUrl = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query)
 			.TryGetValue("returnUrl", out var returnUrlValue) ? returnUrlValue.FirstOrDefault("/") : "/";
 
-
 		UriBuilder uriBuilder;
 		switch (provider.ToUpper())
 		{
@@ -110,12 +109,15 @@ public partial class Login : BaseComponent
 				ShowModalNotImplemented();
 				return;
 		}
+		if ((uriBuilder.Scheme == "http" && uriBuilder.Port == 80) || (uriBuilder.Scheme == "https" && uriBuilder.Port == 443))
+		{
+			uriBuilder.Port = -1;
+		}
 		var apiResult = await ApiClient.GetExternalAuthUrlAsync(new ExternalAuthUrlReq()
 		{
 			Provider = provider,
 			RedirectUrl = uriBuilder.ToString()
 		}, ApiBaseUrl);
-
 		if (apiResult.Status != 200)
 		{
 			HideLoginForm = DisableExternalLogin = false;
