@@ -15,12 +15,14 @@ public class ExternalAuthController : ApiBaseController
 	private readonly IAuthenticator? _authenticator;
 	private readonly IAuthenticatorAsync? _authenticatorAsync;
 	private readonly ExternalLoginManager _externalLoginManager;
+	private readonly ILogger<ExternalAuthController> _logger;
 
 	public ExternalAuthController(
 		IConfiguration config,
 		IWebHostEnvironment env,
 		ExternalLoginManager externalLoginManager,
-		IAuthenticator? authenticator, IAuthenticatorAsync? authenticatorAsync)
+		IAuthenticator? authenticator, IAuthenticatorAsync? authenticatorAsync,
+		ILogger<ExternalAuthController> logger)
 	{
 		ArgumentNullException.ThrowIfNull(config, nameof(config));
 		ArgumentNullException.ThrowIfNull(env, nameof(env));
@@ -35,6 +37,7 @@ public class ExternalAuthController : ApiBaseController
 		_externalLoginManager = externalLoginManager;
 		_authenticator = authenticator;
 		_authenticatorAsync = authenticatorAsync;
+		_logger = logger;
 	}
 
 	/// <summary>
@@ -44,6 +47,7 @@ public class ExternalAuthController : ApiBaseController
 	public ActionResult<ApiResp<IEnumerable<string>>> GetExternalAuthProviders()
 	{
 		var providers = _externalLoginManager.GetProviderNames() ?? [];
+		_logger.LogDebug("GetExternalAuthProviders(): {providers}", JsonSerializer.Serialize(providers));
 		return ResponseOk(providers);
 	}
 
@@ -61,10 +65,12 @@ public class ExternalAuthController : ApiBaseController
 			{
 				RedirectUrl = request.RedirectUrl,
 			});
+			_logger.LogDebug("GetExternalAuthUrl({request}): {authUrl}", JsonSerializer.Serialize(request), authUrl);
 			return ResponseOk(authUrl);
 		}
 		catch (ExternalLoginException ex)
 		{
+			_logger.LogError(ex, "GetExternalAuthUrl({request}): {message}", JsonSerializer.Serialize(request), ex.Message);
 			return ResponseNoData(500, ex.Message);
 		}
 	}
@@ -90,11 +96,13 @@ public class ExternalAuthController : ApiBaseController
 			// try to authenticate with external provider
 			var loginResult = await _externalLoginManager.AuthenticateAsync(authReq.Provider, authReq.AuthData);
 			if (!loginResult.IsSuccessStatusCode) return ResponseNoData(401, loginResult.ErrorMessage ?? loginResult.ErrorType ?? "Authentication failed.");
+			_logger.LogDebug("ExternalLogin({authReq})/AuthenticateAsync: {loginResult}", JsonSerializer.Serialize(authReq), JsonSerializer.Serialize(loginResult));
 
 			// get user profile from external provider
 			var extProfileResult = await _externalLoginManager.GetUserProfileAsync(authReq.Provider, loginResult.AccessToken!);
 			if (!extProfileResult.IsSuccessStatusCode) return ResponseNoData(401, extProfileResult.ErrorMessage ?? extProfileResult.ErrorType ?? "Failed to get user profile.");
 			if (string.IsNullOrWhiteSpace(extProfileResult.Email)) return ResponseNoData(401, "User profile does not have a valid email address.");
+			_logger.LogDebug("ExternalLogin({authReq})/GetUserProfileAsync: {extProfileResult}", JsonSerializer.Serialize(authReq), JsonSerializer.Serialize(extProfileResult));
 
 			// create user account if needed
 			var user = await EnsureUserAccountAsync(identityRepository, lookupNormalizer, extProfileResult);
@@ -111,6 +119,7 @@ public class ExternalAuthController : ApiBaseController
 		}
 		catch (ExternalLoginException ex)
 		{
+			_logger.LogError(ex, "ExternalLogin({authReq}): {message}", JsonSerializer.Serialize(authReq), ex.Message);
 			return ResponseNoData(500, ex.Message);
 		}
 	}
@@ -122,7 +131,7 @@ public class ExternalAuthController : ApiBaseController
 		public IEnumerable<string>? Claims { get; set; }
 	}
 
-	async Task<BatUser?> EnsureUserAccountAsync(IIdentityRepository identityRepository, ILookupNormalizer lookupNormalizer, ExternalUserProfile extProfile)
+	private async Task<BatUser?> EnsureUserAccountAsync(IIdentityRepository identityRepository, ILookupNormalizer lookupNormalizer, ExternalUserProfile extProfile)
 	{
 		var user = await identityRepository.GetUserByEmailAsync(extProfile.Email!);
 		if (user is not null) return user;

@@ -8,20 +8,35 @@ namespace Bat.Shared.ExternalLoginHelper;
 /// </summary>
 public class ExternalLoginBuilder
 {
+	// /// <summary>
+	// /// Creates a new instance of <see cref="ExternalLoginBuilder"/>.
+	// /// </summary>
+	// /// <returns>The new instance of <see cref="ExternalLoginBuilder"/>.</returns>
+	// public static ExternalLoginBuilder New()
+	// {
+	// 	return New(null);
+	// }
+
 	/// <summary>
 	/// Creates a new instance of <see cref="ExternalLoginBuilder"/>.
 	/// </summary>
-	public static ExternalLoginBuilder New()
+	/// <param name="serviceProvider">The service provider.</param>
+	/// <returns>The new instance of <see cref="ExternalLoginBuilder"/>.</returns>
+	public static ExternalLoginBuilder New(IServiceProvider? serviceProvider)
 	{
-		return new ExternalLoginBuilder();
+		return new ExternalLoginBuilder(serviceProvider);
 	}
 
 	protected IDictionary<string, IConfigurationSection> ProvidersConfig { get; private set; } = new Dictionary<string, IConfigurationSection>();
 	protected IDictionary<string, ExternalLoginProviderConfig> Providers { get; private set; } = new Dictionary<string, ExternalLoginProviderConfig>();
 	protected bool ThrownOnInvalidConfig { get; private set; } = false;
 	protected HttpClient? HttpClient { get; private set; } = default;
+	protected IServiceProvider? ServiceProvider { get; private set; } = default;
 
-	protected ExternalLoginBuilder() { }
+	protected ExternalLoginBuilder(IServiceProvider? serviceProvider)
+	{
+		ServiceProvider = serviceProvider;
+	}
 
 	public ExternalLoginManager Build()
 	{
@@ -31,7 +46,7 @@ public class ExternalLoginBuilder
 		if (ProvidersConfig.Count == 0 && Providers.Count == 0)
 		{
 			logger.LogWarning("No external login providers configuration provided.");
-			return new ExternalLoginManager(finalProviders);
+			return new ExternalLoginManager(ServiceProvider, finalProviders);
 		}
 
 		foreach (var (providerName, providerConfig) in ProvidersConfig)
@@ -53,7 +68,7 @@ public class ExternalLoginBuilder
 			}
 		}
 
-		return new ExternalLoginManager(finalProviders, HttpClient);
+		return new ExternalLoginManager(ServiceProvider, finalProviders, HttpClient);
 	}
 
 	/// <summary>

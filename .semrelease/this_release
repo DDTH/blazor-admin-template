@@ -1,5 +1,9 @@
 # This file has been cleaned up post-releasing version 1.2.0.
 # Generate its content quickly using the following command:
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
-- Fix(CodeQL) - Severity: Note
-- Fix(CodeQL) - Severity: Warning
+- Fix(CodeQL) - Severity: Note.
+- Fix(CodeQL) - Severity: Warning.
+- Fix(deps): Microsoft.EntityFrameworkCore reverted back to v8.
+- Fix: Logout link not working.
+- Feature: Login with external account - LinkedIn.
+- Other fixes and improvements.

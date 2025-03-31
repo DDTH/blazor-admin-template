@@ -1,4 +1,5 @@
-using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Bat.Shared.ExternalLoginHelper;
 
@@ -53,11 +54,14 @@ public sealed partial class ExternalLoginManager
 {
 	private IDictionary<string, ExternalLoginProviderConfig> Providers { get; } = new Dictionary<string, ExternalLoginProviderConfig>();
 	private HttpClient HttpClient { get; set; } = default!;
+	private IServiceProvider? ServiceProvider { get; set; }
+	private ILogger<ExternalLoginManager> Logger { get; set; } = default!;
 
-	internal ExternalLoginManager(IDictionary<string, ExternalLoginProviderConfig> providers) : this(providers, null) { }
+	internal ExternalLoginManager(IServiceProvider? serviceProvider, IDictionary<string, ExternalLoginProviderConfig> providers) : this(serviceProvider, providers, null) { }
 
-	internal ExternalLoginManager(IDictionary<string, ExternalLoginProviderConfig> providers, HttpClient? httpClient)
+	internal ExternalLoginManager(IServiceProvider? serviceProvider, IDictionary<string, ExternalLoginProviderConfig> providers, HttpClient? httpClient)
 	{
+		ServiceProvider = serviceProvider;
 		HttpClient = httpClient ?? new HttpClient();
 		foreach (var (providerName, providerConfig) in providers)
 		{
@@ -67,6 +71,7 @@ public sealed partial class ExternalLoginManager
 				Providers[providerName] = providerConfig;
 			}
 		}
+		Logger = ServiceProvider?.GetService<ILogger<ExternalLoginManager>>() ?? LoggerFactory.Create(b => b.AddConsole()).CreateLogger<ExternalLoginManager>();
 	}
 
 	/// <summary>
@@ -116,6 +121,7 @@ public sealed partial class ExternalLoginManager
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => BuildAuthenticationUrlLinkedIn(providerConfig, req),
 			"MICROSOFT" => BuildAuthenticationUrlMicrosoft(providerConfig, req),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
@@ -140,6 +146,7 @@ public sealed partial class ExternalLoginManager
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => await AuthenticateLinkedInAsync(providerConfig, authReq),
 			"MICROSOFT" => await AuthenticateMicrosoftAsync(providerConfig, authReq),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
@@ -156,14 +163,10 @@ public sealed partial class ExternalLoginManager
 	/// <exception cref="ExternalLoginException">Thrown when an error occurs while getting the user profile.</exception>
 	public async Task<ExternalUserProfile> GetUserProfileAsync(string providerName, string accessToken)
 	{
-		// if (!Providers.TryGetValue(providerName, out var providerConfig))
-		// {
-		// 	throw new NoProviderException($"Provider '{providerName}' not found.");
-		// }
-
 		providerName = providerName.ToUpper();
 		return providerName switch
 		{
+			"LINKEDIN" => await GetUserProfileLinkedInAsync(accessToken),
 			"MICROSOFT" => await GetUserProfileMicrosoftAsync(accessToken),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
