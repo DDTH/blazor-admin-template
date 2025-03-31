@@ -6,3 +6,4 @@
 - Fix(deps): Microsoft.EntityFrameworkCore reverted back to v8.
 - Fix: Logout link not working.
 - Feature: Login with external account - LinkedIn.
+- Other fixes and improvements.
