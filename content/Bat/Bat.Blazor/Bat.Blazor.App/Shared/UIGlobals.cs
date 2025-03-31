@@ -12,6 +12,7 @@ public class UIGlobals
 	public const string ROUTE_LOGOUT = "/logout";
 	public const string ROUTE_PROFILE = "/profile";
 
+	public const string ROUTE_LOGIN_EXTERNAL_LINKEDIN = "/external-auth/linkedin";
 	public const string ROUTE_LOGIN_EXTERNAL_MICROSOFT = "/external-auth/microsoft";
 
 	public const string ROUTE_BASE = "/admin";

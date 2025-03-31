@@ -23,12 +23,9 @@ public sealed class ExternalLoginProviderConfig : Dictionary<string, string>
 	public ExternalLoginProviderConfig(string providerName, IConfigurationSection config)
 	{
 		ProviderName = providerName;
-		foreach (var conf in config.GetChildren())
+		foreach (var conf in config.GetChildren().Where(c => c.Value != null))
 		{
-			if (conf.Value != null)
-			{
-				this[conf.Key] = conf.Value;
-			}
+			this[conf.Key] = conf.Value!;
 		}
 	}
 
@@ -36,12 +33,9 @@ public sealed class ExternalLoginProviderConfig : Dictionary<string, string>
 
 	public bool TryGetValueAsBool(string key, out bool value)
 	{
-		if (TryGetValue(key, out var val))
+		if (TryGetValue(key, out var val) && bool.TryParse(val, out value))
 		{
-			if (bool.TryParse(val, out value))
-			{
-				return true;
-			}
+			return true;
 		}
 		value = false;
 		return false;
@@ -96,16 +90,23 @@ public sealed class ExternalLoginResult : BaseExternalProviderResp
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public string? AccessToken { get; set; }
 
-	[JsonPropertyName("refresh_token")]
-	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-	public string? RefreshToken { get; set; }
-
 	[JsonPropertyName("expire_in")]
 	public int ExpireIn { get; set; }
 
 	[JsonPropertyName("expire_at")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public DateTimeOffset? ExpireAt { get; set; }
+
+	[JsonPropertyName("refresh_token")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? RefreshToken { get; set; }
+
+	[JsonPropertyName("refresh_token_expire_in")]
+	public int RefreshTokenExpireIn { get; set; }
+
+	[JsonPropertyName("refresh_token_expire_at")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public DateTimeOffset? RefreshTokenExpireAt { get; set; }
 
 	[JsonPropertyName("redirect_url")]
 	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

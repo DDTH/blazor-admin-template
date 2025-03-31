@@ -61,7 +61,7 @@ public static class HttpClientHelper
 	{
 		try
 		{
-			var resp = await httpClient.SendAsync(req);
+			using var resp = await httpClient.SendAsync(req);
 			var content = await resp.Content.ReadAsStringAsync();
 			return new HttpResponseJson
 			{

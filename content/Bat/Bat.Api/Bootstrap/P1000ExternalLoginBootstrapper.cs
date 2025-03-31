@@ -16,6 +16,6 @@ public class ExternalLoginBootstrapper
 
 		var configuration = appBuilder.Configuration;
 		var services = appBuilder.Services;
-		services.AddSingleton(sp => ExternalLoginBuilder.New().WithProvidersConfig(configuration).Build());
+		services.AddSingleton(sp => ExternalLoginBuilder.New(sp).WithProvidersConfig(configuration).Build());
 	}
 }

@@ -68,9 +68,13 @@
 									@foreach (var provider in ExternalAuthProviders)
 									{
 										<button class="btn btn-lg btn-outline-light mt-1 text-start" type="button" disabled="@DisableExternalLogin" @onclick="() => BtnClickExternalLogin(provider)">
-											@if (provider == "Microsoft")
+											@if (provider.ToUpper() == "MICROSOFT")
 											{
 												<BIcon icon="bi-microsoft" />
+											}
+											else if (provider.ToUpper() == "LINKEDIN")
+											{
+												<BIcon icon="bi-linkedin" />
 											}
 											@* else if (provider == "Google")
 											{

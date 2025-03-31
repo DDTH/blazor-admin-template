@@ -11,14 +11,14 @@ public partial class Logout : BaseComponent
 {
 	private string Message { get; set; } = "Logging out, please wait...";
 
-	[Inject]
-	private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+	// [Inject]
+	// private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		var localStorage = ServiceProvider.GetRequiredService<LocalStorageHelper>();
 		await localStorage.RemoveItemAsync(Globals.LOCAL_STORAGE_KEY_AUTH_TOKEN);
-		((JwtAuthenticationStateProvider)AuthenticationStateProvider).NotifyStageChanged();
+		// ((JwtAuthenticationStateProvider)AuthenticationStateProvider).NotifyStageChanged();
 
 		NavigationManager.NavigateTo(UIGlobals.ROUTE_LANDING, forceLoad: true);
 	}
