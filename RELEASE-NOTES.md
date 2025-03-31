@@ -1,5 +1,18 @@
 # Blazor Admin Template release notes
 
+## 2025-03-31 - v1.3.0
+
+### Added/Refactoring
+
+- Feature: Login with external account - LinkedIn.
+
+### Fixed/Improvement
+
+- Fix(CodeQL) - Severity: Note.
+- Fix(CodeQL) - Severity: Warning.
+- Fix(deps): dependencies for .NET 8.
+- Fix: Logout link not working.
+
 ## 2024-12-02 - v1.2.0
 
 ### Added/Refactoring
