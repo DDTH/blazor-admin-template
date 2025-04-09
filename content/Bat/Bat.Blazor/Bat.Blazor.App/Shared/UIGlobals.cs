@@ -14,6 +14,7 @@ public class UIGlobals
 
 	public const string ROUTE_LOGIN_EXTERNAL_LINKEDIN = "/external-auth/linkedin";
 	public const string ROUTE_LOGIN_EXTERNAL_MICROSOFT = "/external-auth/microsoft";
+	public const string ROUTE_LOGIN_EXTERNAL_GITHUB = "/external-auth/github";
 
 	public const string ROUTE_BASE = "/admin";
 	public const string ROUTE_HOME = $"{ROUTE_BASE}/";
