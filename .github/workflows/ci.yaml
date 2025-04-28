@@ -155,8 +155,8 @@ jobs:
             -p 1234:8080 \
             --platform ${{ matrix.platforms }} \
             test
-          sleep 5
-          curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz
+          sleep 10
+          curl -s -w "%{http_code}" http://localhost:1234/healthz
           STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
           if [ "$STATUS_CODE" -ne 200 ]; then
             echo "❌ Health check failed with status code $STATUS_CODE"
