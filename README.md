@@ -17,8 +17,9 @@ Template to quickly create admin control panel projects with .NET Blazor.
 - Authentication using external providers:
   - [ ] Apple
   - [ ] Facebook
-  - [ ] GitHub
+  - [X] GitHub
   - [ ] Google
+  - [X] LinkedIn
   - [X] Microsoft
   - [ ] Twitter/X
 - Sample database access implementation using [Entity Framework](https://learn.microsoft.com/en-us/ef/core/).

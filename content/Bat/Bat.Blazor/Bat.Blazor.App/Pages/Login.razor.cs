@@ -104,6 +104,13 @@ public partial class Login : BaseComponent
 					Query = QueryHelpers.AddQueryString(string.Empty, "returnUrl", returnUrl)
 				};
 				break;
+			case "GITHUB":
+				uriBuilder = new UriBuilder(NavigationManager.BaseUri)
+				{
+					Path = UIGlobals.ROUTE_LOGIN_EXTERNAL_GITHUB,
+					Query = QueryHelpers.AddQueryString(string.Empty, "returnUrl", returnUrl)
+				};
+				break;
 			default:
 				HideLoginForm = DisableExternalLogin = false;
 				ShowModalNotImplemented();
