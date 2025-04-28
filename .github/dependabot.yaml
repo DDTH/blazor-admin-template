@@ -10,6 +10,16 @@ updates:
       day: "sunday"
 
   - package-ecosystem: "nuget"
+    directory: "/dummy"
+    schedule:
+      interval: "daily"
+      day: "saturday"
+    versioning-strategy: "increase"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
+
+  - package-ecosystem: "nuget"
     directory: "/content/Bat/Bat.Shared"
     schedule:
       interval: "weekly"
