@@ -11,6 +11,7 @@ updates:
 
   - package-ecosystem: "nuget"
     directories:
+      - "/Bat.Libs"
       - "/Bat.Shared"
       - "/Bat.Shared.EF"
       - "/Bat.Api"
