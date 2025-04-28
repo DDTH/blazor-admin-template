@@ -144,6 +144,7 @@ jobs:
         with:
           platforms: ${{ matrix.platforms }}
           push: false
+          load: true
           tags: test
           file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
           context: ${{ env.TEMPLATE_ROOT }}
