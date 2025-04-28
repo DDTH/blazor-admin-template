@@ -157,9 +157,9 @@ jobs:
             -p 1234:8080 \
             --platform ${{ matrix.platforms }} \
             test)
-          sleep 10
+          sleep 30
           docker logs ${CONTAINER}
-          STATUS_OUTPUT=$(curl -s http://localhost:1234/healthz)
+          STATUS_OUTPUT=$(curl http://localhost:1234/healthz)
           echo "ℹ️ Health check output: $STATUS_OUTPUT"
           STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
           if [ "$STATUS_CODE" -ne 200 ]; then
