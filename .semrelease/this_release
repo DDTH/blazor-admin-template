@@ -2,5 +2,7 @@
 # Generate its content quickly using the following command:
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Feature: Login with external account - GitHub.
+- Feature: Test the generated Docker image with a health check.
+- Optimized `dependabot.yaml`.
 - Fix: Dependencies with dotNet 8.
 - Fix: CodeQL warnings.
