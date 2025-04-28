@@ -8,18 +8,18 @@
 
   <ItemGroup>
     <PackageReference Include="Ddth.Utilities" Version="0.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.3">
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.3" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.7.0">
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.9.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.7.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
   </ItemGroup>
 
 </Project>

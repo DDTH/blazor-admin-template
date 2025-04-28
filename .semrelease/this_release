@@ -3,3 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Feature: Login with external account - GitHub.
 - Fix: Dependencies with dotNet 8.
+- Fix: CodeQL warnings.
