@@ -137,6 +137,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       - name: Build Docker image for ${{ matrix.platforms }}
@@ -157,7 +159,8 @@ jobs:
             test)
           sleep 10
           docker logs ${CONTAINER}
-          curl -s -w "%{http_code}" http://localhost:1234/healthz
+          STATUS_OUTPUT=$(curl -s http://localhost:1234/healthz)
+          echo "ℹ️ Health check output: $STATUS_OUTPUT"
           STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
           if [ "$STATUS_CODE" -ne 200 ]; then
             echo "❌ Health check failed with status code $STATUS_CODE"
