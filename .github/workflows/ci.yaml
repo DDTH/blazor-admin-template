@@ -150,19 +150,18 @@ jobs:
           context: ${{ env.TEMPLATE_ROOT }}
       - name: Test Docker container for ${{ matrix.platforms }}
         run: |
-          docker images
-          # docker run --rm -d \
-          #   --name test \
-          #   -p 1234:8080 \
-          #   --platform ${{ matrix.platforms }} \
-          #   test
-          # sleep 5
-          # STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
-          # docker stop test
-          # if [ "$STATUS_CODE" -ne 200 ]; then
-          #   echo "Health check failed with status code $STATUS_CODE"
-          #   exit 1
-          # fi
+          docker run --rm -d \
+            --name test \
+            -p 1234:8080 \
+            --platform ${{ matrix.platforms }} \
+            test
+          sleep 5
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
+          docker stop test
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "❌ Health check failed with status code $STATUS_CODE"
+            exit 1
+          fi
 
   TestDockerfileWindowsTemplate:
     needs: BuildAndTestTemplate
