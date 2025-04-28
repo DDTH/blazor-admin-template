@@ -9,10 +9,10 @@ updates:
       interval: "weekly"
       day: "sunday"
 
-  - package-ecosystem: "dummy"
+  - package-ecosystem: "nuget"
     directory: "/content/Bat/Bat.Shared"
     schedule:
-      interval: "weekly"
+      interval: "daily"
       day: "saturday"
     versioning-strategy: "increase"
     ignore:
