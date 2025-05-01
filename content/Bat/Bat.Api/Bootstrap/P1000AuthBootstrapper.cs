@@ -1,5 +1,6 @@
 ﻿using Bat.Api.Services;
 using Bat.Shared.Api;
+using Bat.Shared.Api.Services;
 using Bat.Shared.Bootstrap;
 using Bat.Shared.Identity;
 using Bat.Shared.Jwt;

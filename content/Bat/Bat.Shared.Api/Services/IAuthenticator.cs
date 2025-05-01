@@ -1,7 +1,6 @@
-﻿using Bat.Shared.Api;
-using Bat.Shared.ExternalLoginHelper;
+﻿using Bat.Shared.ExternalLoginHelper;
 
-namespace Bat.Api.Services;
+namespace Bat.Shared.Api.Services;
 
 public interface IAuthenticator
 {

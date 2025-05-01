@@ -11,14 +11,14 @@ public sealed class AppBootstrapper
 {
 	private static readonly ILogger<AppBootstrapper> logger = LoggerFactory.Create(b => b.AddConsole()).CreateLogger<AppBootstrapper>();
 
-	private static readonly string[] methodNamesConfigureServices = { "ConfigureServices", "ConfiguresServices", "ConfigureService", "ConfiguresService" };
-	private static readonly string[] methodNamesConfigureServicesAsync = { "ConfigureServicesAsync", "ConfiguresServicesAsync", "ConfigureServiceAsync", "ConfiguresServiceAsync" };
-	private static readonly string[] methodNamesConfigureBuilder = { "ConfigureBuilder", "ConfiguresBuilder" };
-	private static readonly string[] methodNamesConfigureBuilderAsync = { "ConfigureBuilderAsync", "ConfiguresBuilderAsync" };
-	private static readonly string[] methodNamesInitializeServices = { "InitializeServices", "InitializesServices", "InitializeService", "InitializesService" };
-	private static readonly string[] methodNamesInitializeServicesAsync = { "InitializeServicesAsync", "InitializesServicesAsync", "InitializeServiceAsync", "InitializesServiceAsync" };
-	private static readonly string[] methodNamesDecorateApp = { "DecorateApp", "DecoratesApp", "DecorateApplication", "DecoratesApplication" };
-	private static readonly string[] methodNamesDecorateAppAsync = { "DecorateAppAsync", "DecoratesAppAsync", "DecorateApplicationAsync", "DecoratesApplicationAsync" };
+	private static readonly string[] methodNamesConfigureServices = ["ConfigureServices", "ConfiguresServices", "ConfigureService", "ConfiguresService"];
+	private static readonly string[] methodNamesConfigureServicesAsync = ["ConfigureServicesAsync", "ConfiguresServicesAsync", "ConfigureServiceAsync", "ConfiguresServiceAsync"];
+	private static readonly string[] methodNamesConfigureBuilder = ["ConfigureBuilder", "ConfiguresBuilder"];
+	private static readonly string[] methodNamesConfigureBuilderAsync = ["ConfigureBuilderAsync", "ConfiguresBuilderAsync"];
+	private static readonly string[] methodNamesInitializeServices = ["InitializeServices", "InitializesServices", "InitializeService", "InitializesService"];
+	private static readonly string[] methodNamesInitializeServicesAsync = ["InitializeServicesAsync", "InitializesServicesAsync", "InitializeServiceAsync", "InitializesServiceAsync"];
+	private static readonly string[] methodNamesDecorateApp = ["DecorateApp", "DecoratesApp", "DecorateApplication", "DecoratesApplication"];
+	private static readonly string[] methodNamesDecorateAppAsync = ["DecorateAppAsync", "DecoratesAppAsync", "DecorateApplicationAsync", "DecoratesApplicationAsync"];
 
 	public static ICollection<Task> Bootstrap(out WebApplication app, WebApplicationBuilder appBuilder, IEnumerable<Assembly>? assemblies = default)
 	{
@@ -28,7 +28,7 @@ public sealed class AppBootstrapper
 		logger.LogInformation("Loading bootstrappers...");
 		BootstrapHelper.FindBootstrappers(assemblies).ToList().ForEach(t =>
 		{
-			logger.LogInformation("Found bootstrapper: {name}.", t.FullName);
+			logger.LogInformation("-- Found bootstrapper: {name}.", t.FullName);
 			var lookupMethodConfigureServicesAsync = new MethodLookup { MethodNamesToFind = methodNamesConfigureServicesAsync };
 			var lookupMethodConfigureServices = new MethodLookup { MethodNamesToFind = methodNamesConfigureServices };
 			var lookupMethodConfigureBuilderAsync = new MethodLookup { MethodNamesToFind = methodNamesConfigureBuilderAsync };
@@ -46,7 +46,7 @@ public sealed class AppBootstrapper
 				&& lookupMethodInitializeServicesAsync.MethodInfo == null && lookupMethodInitializeServices.MethodInfo == null
 				&& lookupMethodDecorateAppAsync.MethodInfo == null && lookupMethodDecorateApp.MethodInfo == null)
 			{
-				logger.LogWarning("{name}...couldnot find any public method: {ConfigureServicesAsync}, {ConfigureServices}, {ConfigureBuilderAsync}, {ConfigureBuilder}, {InitializeServicesAsync}, {InitializeServices}, {DecorateAppAsync}, {DecorateApp}.",
+				logger.LogWarning("---- {name}...couldnot find any public method: {ConfigureServicesAsync}, {ConfigureServices}, {ConfigureBuilderAsync}, {ConfigureBuilder}, {InitializeServicesAsync}, {InitializeServices}, {DecorateAppAsync}, {DecorateApp}.",
 					t.FullName,
 					methodNamesConfigureServicesAsync, methodNamesConfigureServices,
 					methodNamesConfigureBuilderAsync, methodNamesConfigureBuilder,
@@ -64,7 +64,7 @@ public sealed class AppBootstrapper
 			var invalidAsyncMethod = BootstrapHelper.VerifyAsyncMethods(asyncMethods);
 			if (invalidAsyncMethod != null)
 			{
-				logger.LogWarning("{name}...found method {method} but it is not async.", t.FullName, invalidAsyncMethod.Name);
+				logger.LogWarning("---- {name}...found method {method} but it is not async.", t.FullName, invalidAsyncMethod.Name);
 				return;
 			}
 			var attr = t.GetCustomAttribute<BootstrapperAttribute>();
@@ -85,7 +85,7 @@ public sealed class AppBootstrapper
 			if (lookupMethodInitializeServices.MethodInfo != null) foundMethods.Add(lookupMethodInitializeServices.MethodInfo.Name);
 			if (lookupMethodDecorateAppAsync.MethodInfo != null) foundMethods.Add(lookupMethodDecorateAppAsync.MethodInfo.Name);
 			if (lookupMethodDecorateApp.MethodInfo != null) foundMethods.Add(lookupMethodDecorateApp.MethodInfo.Name);
-			logger.LogInformation("{name}...found methods: {methods}.", t.FullName, string.Join(", ", foundMethods));
+			logger.LogInformation("---- {name}...found methods: {methods}.", t.FullName, string.Join(", ", foundMethods));
 		});
 
 		bootstrappersInfo.Sort((a, b) => a.priority.CompareTo(b.priority));
@@ -101,7 +101,7 @@ public sealed class AppBootstrapper
 
 			if (bootstrapper.methodConfigureServicesAsync != null)
 			{
-				logger.LogInformation("[{priority}] Invoking async method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking async method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureServicesAsync.Name);
 
 				// async method takes priority
@@ -110,7 +110,7 @@ public sealed class AppBootstrapper
 			}
 			else
 			{
-				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureServices!.Name);
 				WebReflectionHelper.InvokeMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureServices);
 			}
@@ -126,7 +126,7 @@ public sealed class AppBootstrapper
 
 			if (bootstrapper.methodConfigureBuilderAsync != null)
 			{
-				logger.LogInformation("[{priority}] Invoking async method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking async method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureBuilderAsync.Name);
 
 				// async method takes priority
@@ -135,7 +135,7 @@ public sealed class AppBootstrapper
 			}
 			else
 			{
-				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodConfigureBuilder!.Name);
 				WebReflectionHelper.InvokeMethod(appBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilder);
 			}
@@ -153,7 +153,7 @@ public sealed class AppBootstrapper
 
 			if (bootstrapper.methodInitializeServicesAsync != null)
 			{
-				logger.LogInformation("[{priority}] Invoking async method {type}.{method}...",
+				logger.LogInformation("--[{priority}] Invoking async method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodInitializeServicesAsync.Name);
 				// async method takes priority
 				var task = WebReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodInitializeServicesAsync);
@@ -161,7 +161,7 @@ public sealed class AppBootstrapper
 			}
 			else
 			{
-				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodInitializeServices!.Name);
 				WebReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodInitializeServices);
 			}
@@ -177,7 +177,7 @@ public sealed class AppBootstrapper
 
 			if (bootstrapper.methodDecorateAppAsync != null)
 			{
-				logger.LogInformation("[{priority}] Invoking async method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking async method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodDecorateAppAsync.Name);
 				// async method takes priority
 				var task = WebReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodDecorateAppAsync);
@@ -185,7 +185,7 @@ public sealed class AppBootstrapper
 			}
 			else
 			{
-				logger.LogInformation("[{priority}] Invoking method {type}.{method}...",
+				logger.LogInformation("-- [{priority}] Invoking method {type}.{method}...",
 					bootstrapper.priority, bootstrapper.type.FullName, bootstrapper.methodDecorateApp!.Name);
 				WebReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodDecorateApp);
 			}

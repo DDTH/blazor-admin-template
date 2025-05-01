@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json.Serialization;
 
-namespace Bat.Api.Services;
+namespace Bat.Shared.Api.Services;
 
 /// <summary>
 /// Resposne to a token validation request.

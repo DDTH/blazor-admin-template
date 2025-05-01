@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
-using Bat.Shared.Models;
+﻿using System.Text.Json.Serialization;
+using Bat.Demo.Shared.Models;
 
-namespace Bat.Shared.Api;
+namespace Bat.Demo.Api.Api;
 
 /// <summary>
 /// Request to create or update an application.

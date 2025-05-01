@@ -1,9 +1,11 @@
-﻿@using Bat.Blazor.App.Layout
+﻿@*
+@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
+@using Bat.Blazor.Demo.App.Shared
 @using Bat.Shared.Identity
 @using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_APPLICATIONS)]
+@attribute [Route(DemoUIGlobals.ROUTE_APPLICATIONS)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -215,3 +217,4 @@
 @code {
     private const string PAGE_TITLE = "Applications";
 }
+*@

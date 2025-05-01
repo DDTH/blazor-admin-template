@@ -1,4 +1,5 @@
-﻿using Bat.Api.Services;
+﻿using Bat.Shared.Api.Controller;
+using Bat.Shared.Api.Services;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

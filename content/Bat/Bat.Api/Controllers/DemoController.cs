@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Api;
+using Bat.Shared.Api.Controller;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Mvc;
 
