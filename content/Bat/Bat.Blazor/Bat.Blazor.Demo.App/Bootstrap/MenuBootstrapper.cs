@@ -1,4 +1,5 @@
-using Bat.Blazor.App.Layout;
+﻿using Bat.Blazor.App.Layout;
+using Bat.Blazor.Demo.App.Shared;
 using Bat.Shared.Bootstrap;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,8 +12,17 @@ public class MenuBootstrapper
 	{
 		Sidebar.AddOrReplaceSection(new Sidebar.SidebarSection
 		{
-			Id = "apps",
-			Label = "Applications"
+			Id = "demo",
+			Label = "Demo",
+			Items = [
+				new Sidebar.SidebarItem
+				{
+					Id = "apps",
+					Label = "Applications",
+					Icon = "cil-apps",
+					Url = DemoUIGlobals.ROUTE_APPLICATIONS,
+				}
+			],
 		});
 	}
 }

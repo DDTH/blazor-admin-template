@@ -1,5 +1,5 @@
 ﻿using System.Security.Cryptography;
-using Bat.Demo.Api.Api;
+using Bat.Demo.Shared.Api;
 using Bat.Demo.Shared.Models;
 using Bat.Shared.Api;
 using Bat.Shared.Api.Controller;
