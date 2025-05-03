@@ -1,18 +1,17 @@
-@*
-@using Bat.Blazor.App.Layout
+﻿@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
+@using Bat.Blazor.Demo.App.Shared
 @using Bat.Shared.Identity
-@using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(UIGlobals.ROUTE_APPLICATIONS_MODIFY)]
+@attribute [Route(DemoUIGlobals.ROUTE_APPLICATIONS_MODIFY)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
     <li class="breadcrumb-item">
-        <a href="@UIGlobals.ROUTE_HOME">Home</a>
+        <a href="@DemoUIGlobals.ROUTE_HOME">Home</a>
     </li>
 	<li class="breadcrumb-item">
-        <a href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a>
+        <a href="@DemoUIGlobals.ROUTE_APPLICATIONS">Applications</a>
     </li>
     <li class="breadcrumb-item active">
         <span>@PAGE_TITLE</span>
@@ -70,4 +69,3 @@
 @code {
     private const string PAGE_TITLE = "Modify Application";
 }
-*@
