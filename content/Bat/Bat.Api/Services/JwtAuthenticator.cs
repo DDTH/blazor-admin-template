@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Api;
+using Bat.Shared.Api.Services;
 using Bat.Shared.ExternalLoginHelper;
 using Bat.Shared.Identity;
 using Bat.Shared.Jwt;

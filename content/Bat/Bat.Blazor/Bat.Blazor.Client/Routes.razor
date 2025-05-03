@@ -1,7 +1,7 @@
 ﻿@using Bat.Blazor.App.Shared
-﻿
+
 <CascadingAuthenticationState>
-    <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Bat.Blazor.App._Imports).Assembly }">
+    <Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Bat.Blazor.App._Imports).Assembly, typeof(Bat.Blazor.Demo.App._Imports).Assembly }">
         <Found Context="routeData">
             <!--<RouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)" />-->
             <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Bat.Blazor.App.Layout.MainLayout)">

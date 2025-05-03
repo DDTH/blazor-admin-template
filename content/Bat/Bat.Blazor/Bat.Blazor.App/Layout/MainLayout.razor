@@ -15,7 +15,9 @@
                 <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_HOME">Dashboard</a></li>
                 <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_USERS">Users</a></li>
                 <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_IDENTITY_ROLES">Roles</a></li>
+				@*
                 <li class="nav-item"><a class="nav-link" href="@UIGlobals.ROUTE_APPLICATIONS">Applications</a></li>
+				*@
             </ul>
             <ul class="header-nav ms-auto">
                 <li class="nav-item">
@@ -230,7 +232,7 @@
 </script>
 
 @code {
-    internal static readonly object Breadcrumb = new();
+    public static readonly object Breadcrumb = new();
 
 	private string GravatarUrl { get; set; } = string.Empty;
 

@@ -13,13 +13,13 @@ public class ApiClient : IApiClient
 		defaultHttpClient = httpClient;
 	}
 
-	private void UsingBaseUrlAndHttpClient(string? baseUrl, HttpClient? requestHttpClient, out string usingBaseUrl, out HttpClient usingHttpClient)
+	protected void UsingBaseUrlAndHttpClient(string? baseUrl, HttpClient? requestHttpClient, out string usingBaseUrl, out HttpClient usingHttpClient)
 	{
 		usingBaseUrl = string.IsNullOrEmpty(baseUrl) ? (Globals.ApiBaseUrl ?? string.Empty) : baseUrl;
 		usingHttpClient = requestHttpClient ?? defaultHttpClient;
 	}
 
-	private static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken, object? requestData)
+	protected static HttpRequestMessage BuildRequest(HttpMethod method, Uri endpoint, string? authToken, object? requestData)
 	{
 		var req = new HttpRequestMessage(method, endpoint)
 		{
@@ -38,38 +38,30 @@ public class ApiClient : IApiClient
 		return req;
 	}
 
-	private static readonly string NoAuth = string.Empty;
-	private static readonly object? NoData = null;
+	protected static readonly string NoAuth = string.Empty;
+	protected static readonly object? NoData = null;
 
-	private async Task<HttpResponseMessage> BuildAndSendRequestAsync(HttpClient? requestHttpClient, HttpMethod method, string? baseUrl, string apiEndpoint, string? authToken, object? requestData, CancellationToken cancellationToken)
+	protected async Task<HttpResponseMessage> BuildAndSendRequestAsync(HttpClient? requestHttpClient, HttpMethod method, string? baseUrl, string apiEndpoint, string? authToken, object? requestData, CancellationToken cancellationToken)
 	{
 		UsingBaseUrlAndHttpClient(baseUrl, requestHttpClient, out var usingBaseUrl, out var usingHttpClient);
 		var apiUri = new Uri(new Uri(usingBaseUrl), apiEndpoint);
-		// Console.WriteLine($"[DEBUG] calling {method.ToString()}:{apiUri.ToString()}");
 		using var httpReq = BuildRequest(method, apiUri, authToken, requestData);
 		return await usingHttpClient.SendAsync(httpReq, cancellationToken);
 	}
 
-	private static async Task<ApiResp<T>> ReadAndCloseResponseAsync<T>(HttpResponseMessage httpResult, CancellationToken cancellationToken)
+	protected static async Task<ApiResp<T>> ReadAndCloseResponseAsync<T>(HttpResponseMessage httpResult, CancellationToken cancellationToken)
 	{
 		try
 		{
 			var result = await httpResult.Content.ReadFromJsonAsync<ApiResp<T>>(cancellationToken);
 			if (result == null)
 			{
-				// var statusCodes = (int)httpResult.StatusCode;
-				// var content = await httpResult.Content.ReadAsStringAsync(cancellationToken);
-				// Console.WriteLine($"[ERROR] Invalid response from server. Status: {statusCodes}, Type: {typeof(T).Name},\nContent: {content}");
 				return new ApiResp<T> { Status = 500, Message = "Invalid response from server." };
 			}
 			return result;
 		}
 		catch (Exception ex) when (ex is JsonException || ex is InvalidOperationException || ex is OperationCanceledException)
 		{
-			// Console.WriteLine($"[ERROR] Error reading response: {ex.Message}");
-			// var statusCodes = (int)httpResult.StatusCode;
-			// var content = await httpResult.Content.ReadAsStringAsync(cancellationToken);
-			// Console.WriteLine($"[ERROR] Status: {statusCodes}, Type: {typeof(T).Name},\nContent: {content}");
 			return new ApiResp<T> { Status = 500, Message = ex.Message };
 		}
 	}
@@ -305,72 +297,72 @@ public class ApiClient : IApiClient
 
 	/*----------------------------------------------------------------------*/
 
-	/// <inheritdoc/>
-	public async Task<ApiResp<IEnumerable<AppResp>>> GetAllAppsAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
-	{
-		using var httpResult = await BuildAndSendRequestAsync(
-			requestHttpClient,
-			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS,
-			authToken,
-			NoData,
-			cancellationToken
-		);
-		return await ReadAndCloseResponseAsync<IEnumerable<AppResp>>(httpResult, cancellationToken);
-	}
+	// /// <inheritdoc/>
+	// public async Task<ApiResp<IEnumerable<AppResp>>> GetAllAppsAsync(string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	// {
+	// 	using var httpResult = await BuildAndSendRequestAsync(
+	// 		requestHttpClient,
+	// 		HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS,
+	// 		authToken,
+	// 		NoData,
+	// 		cancellationToken
+	// 	);
+	// 	return await ReadAndCloseResponseAsync<IEnumerable<AppResp>>(httpResult, cancellationToken);
+	// }
 
-	/// <inheritdoc/>
-	public async Task<ApiResp<AppResp>> CreateAppAsync(CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
-	{
-		using var httpResult = await BuildAndSendRequestAsync(
-			requestHttpClient,
-			HttpMethod.Post, baseUrl, IApiClient.API_ENDPOINT_APPS,
-			authToken,
-			req,
-			cancellationToken
-		);
-		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
-	}
+	// /// <inheritdoc/>
+	// public async Task<ApiResp<AppResp>> CreateAppAsync(CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	// {
+	// 	using var httpResult = await BuildAndSendRequestAsync(
+	// 		requestHttpClient,
+	// 		HttpMethod.Post, baseUrl, IApiClient.API_ENDPOINT_APPS,
+	// 		authToken,
+	// 		req,
+	// 		cancellationToken
+	// 	);
+	// 	return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
+	// }
 
-	/// <inheritdoc/>
-	public async Task<ApiResp<AppResp>> GetAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
-	{
-		using var httpResult = await BuildAndSendRequestAsync(
-			requestHttpClient,
-			HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
-			authToken,
-			NoData,
-			cancellationToken
-		);
-		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
-	}
+	// /// <inheritdoc/>
+	// public async Task<ApiResp<AppResp>> GetAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	// {
+	// 	using var httpResult = await BuildAndSendRequestAsync(
+	// 		requestHttpClient,
+	// 		HttpMethod.Get, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+	// 		authToken,
+	// 		NoData,
+	// 		cancellationToken
+	// 	);
+	// 	return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
+	// }
 
-	/// <inheritdoc/>
-	public async Task<ApiResp<AppResp>> DeleteAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
-	{
-		using var httpResult = await BuildAndSendRequestAsync(
-			requestHttpClient,
-			HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
-			authToken,
-			NoData,
-			cancellationToken
-		);
-		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
-	}
+	// /// <inheritdoc/>
+	// public async Task<ApiResp<AppResp>> DeleteAppAsync(string id, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	// {
+	// 	using var httpResult = await BuildAndSendRequestAsync(
+	// 		requestHttpClient,
+	// 		HttpMethod.Delete, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+	// 		authToken,
+	// 		NoData,
+	// 		cancellationToken
+	// 	);
+	// 	return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
+	// }
 
-	/// <inheritdoc/>
-	public async Task<ApiResp<AppResp>> UpdateAppAsync(string id, CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
-	{
-		using var httpResult = await BuildAndSendRequestAsync(
-			requestHttpClient,
-			HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
-			authToken,
-			req,
-			cancellationToken
-		);
-		return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
-	}
+	// /// <inheritdoc/>
+	// public async Task<ApiResp<AppResp>> UpdateAppAsync(string id, CreateOrUpdateAppReq req, string authToken, string? baseUrl = default, HttpClient? requestHttpClient = default, CancellationToken cancellationToken = default)
+	// {
+	// 	using var httpResult = await BuildAndSendRequestAsync(
+	// 		requestHttpClient,
+	// 		HttpMethod.Put, baseUrl, IApiClient.API_ENDPOINT_APPS_ID.Replace("{id}", id),
+	// 		authToken,
+	// 		req,
+	// 		cancellationToken
+	// 	);
+	// 	return await ReadAndCloseResponseAsync<AppResp>(httpResult, cancellationToken);
+	// }
 
-	/*----------------------------------------------------------------------*/
+	// /*----------------------------------------------------------------------*/
 
 	/// <inheritdoc/>
 	public async Task<ApiResp<IEnumerable<string>>> GetExternalAuthProvidersAsync(string? baseUrl = default, HttpClient? httpClient = default, CancellationToken cancellationToken = default)

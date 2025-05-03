@@ -34,12 +34,35 @@
             </a>
         </li>
 
+		@foreach (var section in Sections)
+		{
+			<li class="nav-title">@(section!.Label)</li>
+			@foreach (var item in section!.Items)
+			{
+				<li class="nav-item">
+					<a class="nav-link" href="@item.Url">
+						@if (!string.IsNullOrEmpty(item.Icon) && (item.Icon.StartsWith("cil-") || item.Icon.StartsWith("cif-") || item.Icon.StartsWith("cib-")))
+						{
+							<CIcon icon="@item.Icon" className="nav-icon" />
+						}
+						else if (!string.IsNullOrEmpty(item.Icon) && item.Icon.StartsWith("bi-"))
+						{
+							<BIcon icon="@item.Icon" extraClassName="nav-icon" /> @item.Label
+						}
+						@item.Label
+					</a>
+				</li>
+			}
+		}
+
+		@*
         <li class="nav-title">Applications</li>
         <li class="nav-item">
             <a class="nav-link" href="@UIGlobals.ROUTE_APPLICATIONS">
                 <CIcon icon="cil-apps" className="nav-icon" /> Applications
             </a>
         </li>
+		*@
 
 		<li class="nav-title">Documents</li>
 		<li class="nav-item">

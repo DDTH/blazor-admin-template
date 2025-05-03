@@ -1,8 +1,9 @@
-using Bat.Blazor.App.Shared;
-using Bat.Shared.Api;
+﻿using Bat.Blazor.Demo.App.Shared;
+using Bat.Demo.Shared.Api;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Bat.Blazor.App.Pages;
+namespace Bat.Blazor.Demo.App.Pages;
 
 public partial class ApplicationsModify
 {
@@ -22,7 +23,8 @@ public partial class ApplicationsModify
 	{
 		HideUI = true;
 		ShowAlert("info", "Loading application details. Please wait...");
-		var result = await ApiClient.GetAppAsync(id, authToken, ApiBaseUrl);
+		var apiClient = ServiceProvider.GetRequiredService<IDemoApiClient>();
+		var result = await apiClient.GetAppAsync(id, authToken, ApiBaseUrl);
 		if (result.Status == 200)
 		{
 			return result.Data;
@@ -52,7 +54,7 @@ public partial class ApplicationsModify
 
 	private void BtnClickCancel()
 	{
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_APPLICATIONS);
+		NavigationManager.NavigateTo(DemoUIGlobals.ROUTE_APPLICATIONS);
 	}
 
 	private void ShowAlert(string type, string message)
@@ -83,7 +85,8 @@ public partial class ApplicationsModify
 			DisplayName = AppName.Trim(),
 			PublicKeyPEM = AppPublicKeyPEM.Trim(),
 		};
-		var resp = await ApiClient.UpdateAppAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);
+		var apiClient = ServiceProvider.GetRequiredService<IDemoApiClient>();
+		var resp = await apiClient.UpdateAppAsync(Id, req, await GetAuthTokenAsync(), ApiBaseUrl);
 		if (resp.Status != 200)
 		{
 			HideUI = false;
@@ -94,6 +97,6 @@ public partial class ApplicationsModify
 		var passAlertMessage = $"Application '{req.DisplayName}' updated successfully.";
 		var passAlertType = "success";
 		await Task.Delay(500);
-		NavigationManager.NavigateTo($"{UIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
+		NavigationManager.NavigateTo($"{DemoUIGlobals.ROUTE_APPLICATIONS}?alertMessage={passAlertMessage}&alertType={passAlertType}");
 	}
 }

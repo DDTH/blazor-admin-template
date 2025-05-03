@@ -1,4 +1,4 @@
-﻿namespace Bat.Api;
+﻿namespace Bat.Shared.Api;
 
 /// <summary>
 /// An application-wide global variables and repository.

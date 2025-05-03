@@ -1,9 +1,10 @@
-﻿using Bat.Shared.Cache;
-using Bat.Shared.Models;
+﻿using Bat.Demo.Shared.Models;
+using Bat.Shared.Cache;
+using Bat.Shared.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Bat.Shared.EF;
+namespace Bat.Demo.Shared.EF;
 
 public sealed class ApplicationDbContextRepository
 	: CacheSupportedGenericDbContextRepository<ApplicationDbContextRepository, Application, string>, IApplicationRepository

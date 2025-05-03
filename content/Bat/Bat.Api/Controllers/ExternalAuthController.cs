@@ -1,6 +1,7 @@
 using System.Text.Json;
-using Bat.Api.Services;
 using Bat.Shared.Api;
+using Bat.Shared.Api.Controller;
+using Bat.Shared.Api.Services;
 using Bat.Shared.ExternalLoginHelper;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;

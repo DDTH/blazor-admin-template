@@ -1,7 +1,8 @@
-﻿using Bat.Shared.EF;
-using Bat.Shared.Models;
+﻿using Bat.Demo.Shared.EF;
+using Bat.Demo.Shared.Models;
+using Bat.Shared.Api;
 
-namespace Bat.Api.Bootstrap;
+namespace Bat.Demo.Api.Bootstrap;
 
 sealed class ApplicationInitializer(
 	IServiceProvider serviceProvider,

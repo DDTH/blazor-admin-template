@@ -1,13 +1,32 @@
-﻿using Bat.Blazor.Client;
+﻿using System.Reflection;
+using Bat.Blazor.Client;
 using Bat.Shared.Helpers;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-	.Append(typeof(Bat.Blazor.App.Globals).Assembly); // Bat.Blazor.App is shared between Blazor Server and WebAssembly, add its assembly to the list
 var wasmAppBuilder = WebAssemblyHostBuilder.CreateDefault(args);
+
+// load custom assemblies for bootstrapping
+var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+var additionalAssemblies = wasmAppBuilder.Configuration.GetSection("Bootstrap:Assemblies").Get<List<string>>() ?? [];
+Console.WriteLine($"[INFO] Loading additional assemblies...");
+foreach (var assemblyName in additionalAssemblies)
+{
+	Console.WriteLine($"[INFO] -- Loading assembly [{assemblyName}]...");
+	try
+	{
+		assemblies = [.. assemblies, Assembly.Load(assemblyName)];
+	}
+	catch (Exception e) when (e is ArgumentException || e is FileNotFoundException || e is FileLoadException || e is BadImageFormatException)
+	{
+		Console.WriteLine($"[ERROR] -- Failed to load assembly [{assemblyName}]: {e.Message}");
+	}
+}
+
 Bat.Blazor.App.Globals.ApiBaseUrl = string.IsNullOrEmpty(wasmAppBuilder.Configuration[Bat.Blazor.App.Globals.CONF_KEY_API_BASE_URL])
 	? wasmAppBuilder.HostEnvironment.BaseAddress
 	: wasmAppBuilder.Configuration[Bat.Blazor.App.Globals.CONF_KEY_API_BASE_URL];
+
+// Bootstrapping
 var tasks = WasmAppBootstrapper.Bootstrap(out var app, wasmAppBuilder, assemblies);
 await Task.Run(() =>
 {

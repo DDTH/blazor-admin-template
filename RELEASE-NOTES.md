@@ -1,5 +1,19 @@
 # Blazor Admin Template release notes
 
+## 2025-05-03 - v2.0.0
+
+### Added/Refactoring/Deprecation
+
+- Refactored solution/projects structure.
+- Feature: Login with external account - GitHub.
+- Feature: Test the generated Docker image with a health check.
+
+### Fixed/Improvements
+
+- Optimized `dependabot.yaml`.
+- Fix: Dependencies with dotNet 8.
+- Fix: CodeQL warnings.
+
 ## 2025-03-31 - v1.3.0
 
 ### Added/Refactoring
