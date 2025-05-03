@@ -21,6 +21,9 @@ updates:
       - "/content/Bat/Bat.Blazor/Bat.Blazor"
       - "/content/Bat/Bat.Blazor/Bat.Blazor.App"
       - "/content/Bat/Bat.Blazor/Bat.Blazor.Client"
+      - "/content/Bat/Bat.Demo.Shared"
+      - "/content/Bat/Bat.Demo.Api"
+      - "/content/Bat/Bat.Blazor/Bat.Blazor.Demo.App"
     schedule:
       interval: "weekly"
       day: "saturday"
