@@ -28,5 +28,5 @@ updates:
       interval: "weekly"
       day: "saturday"
     ignore:
-      - dependency-name: "Microsoft.AspNetCore.*"
+      - dependency-name: "**"
         update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
