@@ -1,6 +1,7 @@
 using System.Text.Json;
-using Bat.Api.Services;
 using Bat.Shared.Api;
+using Bat.Shared.Api.Controller;
+using Bat.Shared.Api.Services;
 using Bat.Shared.ExternalLoginHelper;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -43,7 +44,7 @@ public class ExternalAuthController : ApiBaseController
 	/// <summary>
 	/// Gets list of external authentication providers.
 	/// </summary>
-	[HttpGet("/api/external-auth/providers")]
+	[HttpGet(IApiClient.API_ENDPOINT_EXTERNAL_AUTH_PROVIDERS)]
 	public ActionResult<ApiResp<IEnumerable<string>>> GetExternalAuthProviders()
 	{
 		var providers = _externalLoginManager.GetProviderNames() ?? [];
@@ -56,7 +57,7 @@ public class ExternalAuthController : ApiBaseController
 	/// </summary>
 	/// <param name="request">The external authentication URL request.</param>
 	/// <returns>The external authentication URL.</returns>
-	[HttpPost("/api/external-auth/url")]
+	[HttpPost(IApiClient.API_ENDPOINT_EXTERNAL_AUTH_URL)]
 	public ActionResult<ApiResp<string>> GetExternalAuthUrl([FromBody] ExternalAuthUrlReq request)
 	{
 		try
@@ -85,7 +86,7 @@ public class ExternalAuthController : ApiBaseController
 	/// <exception cref="NoProviderException">Thrown when the provider is not found.</exception>
 	/// <exception cref="ProviderNotSupported">Thrown when the provider is not supported.</exception>
 	/// <exception cref="ExternalLoginException">Thrown when an error occurs while logging in.</exception>
-	[HttpPost("/api/external-auth/login")]
+	[HttpPost(IApiClient.API_ENDPOINT_EXTERNAL_AUTH_LOGIN)]
 	public async Task<ActionResult<ApiResp<ExternalAuthResp>>> ExternalLogin(
 		[FromBody] ExternalAuthReq authReq,
 		IIdentityRepository identityRepository,

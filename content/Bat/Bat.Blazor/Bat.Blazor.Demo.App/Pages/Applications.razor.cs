@@ -1,8 +1,10 @@
-using Bat.Blazor.App.Shared;
-using Bat.Shared.Api;
+﻿using Bat.Blazor.App.Shared;
+using Bat.Blazor.Demo.App.Shared;
+using Bat.Demo.Shared.Api;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Bat.Blazor.App.Pages;
+namespace Bat.Blazor.Demo.App.Pages;
 
 public partial class Applications
 {
@@ -16,7 +18,7 @@ public partial class Applications
 
 	private int AppIndex = 0;
 	private IEnumerable<AppResp>? AppList { get; set; }
-	private IDictionary<string, AppResp>? AppMap { get; set; }
+	private Dictionary<string, AppResp>? AppMap { get; set; }
 	private AppResp? SelectedApp { get; set; }
 
 	private void CloseAlert()
@@ -40,7 +42,8 @@ public partial class Applications
 		{
 			HideUI = true;
 			ShowAlert("info", "Loading applications...");
-			var result = await ApiClient.GetAllAppsAsync(await GetAuthTokenAsync(), ApiBaseUrl);
+			var apiClient = ServiceProvider.GetRequiredService<IDemoApiClient>();
+			var result = await apiClient.GetAllAppsAsync(await GetAuthTokenAsync(), ApiBaseUrl);
 			if (result.Status == 200)
 			{
 				HideUI = false;
@@ -74,7 +77,7 @@ public partial class Applications
 	private void BtnClickModify(string appId)
 	{
 		SelectedApp = AppMap?[appId];
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_APPLICATIONS_MODIFY.Replace("{id}", appId));
+		NavigationManager.NavigateTo(DemoUIGlobals.ROUTE_APPLICATIONS_MODIFY.Replace("{id}", appId, StringComparison.OrdinalIgnoreCase));
 	}
 
 	private void BtnClickDelete(string appId)
@@ -88,7 +91,8 @@ public partial class Applications
 		ModalDialogDelete.Close();
 		HideUI = true;
 		ShowAlert("info", $"Deleting application '{SelectedApp?.DisplayName}', please wait...");
-		var result = await ApiClient.DeleteAppAsync(SelectedApp?.Id ?? string.Empty, await GetAuthTokenAsync(), ApiBaseUrl);
+		var apiClient = ServiceProvider.GetRequiredService<IDemoApiClient>();
+		var result = await apiClient.DeleteAppAsync(SelectedApp?.Id ?? string.Empty, await GetAuthTokenAsync(), ApiBaseUrl);
 		HideUI = false;
 		if (result.Status == 200)
 		{
@@ -103,6 +107,6 @@ public partial class Applications
 
 	private void BtnClickAdd()
 	{
-		NavigationManager.NavigateTo(UIGlobals.ROUTE_APPLICATIONS_ADD);
+		NavigationManager.NavigateTo(DemoUIGlobals.ROUTE_APPLICATIONS_ADD);
 	}
 }

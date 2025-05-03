@@ -1,10 +1,10 @@
 ﻿using Bat.Shared.Bootstrap;
 using System.Text.Json;
 
-namespace Bat.Blazor.Bootstrap;
+namespace Bat.Api.Bootstrap;
 
 /// <summary>
-/// Bootstrapper that handle errors that have not been caught by other routes.
+/// Bootstrapper that configures handler to catch errors not catching by other routes.
 /// </summary>
 [Bootstrapper]
 public class Fallback404Bootstrapper

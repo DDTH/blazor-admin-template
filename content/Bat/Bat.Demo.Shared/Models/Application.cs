@@ -1,4 +1,6 @@
-﻿namespace Bat.Shared.Models;
+﻿using Bat.Shared.Models;
+
+namespace Bat.Demo.Shared.Models;
 
 public sealed class Application : Entity<string>
 {

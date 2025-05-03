@@ -12,9 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.12" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.67.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.15" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +20,8 @@
     <ProjectReference Include="..\Bat.Blazor.Client\Bat.Blazor.Client.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
     <ProjectReference Include="..\..\Bat.Libs\Bat.Libs.csproj" />
+    <ProjectReference Include="..\Bat.Blazor.Demo.App\Bat.Blazor.Demo.App.csproj" />
+    <ProjectReference Include="..\..\Bat.Demo.Api\Bat.Demo.Api.csproj" />
   </ItemGroup>
 
   <!-- Prevents duplicated files from other projects from being copied to the output directory -->

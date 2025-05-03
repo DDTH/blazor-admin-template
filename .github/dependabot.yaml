@@ -1,7 +1,10 @@
 # Please see the documentation for all configuration options:
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
+# Touch: 1
+
 version: 2
+
 updates:
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -10,61 +13,20 @@ updates:
       day: "sunday"
 
   - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Shared"
+    directories:
+      - "/content/Bat/Bat.Libs"
+      - "/content/Bat/Bat.Shared"
+      - "/content/Bat/Bat.Shared.EF"
+      - "/content/Bat/Bat.Api"
+      - "/content/Bat/Bat.Blazor/Bat.Blazor"
+      - "/content/Bat/Bat.Blazor/Bat.Blazor.App"
+      - "/content/Bat/Bat.Blazor/Bat.Blazor.Client"
+      - "/content/Bat/Bat.Demo.Shared"
+      - "/content/Bat/Bat.Demo.Api"
+      - "/content/Bat/Bat.Blazor/Bat.Blazor.Demo.App"
     schedule:
       interval: "weekly"
       day: "saturday"
-    versioning-strategy: "increase"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
-
-  - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Shared.EF"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    versioning-strategy: "increase"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
-
-  - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Api"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    versioning-strategy: "increase"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
-
-  - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Blazor/Bat.Blazor"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    versioning-strategy: "increase"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
-
-  - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Blazor/Bat.Blazor.App"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    versioning-strategy: "increase"
-    ignore:
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes
-
-  - package-ecosystem: "nuget"
-    directory: "/content/Bat/Bat.Blazor/Bat.Blazor.Client"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-    versioning-strategy: "increase"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"] # do not update to major version as it may contain breaking changes

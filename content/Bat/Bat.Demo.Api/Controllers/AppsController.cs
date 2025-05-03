@@ -1,12 +1,14 @@
 ﻿using System.Security.Cryptography;
-using Bat.Api.Services;
+using Bat.Demo.Shared.Api;
+using Bat.Demo.Shared.Models;
 using Bat.Shared.Api;
+using Bat.Shared.Api.Controller;
+using Bat.Shared.Api.Services;
 using Bat.Shared.Identity;
-using Bat.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bat.Api.Controllers;
+namespace Bat.Demo.Api.Controllers;
 
 [Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER)]
 public partial class AppsController : ApiBaseController
@@ -35,7 +37,7 @@ public partial class AppsController : ApiBaseController
 	/// Gets all available applications.
 	/// </summary>
 	/// <returns></returns>
-	[HttpGet(IApiClient.API_ENDPOINT_APPS)]
+	[HttpGet(IDemoApiClient.API_ENDPOINT_APPS)]
 	public async Task<ActionResult<ApiResp<AppResp>>> GetAllApps()
 	{
 		var apps = ApplicationRepository.GetAllAsync();
@@ -53,7 +55,7 @@ public partial class AppsController : ApiBaseController
 	/// <param name="id"></param>
 	/// <returns></returns>
 	///
-	[HttpGet(IApiClient.API_ENDPOINT_APPS_ID)]
+	[HttpGet(IDemoApiClient.API_ENDPOINT_APPS_ID)]
 	public async Task<ActionResult<ApiResp<AppResp>>> GetApp([FromRoute] string id)
 	{
 		var app = await ApplicationRepository.GetByIDAsync(id);
@@ -67,7 +69,7 @@ public partial class AppsController : ApiBaseController
 	/// </summary>
 	/// <param name="req"></param>
 	/// <returns></returns>
-	[HttpPost(IApiClient.API_ENDPOINT_APPS)]
+	[HttpPost(IDemoApiClient.API_ENDPOINT_APPS)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> CreateApp([FromBody] CreateOrUpdateAppReq req)
 	{
@@ -116,7 +118,7 @@ public partial class AppsController : ApiBaseController
 	/// <param name="id"></param>
 	/// <param name="req"></param>
 	/// <returns></returns>
-	[HttpPut(IApiClient.API_ENDPOINT_APPS_ID)]
+	[HttpPut(IDemoApiClient.API_ENDPOINT_APPS_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> UpdateApp([FromRoute] string id, [FromBody] CreateOrUpdateAppReq req)
 	{
@@ -166,7 +168,7 @@ public partial class AppsController : ApiBaseController
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	[HttpDelete(IApiClient.API_ENDPOINT_APPS_ID)]
+	[HttpDelete(IDemoApiClient.API_ENDPOINT_APPS_ID)]
 	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> DeleteApp([FromRoute] string id)
 	{

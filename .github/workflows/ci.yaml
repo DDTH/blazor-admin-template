@@ -133,20 +133,40 @@ jobs:
     strategy:
       matrix:
         platforms: [ 'linux/amd64', 'linux/arm64' ]
+        dockerfiles: [ 'Dockerfile', 'Dockerfile.dev' ]
     name: Test building Docker image(s) for Linux from the original template
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build Docker image for ${{ matrix.platforms }}
+      - name: Build Docker image for ${{ matrix.platforms }} with ${{ matrix.dockerfiles }}
         uses: docker/build-push-action@v6
         with:
           platforms: ${{ matrix.platforms }}
           push: false
+          load: true
           tags: test
-          file: ${{ env.TEMPLATE_ROOT }}/Dockerfile
+          file: ${{ env.TEMPLATE_ROOT }}/${{ matrix.dockerfiles }}
           context: ${{ env.TEMPLATE_ROOT }}
+      - name: Test Docker container for ${{ matrix.platforms }} with ${{ matrix.dockerfiles }}
+        run: |
+          CONTAINER=$(docker run -d \
+            --name test \
+            -p 1234:8080 \
+            --platform ${{ matrix.platforms }} \
+            test)
+          sleep 30 # Wait for the container to start and bootstrap, increase wait time if needed
+          docker logs ${CONTAINER}
+          STATUS_OUTPUT=$(curl http://localhost:1234/healthz)
+          echo "ℹ️ Health check output: $STATUS_OUTPUT"
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:1234/healthz)
+          if [ "$STATUS_CODE" -ne 200 ]; then
+            echo "❌ Health check failed with status code $STATUS_CODE"
+            exit 1
+          fi
 
   TestDockerfileWindowsTemplate:
     needs: BuildAndTestTemplate

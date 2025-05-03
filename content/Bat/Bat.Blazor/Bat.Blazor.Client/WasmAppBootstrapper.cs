@@ -10,14 +10,14 @@ namespace Bat.Blazor.Client;
 /// </summary>
 public sealed class WasmAppBootstrapper
 {
-	private static readonly string[] methodNamesConfigureServices = { "ConfigureServices", "ConfiguresServices", "ConfigureService", "ConfiguresService" };
-	private static readonly string[] methodNamesConfigureServicesAsync = { "ConfigureServicesAsync", "ConfiguresServicesAsync", "ConfigureServiceAsync", "ConfiguresServiceAsync" };
+	private static readonly string[] methodNamesConfigureServices = ["ConfigureServices", "ConfiguresServices", "ConfigureService", "ConfiguresService"];
+	private static readonly string[] methodNamesConfigureServicesAsync = ["ConfigureServicesAsync", "ConfiguresServicesAsync", "ConfigureServiceAsync", "ConfiguresServiceAsync"];
 	private static readonly string[] methodNamesConfigureBuilder = { "ConfigureWasmBuilder", "ConfiguresWasmBuilder" };
-	private static readonly string[] methodNamesConfigureBuilderAsync = { "ConfigureWasmBuilderAsync", "ConfiguresWasmBuilderAsync" };
-	private static readonly string[] methodNamesInitializeServices = { "InitializeServices", "InitializesServices", "InitializeService", "InitializesService" };
-	private static readonly string[] methodNamesInitializeServicesAsync = { "InitializeServicesAsync", "InitializesServicesAsync", "InitializeServiceAsync", "InitializesServiceAsync" };
-	private static readonly string[] methodNamesDecorateApp = { "DecorateWasmApp", "DecoratesWasmApp", "DecorateWasmApplication", "DecoratesWasmApplication" };
-	private static readonly string[] methodNamesDecorateAppAsync = { "DecorateWasmAppAsync", "DecoratesWasmAppAsync", "DecorateWasmApplicationAsync", "DecoratesWasmApplicationAsync" };
+	private static readonly string[] methodNamesConfigureBuilderAsync = ["ConfigureWasmBuilderAsync", "ConfiguresWasmBuilderAsync"];
+	private static readonly string[] methodNamesInitializeServices = ["InitializeServices", "InitializesServices", "InitializeService", "InitializesService"];
+	private static readonly string[] methodNamesInitializeServicesAsync = ["InitializeServicesAsync", "InitializesServicesAsync", "InitializeServiceAsync", "InitializesServiceAsync"];
+	private static readonly string[] methodNamesDecorateApp = ["DecorateWasmApp", "DecoratesWasmApp", "DecorateWasmApplication", "DecoratesWasmApplication"];
+	private static readonly string[] methodNamesDecorateAppAsync = ["DecorateWasmAppAsync", "DecoratesWasmAppAsync", "DecorateWasmApplicationAsync", "DecoratesWasmApplicationAsync"];
 
 	public static ICollection<Task> Bootstrap(out WebAssemblyHost app, WebAssemblyHostBuilder wasmAppBuilder, IEnumerable<Assembly>? assemblies = default)
 	{
@@ -27,7 +27,7 @@ public sealed class WasmAppBootstrapper
 		Console.WriteLine("[INFO] Loading bootstrappers...");
 		BootstrapHelper.FindBootstrappers(assemblies).ToList().ForEach(t =>
 		{
-			Console.WriteLine($"[INFO] Found bootstrapper: {t.FullName}.");
+			Console.WriteLine($"[INFO] -- Found bootstrapper: {t.FullName}.");
 			var lookupMethodConfigureServicesAsync = new MethodLookup { MethodNamesToFind = methodNamesConfigureServicesAsync };
 			var lookupMethodConfigureServices = new MethodLookup { MethodNamesToFind = methodNamesConfigureServices };
 			var lookupMethodConfigureBuilderAsync = new MethodLookup { MethodNamesToFind = methodNamesConfigureBuilderAsync };
@@ -49,7 +49,7 @@ public sealed class WasmAppBootstrapper
 					.Concat(methodNamesConfigureBuilderAsync).Concat(methodNamesConfigureBuilder)
 					.Concat(methodNamesInitializeServicesAsync).Concat(methodNamesInitializeServices)
 					.Concat(methodNamesDecorateAppAsync).Concat(methodNamesDecorateApp));
-				Console.WriteLine($"[WARN] {t.FullName}...couldnot find any public method: {allMethods}.");
+				Console.WriteLine($"[WARN] ---- {t.FullName}...couldnot find any public method: {allMethods}.");
 				return;
 			}
 			var asyncMethods = new MethodInfo?[]
@@ -62,7 +62,7 @@ public sealed class WasmAppBootstrapper
 			var invalidAsyncMethod = BootstrapHelper.VerifyAsyncMethods(asyncMethods);
 			if (invalidAsyncMethod != null)
 			{
-				Console.WriteLine($"[WARN] {t.FullName}...found method {invalidAsyncMethod.Name} but it is not async.");
+				Console.WriteLine($"[WARN] ---- {t.FullName}...found method {invalidAsyncMethod.Name} but it is not async.");
 				return;
 			}
 			var attr = t.GetCustomAttribute<BootstrapperAttribute>();
@@ -83,7 +83,7 @@ public sealed class WasmAppBootstrapper
 			if (lookupMethodInitializeServices.MethodInfo != null) foundMethods.Add(lookupMethodInitializeServices.MethodInfo.Name);
 			if (lookupMethodDecorateAppAsync.MethodInfo != null) foundMethods.Add(lookupMethodDecorateAppAsync.MethodInfo.Name);
 			if (lookupMethodDecorateApp.MethodInfo != null) foundMethods.Add(lookupMethodDecorateApp.MethodInfo.Name);
-			Console.WriteLine($"[INFO] {t.FullName}...found methods: {string.Join(", ", foundMethods)}.");
+			Console.WriteLine($"[INFO] ---- {t.FullName}...found methods: {string.Join(", ", foundMethods)}.");
 		});
 
 		bootstrappersInfo.Sort((a, b) => a.priority.CompareTo(b.priority));
@@ -99,7 +99,7 @@ public sealed class WasmAppBootstrapper
 
 			if (bootstrapper.methodConfigureServicesAsync != null)
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureServicesAsync.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureServicesAsync.Name}...");
 
 				// async method takes priority
 				var task = BlazorClientReflectionHelper.InvokeAsyncMethod(wasmAppBuilder, bootstrapper.type, bootstrapper.methodConfigureServicesAsync);
@@ -107,7 +107,7 @@ public sealed class WasmAppBootstrapper
 			}
 			else
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureServices!.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureServices!.Name}...");
 				BlazorClientReflectionHelper.InvokeMethod(wasmAppBuilder, bootstrapper.type, bootstrapper.methodConfigureServices);
 			}
 		}
@@ -122,7 +122,7 @@ public sealed class WasmAppBootstrapper
 
 			if (bootstrapper.methodConfigureBuilderAsync != null)
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureBuilderAsync.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureBuilderAsync.Name}...");
 
 				// async method takes priority
 				var task = BlazorClientReflectionHelper.InvokeAsyncMethod(wasmAppBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilderAsync);
@@ -130,7 +130,7 @@ public sealed class WasmAppBootstrapper
 			}
 			else
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureBuilder!.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodConfigureBuilder!.Name}...");
 				BlazorClientReflectionHelper.InvokeMethod(wasmAppBuilder, bootstrapper.type, bootstrapper.methodConfigureBuilder);
 			}
 		}
@@ -147,14 +147,14 @@ public sealed class WasmAppBootstrapper
 
 			if (bootstrapper.methodInitializeServicesAsync != null)
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServicesAsync.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServicesAsync.Name}...");
 				// async method takes priority
 				var task = BlazorClientReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodInitializeServicesAsync);
 				backgroundBootstrappingTasks.Append(task);
 			}
 			else
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServices!.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodInitializeServices!.Name}...");
 				BlazorClientReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodInitializeServices);
 			}
 		}
@@ -169,14 +169,14 @@ public sealed class WasmAppBootstrapper
 
 			if (bootstrapper.methodDecorateAppAsync != null)
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodDecorateAppAsync.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking async method {bootstrapper.type.FullName}.{bootstrapper.methodDecorateAppAsync.Name}...");
 				// async method takes priority
 				var task = BlazorClientReflectionHelper.InvokeAsyncMethod(app, bootstrapper.type, bootstrapper.methodDecorateAppAsync);
 				backgroundBootstrappingTasks.Append(task);
 			}
 			else
 			{
-				Console.WriteLine($"[{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodDecorateApp!.Name}...");
+				Console.WriteLine($"-- [{bootstrapper.priority}] Invoking method {bootstrapper.type.FullName}.{bootstrapper.methodDecorateApp!.Name}...");
 				BlazorClientReflectionHelper.InvokeMethod(app, bootstrapper.type, bootstrapper.methodDecorateApp);
 			}
 		}

@@ -123,6 +123,7 @@ public sealed partial class ExternalLoginManager
 		{
 			"LINKEDIN" => BuildAuthenticationUrlLinkedIn(providerConfig, req),
 			"MICROSOFT" => BuildAuthenticationUrlMicrosoft(providerConfig, req),
+			"GITHUB" => BuildAuthenticationUrlGitHub(providerConfig, req),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
 	}
@@ -148,6 +149,7 @@ public sealed partial class ExternalLoginManager
 		{
 			"LINKEDIN" => await AuthenticateLinkedInAsync(providerConfig, authReq),
 			"MICROSOFT" => await AuthenticateMicrosoftAsync(providerConfig, authReq),
+			"GITHUB" => await AuthenticateGitHubAsync(providerConfig, authReq),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
 	}
@@ -168,6 +170,7 @@ public sealed partial class ExternalLoginManager
 		{
 			"LINKEDIN" => await GetUserProfileLinkedInAsync(accessToken),
 			"MICROSOFT" => await GetUserProfileMicrosoftAsync(accessToken),
+			"GITHUB" => await GetUserProfileGitHubAsync(accessToken),
 			_ => throw new ProviderNotSupported($"Provider '{providerName}' is not supported."),
 		};
 	}

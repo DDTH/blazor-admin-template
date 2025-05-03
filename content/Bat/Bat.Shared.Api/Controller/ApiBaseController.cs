@@ -1,10 +1,9 @@
-﻿using Bat.Api.Services;
-using Bat.Shared.Api;
+﻿using Bat.Shared.Api.Services;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bat.Api.Controllers;
+namespace Bat.Shared.Api.Controller;
 
 /// <summary>
 /// Base controller for other API controllers in the application.
@@ -24,7 +23,7 @@ public abstract class ApiBaseController : ControllerBase
 	protected static ObjectResult ResponseOk() => ResponseOk<object>(null);
 
 	/// <summary>
-	/// Generic response for "200 OK".
+	/// Cached generic response for "200 OK".
 	/// </summary>
 	protected static readonly ObjectResult _respOk = ResponseNoData(200, "Ok.");
 
@@ -80,27 +79,27 @@ public abstract class ApiBaseController : ControllerBase
 	};
 
 	/// <summary>
-	/// Generic response for "401 Unauthorized" errors.
+	/// Cached generic response for "401 Unauthorized" errors.
 	/// </summary>
 	protected static readonly ObjectResult _respAuthenticationRequired = ResponseNoData(401, "Authentication required.");
 
 	/// <summary>
-	/// Generic response for "403 Forbidden" errors.
+	/// Cached generic response for "403 Forbidden" errors.
 	/// </summary>
 	protected static readonly ObjectResult _respAccessDenied = ResponseNoData(403, "Access denied.");
 
 	/// <summary>
-	/// Generic response for "404 Not Found" errors.
+	/// Cached generic response for "404 Not Found" errors.
 	/// </summary>
 	protected static readonly ObjectResult _respNotFound = ResponseNoData(404, "Not found.");
 
 	/// <summary>
-	/// Generic response for "501 Not Implemented" errors.
+	/// Cached generic response for "501 Not Implemented" errors.
 	/// </summary>
 	protected static readonly ObjectResult _respNotImplemented = ResponseNoData(501, "Not implemented.");
 
 	/// <summary>
-	/// Generic response for "503 Service Unavailable" errors.
+	/// Cached generic response for "503 Service Unavailable" errors.
 	/// </summary>
 	protected static readonly ObjectResult _respServiceUnavailable = ResponseNoData(503, "Server is unavailable to handle the request.");
 
