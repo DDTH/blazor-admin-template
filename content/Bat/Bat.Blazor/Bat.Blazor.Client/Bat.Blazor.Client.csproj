@@ -7,8 +7,9 @@
     <NullabilityInfoContextSupport>true</NullabilityInfoContextSupport>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
-    <WasmBuildNative>true</WasmBuildNative>
-    <RunAOTCompilation>true</RunAOTCompilation>
+    <!-- Uncomment at least one of the following lines to link native references -->
+    <!-- <WasmBuildNative>true</WasmBuildNative> -->
+    <!-- <RunAOTCompilation>true</RunAOTCompilation> -->
   </PropertyGroup>
 
   <ItemGroup>
