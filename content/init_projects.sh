@@ -35,22 +35,16 @@ dotnet sln add ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj
 dotnet sln add ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj
 
 # Add references
+dotnet add ${BASENAME}.Shared/${BASENAME}.Shared.csproj reference ${BASENAME}.Libs/${BASENAME}.Libs.csproj
 dotnet add ${BASENAME}.Shared.EF/${BASENAME}.Shared.EF.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
 dotnet add ${BASENAME}.Shared.Api/${BASENAME}.Shared.Api.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
 dotnet add ${BASENAME}.Shared.Api/${BASENAME}.Shared.Api.csproj reference ${BASENAME}.Shared.EF/${BASENAME}.Shared.EF.csproj
-dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Libs/${BASENAME}.Libs.csproj
-dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
-dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Shared.EF/${BASENAME}.Shared.EF.csproj
 dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Shared.Api/${BASENAME}.Shared.Api.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj reference ${BASENAME}.Libs/${BASENAME}.Libs.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Client/${BASENAME}.Blazor.Client.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Libs/${BASENAME}.Libs.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Client/${BASENAME}.Blazor.Client.csproj reference ${BASENAME}.Libs/${BASENAME}.Libs.csproj
-dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Client/${BASENAME}.Blazor.Client.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Api/${BASENAME}.Api.csproj
+dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj
+dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.Client/${BASENAME}.Blazor.Client.csproj
 ## demo projects
 dotnet add ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj reference ${BASENAME}.Shared/${BASENAME}.Shared.csproj
 dotnet add ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj reference ${BASENAME}.Shared.EF/${BASENAME}.Shared.EF.csproj

@@ -18,9 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bat.Libs\Bat.Libs.csproj" />
-    <ProjectReference Include="..\Bat.Shared\Bat.Shared.csproj" />
-    <ProjectReference Include="..\Bat.Shared.EF\Bat.Shared.EF.csproj" />
     <ProjectReference Include="..\Bat.Shared.Api\Bat.Shared.Api.csproj" />
     <ProjectReference Include="..\Bat.Demo.Api\Bat.Demo.Api.csproj" />
   </ItemGroup>

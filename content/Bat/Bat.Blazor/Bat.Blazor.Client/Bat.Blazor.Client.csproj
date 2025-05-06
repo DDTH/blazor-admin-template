@@ -17,9 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Bat.Shared\Bat.Shared.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
-    <ProjectReference Include="..\..\Bat.Libs\Bat.Libs.csproj" />
     <ProjectReference Include="..\Bat.Blazor.Demo.App\Bat.Blazor.Demo.App.csproj" />
   </ItemGroup>
 

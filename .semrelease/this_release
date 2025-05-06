@@ -1,4 +1,5 @@
 # This file has been cleaned up post-releasing version 2.0.0.
 # Generate its content quickly using the following command:
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
-- [PATCH] Dependabot rules.
+- [PATCH] Update Dependabot rules.
+- Optimized project dependencies.
