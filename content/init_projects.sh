@@ -55,6 +55,7 @@ dotnet add ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj reference ${BA
 dotnet add ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj reference ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj
 dotnet add ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj reference ${BASENAME}.Shared.Api/${BASENAME}.Shared.Api.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj reference ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj
+dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj
 ## core projects --> demo projects
 dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj
