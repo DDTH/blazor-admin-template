@@ -16,6 +16,7 @@ ARG TARGETPLATFORM
 # Build the application.
 RUN echo Running on %BUILDPLATFORM%, building for %TARGETPLATFORM% (%TARGETARCH%)
 RUN dotnet restore
+RUN dotnet workload restore
 RUN dotnet publish --no-restore --configuration Debug --property:PublishDir=/app /p:EnvironmentName=Development
 
 ################################################################################

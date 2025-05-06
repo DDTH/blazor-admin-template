@@ -36,7 +36,7 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
       - name: Install dependencies
-        run: cd ${{ env.TEMPLATE_ROOT }} && dotnet restore
+        run: cd ${{ env.TEMPLATE_ROOT }} && dotnet restore && dotnet workload restore
       - name: Build
         run: cd ${{ env.TEMPLATE_ROOT }} && dotnet build --no-restore
       - name: Test
@@ -358,7 +358,7 @@ jobs:
           cd temp && \
           dotnet new bat -n MyAppLinux
       - name: Install dependencies
-        run: cd temp/ && dotnet restore
+        run: cd temp/ && dotnet restore && dotnet workload restore
       - name: Build
         run: cd temp/ && dotnet build --no-restore
       - name: Test
@@ -400,6 +400,7 @@ jobs:
         run: |
           cd temp
           dotnet restore
+          dotnet workload restore
       - name: Build
         run: |
           cd temp

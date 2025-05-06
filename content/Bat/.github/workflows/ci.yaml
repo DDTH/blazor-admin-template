@@ -28,7 +28,7 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore && dotnet workload restore
       - name: Build
         run: dotnet build --no-restore
       - name: Test
