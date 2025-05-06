@@ -15,8 +15,8 @@ ARG TARGETPLATFORM
 
 # Build the application.
 RUN echo "Running on $BUILDPLATFORM, building for $TARGETPLATFORM ($TARGETARCH)"
-RUN dotnet restore -a $TARGETARCH
 RUN dotnet workload restore
+RUN dotnet restore -a $TARGETARCH
 RUN dotnet publish -a $TARGETARCH --no-restore --property:PublishDir=/app
 
 ################################################################################
