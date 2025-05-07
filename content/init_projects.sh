@@ -6,7 +6,7 @@ PWD=$(pwd)
 # Create a new solution
 dotnet new sln -o ${BASENAME}
 
-# Create core projects
+# Create base projects
 cd ${BASENAME}
 dotnet new classlib -o ${BASENAME}.Libs
 dotnet new classlib -o ${BASENAME}.Shared
@@ -56,7 +56,7 @@ dotnet add ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj reference ${BASENAME
 dotnet add ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj reference ${BASENAME}.Shared.Api/${BASENAME}.Shared.Api.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj reference ${BASENAME}.Demo.Shared/${BASENAME}.Demo.Shared.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.App/${BASENAME}.Blazor.App.csproj
-## core projects --> demo projects
+## base projects --> demo projects
 dotnet add ${BASENAME}.Api/${BASENAME}.Api.csproj reference ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Demo.Api/${BASENAME}.Demo.Api.csproj
 dotnet add ${BASENAME}.Blazor/${BASENAME}.Blazor/${BASENAME}.Blazor.csproj reference ${BASENAME}.Blazor/${BASENAME}.Blazor.Demo.App/${BASENAME}.Blazor.Demo.App.csproj
