@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.19" />
     <ProjectReference Include="..\..\Bat.Shared\Bat.Shared.csproj" />
     <ProjectReference Include="..\Bat.Blazor.App\Bat.Blazor.App.csproj" />
     <ProjectReference Include="..\..\Bat.Libs\Bat.Libs.csproj" />
