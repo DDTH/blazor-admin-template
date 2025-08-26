@@ -188,6 +188,8 @@ jobs:
           image: test
           tags: test
           pushImage: false
+          username: dummy
+          password: dummy
           dockerfile: ${{ env.TEMPLATE_ROOT }}/Dockerfile.win
           directory: ${{ env.TEMPLATE_ROOT }}/
 
