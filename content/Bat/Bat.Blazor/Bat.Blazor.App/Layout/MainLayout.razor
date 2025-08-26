@@ -21,17 +21,17 @@
             </ul>
             <ul class="header-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-bell" className="icon icon-lg" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-list-rich" className="icon icon-lg" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-envelope-open" className="icon icon-lg" />
                     </a>
                 </li>
@@ -231,10 +231,24 @@
     CoreUIFix();
 </script>
 
+<CModal @ref="@ModalDialogNotImplemented" title="Not Implemented" centered="false" type="warning">
+    <div class="text-center">
+        <p>This feature is not implemented yet.</p>
+        <button type="button" class="btn btn-primary" @onclick="() => ModalDialogNotImplemented.Close()"><CIcon icon="x-circle" /> Close</button>
+    </div>
+</CModal>
+
 @code {
     public static readonly object Breadcrumb = new();
 
 	private string GravatarUrl { get; set; } = string.Empty;
+
+	private CModal ModalDialogNotImplemented { get; set; } = default!;
+
+	private void ShowModalNotImplemented()
+	{
+		ModalDialogNotImplemented.Open();
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
