@@ -184,12 +184,12 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           platform: ${{ matrix.platforms }}
-          registry: test
+          registry: docker.io
           image: test
           tags: test
           pushImage: false
-          username: dummy
-          password: dummy
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_PAT }}
           dockerfile: ${{ env.TEMPLATE_ROOT }}/Dockerfile.win
           directory: ${{ env.TEMPLATE_ROOT }}/
 
