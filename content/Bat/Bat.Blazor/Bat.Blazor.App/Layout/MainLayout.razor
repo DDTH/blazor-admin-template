@@ -21,17 +21,17 @@
             </ul>
             <ul class="header-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-bell" className="icon icon-lg" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-list-rich" className="icon icon-lg" />
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="javascript:void(0);" @onclick="ShowModalNotImplemented">
                         <CIcon icon="cil-envelope-open" className="icon icon-lg" />
                     </a>
                 </li>
@@ -159,82 +159,26 @@
     });
 </script>
 <script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/utils/js/index.js" defer></script>
-<script>
-    // FIX the bug where coreui is not properly initialized with Blazor.
-    function CoreUIFix() {
-        if (typeof (coreui) === 'undefined' || typeof (coreui.Sidebar) === 'undefined') {
-            setTimeout(CoreUIFix, 10);
-            return;
-        }
-        CoreUIFixSidebar();
-        CoreUIFixThemeSwitcher();
-    }
+<script src="@UIGlobals.ASSET_ROOT/blazor-coreui-fix/blazor-coreui-fix.js" defer></script>
 
-    function CoreUIFixSidebar() {
-        // fix the sidar toggler
-        let element = document.querySelector('#sidebar');
-        if (!coreui.Sidebar.getInstance(element)) {
-            console.log('[DEBUG] calling coreui.Sidebar.getOrCreateInstance(element)...')
-            coreui.Sidebar.getOrCreateInstance(element);
-        }
-    }
-
-    function CoreUIFixThemeSwitcher() {
-        // fix the theme switcher
-        const THEME = 'coreui-free-bootstrap-admin-template-theme';
-        const getStoredTheme = () => localStorage.getItem(THEME);
-        const setStoredTheme = theme => localStorage.setItem(THEME, theme);
-        const getPreferredTheme = () => {
-            const storedTheme = getStoredTheme();
-            if (storedTheme) {
-                return storedTheme;
-            }
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        };
-        const setTheme = theme => {
-            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.setAttribute('data-coreui-theme', 'dark');
-            } else {
-                document.documentElement.setAttribute('data-coreui-theme', theme);
-            }
-            const event = new Event('ColorSchemeChange');
-            document.documentElement.dispatchEvent(event);
-        };
-        setTheme(getPreferredTheme());
-        const showActiveTheme = theme => {
-            const activeThemeIcon = document.querySelector('.theme-icon-active use');
-            const btnToActive = document.querySelector(`[data-coreui-theme-value="${theme}"]`);
-            const svgOfActiveBtn = btnToActive.querySelector('svg use').getAttribute('xlink:href');
-            for (const element of document.querySelectorAll('[data-coreui-theme-value]')) {
-                element.classList.remove('active');
-            }
-            btnToActive.classList.add('active');
-            activeThemeIcon.setAttribute('xlink:href', svgOfActiveBtn);
-        };
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            const storedTheme = getStoredTheme();
-            if (storedTheme !== 'light' || storedTheme !== 'dark') {
-                setTheme(getPreferredTheme());
-            }
-        });
-        showActiveTheme(getPreferredTheme());
-        for (const toggle of document.querySelectorAll('[data-coreui-theme-value]')) {
-            toggle.addEventListener('click', () => {
-                const theme = toggle.getAttribute('data-coreui-theme-value');
-                setStoredTheme(theme);
-                setTheme(theme);
-                showActiveTheme(theme);
-            });
-        }
-    }
-
-    CoreUIFix();
-</script>
+<CModal @ref="@ModalDialogNotImplemented" title="Not Implemented" centered="false" type="warning">
+    <div class="text-center">
+        <p>This feature is not implemented yet.</p>
+        <button type="button" class="btn btn-primary" @onclick="() => ModalDialogNotImplemented.Close()"><CIcon icon="x-circle" /> Close</button>
+    </div>
+</CModal>
 
 @code {
     public static readonly object Breadcrumb = new();
 
 	private string GravatarUrl { get; set; } = string.Empty;
+
+	private CModal ModalDialogNotImplemented { get; set; } = default!;
+
+	private void ShowModalNotImplemented()
+	{
+		ModalDialogNotImplemented.Open();
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
