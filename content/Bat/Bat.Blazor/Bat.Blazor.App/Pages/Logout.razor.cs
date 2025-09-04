@@ -1,8 +1,6 @@
 ﻿using Bat.Blazor.App.Helpers;
-using Bat.Blazor.App.Services;
 using Bat.Blazor.App.Shared;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Bat.Blazor.App.Pages;

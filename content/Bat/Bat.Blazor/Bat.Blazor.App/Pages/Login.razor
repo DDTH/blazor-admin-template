@@ -58,6 +58,24 @@
                                     </div>
                                 </div>
                             }
+							<div class="row justify-content-center mt-2">
+								<div class="btn-group" role="group" aria-label="Theme">
+									<input type="radio" class="btn-check" name="btnTheme" id="btnThemeLight" autocomplete="off" data-coreui-theme-value="light">
+									<label class="btn btn-sm btn-outline-primary" for="btnThemeLight">
+										<CIcon icon="cil-sun" className="icon icon-sm me-3" />Light
+									</label>
+
+									<input type="radio" class="btn-check" name="btnTheme" id="btnThemeDark" autocomplete="off" data-coreui-theme-value="dark">
+									<label class="btn btn-sm btn-outline-primary" for="btnThemeDark">
+										<CIcon icon="cil-moon" className="icon icon-sm me-3" />Dark
+									</label>
+
+									<input type="radio" class="btn-check" name="btnTheme" id="btnThemeAuto" autocomplete="off" data-coreui-theme-value="auto">
+									<label class="btn btn-sm btn-outline-primary" for="btnThemeAuto">
+										<CIcon icon="cil-contrast" className="icon icon-sm me-3" />Auto
+									</label>
+								</div>
+							</div>
                         </div>
                     </div>
                     <div class="card col-md-5 text-white bg-primary py-5">
@@ -111,6 +129,8 @@
         </div>
     </div>
 </div>
+<script src="@UIGlobals.COREUI_BASE/vendors/@@coreui/utils/js/index.js" defer></script>
+<script src="@UIGlobals.ASSET_ROOT/blazor-coreui-fix/blazor-coreui-fix.js" defer></script>
 
 <CModal @ref="@ModalDialog" title="Not Implemented" centered="false" type="warning">
     <div class="text-center">
