@@ -1,6 +1,3 @@
-# This file has been cleaned up post-releasing version 2.0.0.
+# This file has been cleaned up post-releasing version 2.0.1.
 # Generate its content quickly using the following command:
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
-- Fix(323): Dark/Light mode not working properly.
-- Dep(GH): Bump actions/checkout from 4 to 5.
-- Fix(GHA): Pass secrets from workflow `release` to `ci`.
