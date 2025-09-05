@@ -1,5 +1,16 @@
 # Blazor Admin Template release notes
 
+## 2025-09-05 - v2.0.1
+
+### Fixed/Improvements
+
+- Fix(323): Dark/Light mode not working properly.
+- Fix(GHA): Pass secrets from workflow `release` to `ci`.
+
+### Others
+
+- Dep(GH): Bump actions/checkout from 4 to 5.
+
 ## 2025-05-03 - v2.0.0
 
 ### Added/Refactoring/Deprecation
