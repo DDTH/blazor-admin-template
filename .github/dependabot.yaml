@@ -7,7 +7,9 @@ version: 2
 
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/content/Bat/.github/workflows"
     schedule:
       interval: "weekly"
       day: "sunday"
