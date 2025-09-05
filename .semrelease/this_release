@@ -3,3 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - Fix(323): Dark/Light mode not working properly.
 - Dep(GH): Bump actions/checkout from 4 to 5.
+- Fix(GHA): Pass secrets from workflow `release` to `ci`.
