@@ -16,6 +16,7 @@ env:
 jobs:
   CallCI:
     uses: ./.github/workflows/ci.yaml
+    secrets: inherit
 
   ReleaseDryRun:
     runs-on: ubuntu-latest
