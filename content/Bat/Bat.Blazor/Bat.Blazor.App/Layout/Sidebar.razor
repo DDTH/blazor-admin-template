@@ -2,7 +2,8 @@
 
 <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
     <div class="sidebar-header border-bottom">
-        <div class="sidebar-brand">
+        @* <div class="sidebar-brand"> *@
+		<a href="javascript:void(0);" @onclick="() => NavigationManager.NavigateTo(UIGlobals.ROUTE_LANDING, true)" class="sidebar-brand">
             <BlSvg url="@(UIGlobals.COREUI_BASE+"/assets/brand/coreui.svg#full")" className="sidebar-brand-full" width=88 height=32 alt="CoreUI Logo" />
             <BlSvg url="@(UIGlobals.COREUI_BASE+"/assets/brand/coreui.svg#signet")" className="sidebar-brand-narrow" width=32 height=32 alt="CoreUI Logo" />
             <!--
@@ -13,7 +14,8 @@
                 <use xlink:href="@UIGlobals.COREUI_BASE/assets/brand/coreui.svg#signet"></use>
             </svg>
             -->
-        </div>
+		</a>
+        @* </div> *@
         <button class="btn-close d-lg-none" type="button" data-coreui-dismiss="offcanvas" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
     </div>
     <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">

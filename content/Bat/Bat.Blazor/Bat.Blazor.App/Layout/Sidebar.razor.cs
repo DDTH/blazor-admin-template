@@ -1,4 +1,6 @@
-﻿namespace Bat.Blazor.App.Layout;
+﻿using Microsoft.AspNetCore.Components;
+
+namespace Bat.Blazor.App.Layout;
 
 public partial class Sidebar
 {
@@ -16,6 +18,9 @@ public partial class Sidebar
 		public string Label { get; set; }
 		public IEnumerable<SidebarItem> Items { get; set; }
 	}
+
+	[Inject]
+	protected NavigationManager NavigationManager { get; init; } = default!;
 
 	private static readonly IDictionary<string, SidebarSection> _sidebarSections = new SortedDictionary<string, SidebarSection>(StringComparer.OrdinalIgnoreCase);
 
