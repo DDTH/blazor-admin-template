@@ -22,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
       - name: Setup dotnet ${{ matrix.dotnet }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ matrix.dotnet }}
       - name: Display dotnet version
@@ -51,7 +51,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v5
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 'lts/*'
       - name: Release (dry-run)
