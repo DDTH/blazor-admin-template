@@ -97,7 +97,7 @@ jobs:
       - name: Display dotnet version
         run: dotnet --version
       - name: Update NuGet metadata
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           RESULT: ${{ needs.ReleaseDryRun.outputs.RESULT }}
           VERSION: ${{ needs.ReleaseDryRun.outputs.VERSION }}
