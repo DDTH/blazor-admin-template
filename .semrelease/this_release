@@ -3,3 +3,4 @@
 #   git log origin..HEAD | grep "^\s" > .semrelease/this_release
 - [PATCH] Update Dependabot rules.
 - Optimized project dependencies.
+- [FIX] #323 Dark mode: AuthorizingView and NotAuthorizedView.

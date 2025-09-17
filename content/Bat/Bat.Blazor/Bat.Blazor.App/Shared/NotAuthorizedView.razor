@@ -1,10 +1,11 @@
 ﻿<PageTitle>@PageTitle</PageTitle>
 
-<div class="container">
+<div class="container pt-4">
     <CAlert type="warning">
         <span>You are not authorized to access this page. Please <a href="@LoginUrl" class="alert-link">login</a> with an account that has the required permissions.</span>
     </CAlert>
 </div>
+<script src="@UIGlobals.ASSET_ROOT/blazor-coreui-fix/blazor-coreui-fix.js" defer></script>
 
 @code {
     [Parameter]
