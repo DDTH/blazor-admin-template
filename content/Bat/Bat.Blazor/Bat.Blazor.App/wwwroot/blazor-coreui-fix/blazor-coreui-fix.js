@@ -3,6 +3,12 @@
  */
 
 (function () {
+    const ignoreThemeFix = document.documentElement.getAttribute('ignore-coreui-theme-fix') ?? false;
+    document.documentElement.removeAttribute('ignore-coreui-theme-fix');
+    if (ignoreThemeFix) {
+        return;
+    }
+
     const STORE_KEY_THEME = 'coreui-free-bootstrap-admin-template-theme';
     const getStoredTheme = () => localStorage.getItem(STORE_KEY_THEME);
     const setStoredTheme = theme => localStorage.setItem(STORE_KEY_THEME, theme);
