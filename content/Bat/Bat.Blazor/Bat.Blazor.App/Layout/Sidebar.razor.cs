@@ -29,6 +29,14 @@ public partial class Sidebar
 		_sidebarSections[section.Id] = section;
 	}
 
+	public static void AddOrReplaceSections(params SidebarSection[] sections)
+	{
+		foreach (var section in sections)
+		{
+			AddOrReplaceSection(section);
+		}
+	}
+
 	private static SidebarSection[] Sections
 	{
 		get

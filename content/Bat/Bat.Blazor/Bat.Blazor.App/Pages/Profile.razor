@@ -15,102 +15,106 @@
     </li>
 </SectionContent>
 
-<div class="container-lg px-4">
-    <div class="card border-top-3 mb-4">
-        <div class="card-header">
-            <h4 class="card-title">Profile</h4>
-        </div>
-        <div class="card-body">
-            <form>
-                @if (!string.IsNullOrEmpty(ProfileAlertMessage))
-                {
-                    <CAlert type="@ProfileAlertType">
-                        @ProfileAlertMessage
-                    </CAlert>
-                }
-                <div class="row mb-2">
-                    <label for="inputId" class="col-sm-2 col-form-label">Id</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputId" disabled value="@User?.Id">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputEmail" disabled value="@User?.Email">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <label for="inputFamilyName" class="col-sm-2 col-form-label">Family Name</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputFamilyName" @bind="@FamilyName">
-                    </div>
-                    <label for="inputGivenName" class="col-sm-2 col-form-label">Given Name</label>
-                    <div class="col-sm-4">
-                        <input type="text" class="form-control" id="inputGivenName" @bind="@GivenName">
-                    </div>
-                </div>
-                <button type="button" class="btn @(DisableUpdateProfile?"btn-secondary":"btn-primary")" disabled="@(DisableUpdateProfile)" @onclick="BtnClickedSaveProfile"><BIcon icon="bi-floppy" /> Save</button>
-            </form>
-        </div>
-    </div>
-    <div class="card border-warning border-top-3 mb-4">
-        <div class="card-header">
-            <h4 class="card-title">Change Email</h4>
-        </div>
-        <div class="card-body">
-            <form>
-                @if (!string.IsNullOrEmpty(EmailAlertMessage))
-                {
-                    <CAlert type="@EmailAlertType">
-                        @EmailAlertMessage
-                    </CAlert>
-                }
-                <div class="row mb-2">
-                    <label for="inputNewEmail" class="col-sm-2 col-form-label">New Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="inputNewEmail" @bind="@NewEmail" />
-                    </div>
-                </div>
-                <button type="button" class="btn @(DisableChangeEmail?"btn-secondary":"btn-warning")" disabled="@(DisableChangeEmail)" @onclick="BtnClickedChangeEmail"><BIcon icon="bi-floppy" /> Save</button>
-            </form>
-        </div>
-    </div>
-    <div class="card border-danger border-top-3 mb-4">
-        <div class="card-header">
-            <h4 class="card-title">Change Password</h4>
-        </div>
-        <div class="card-body">
-            <form>
-                @if (!string.IsNullOrEmpty(PasswordAlertMessage))
-                {
-                    <CAlert type="@PasswordAlertType">
-                        @PasswordAlertMessage
-                    </CAlert>
-                }
-                <div class="row mb-2">
-                    <label for="inputPwd" class="col-sm-2 col-form-label">Current Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="inputPwd" @bind="@CurrentPwd">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <label for="inputNewPwd" class="col-sm-2 col-form-label">New Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="inputNewPwd" @bind="@NewPwd">
-                    </div>
-                </div>
-                <div class="row mb-2">
-                    <label for="inputConfirmedPwd" class="col-sm-2 col-form-label">Confirmed Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="inputConfirmedPwd" @bind="@ConfirmPwd">
-                    </div>
-                </div>
-                <button type="button" class="btn @(DisableChangePassword?"btn-secondary":"btn-danger")" disabled="@(DisableChangePassword)" @onclick="BtnClickedChangePassword"><BIcon icon="bi-floppy" /> Save</button>
-            </form>
-        </div>
-    </div>
-</div>
+<AuthorizeView>
+	<Authorized>
+		<div class="container-lg px-4">
+			<div class="card border-top-3 mb-4">
+				<div class="card-header">
+					<h4 class="card-title">Profile</h4>
+				</div>
+				<div class="card-body">
+					<form>
+						@if (!string.IsNullOrEmpty(ProfileAlertMessage))
+						{
+							<CAlert type="@ProfileAlertType">
+								@ProfileAlertMessage
+							</CAlert>
+						}
+						<div class="row mb-2">
+							<label for="inputId" class="col-sm-2 col-form-label">Id</label>
+							<div class="col-sm-10">
+								<input type="text" class="form-control" id="inputId" disabled value="@User?.Id">
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+							<div class="col-sm-10">
+								<input type="email" class="form-control" id="inputEmail" disabled value="@User?.Email">
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label for="inputFamilyName" class="col-sm-2 col-form-label">Family Name</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" id="inputFamilyName" @bind="@FamilyName">
+							</div>
+							<label for="inputGivenName" class="col-sm-2 col-form-label">Given Name</label>
+							<div class="col-sm-4">
+								<input type="text" class="form-control" id="inputGivenName" @bind="@GivenName">
+							</div>
+						</div>
+						<button type="button" class="btn @(DisableUpdateProfile?"btn-secondary":"btn-primary")" disabled="@(DisableUpdateProfile)" @onclick="BtnClickedSaveProfile"><BIcon icon="bi-floppy" /> Save</button>
+					</form>
+				</div>
+			</div>
+			<div class="card border-warning border-top-3 mb-4">
+				<div class="card-header">
+					<h4 class="card-title">Change Email</h4>
+				</div>
+				<div class="card-body">
+					<form>
+						@if (!string.IsNullOrEmpty(EmailAlertMessage))
+						{
+							<CAlert type="@EmailAlertType">
+								@EmailAlertMessage
+							</CAlert>
+						}
+						<div class="row mb-2">
+							<label for="inputNewEmail" class="col-sm-2 col-form-label">New Email</label>
+							<div class="col-sm-10">
+								<input type="email" class="form-control" id="inputNewEmail" @bind="@NewEmail" />
+							</div>
+						</div>
+						<button type="button" class="btn @(DisableChangeEmail?"btn-secondary":"btn-warning")" disabled="@(DisableChangeEmail)" @onclick="BtnClickedChangeEmail"><BIcon icon="bi-floppy" /> Save</button>
+					</form>
+				</div>
+			</div>
+			<div class="card border-danger border-top-3 mb-4">
+				<div class="card-header">
+					<h4 class="card-title">Change Password</h4>
+				</div>
+				<div class="card-body">
+					<form>
+						@if (!string.IsNullOrEmpty(PasswordAlertMessage))
+						{
+							<CAlert type="@PasswordAlertType">
+								@PasswordAlertMessage
+							</CAlert>
+						}
+						<div class="row mb-2">
+							<label for="inputPwd" class="col-sm-2 col-form-label">Current Password</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" id="inputPwd" @bind="@CurrentPwd">
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label for="inputNewPwd" class="col-sm-2 col-form-label">New Password</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" id="inputNewPwd" @bind="@NewPwd">
+							</div>
+						</div>
+						<div class="row mb-2">
+							<label for="inputConfirmedPwd" class="col-sm-2 col-form-label">Confirmed Password</label>
+							<div class="col-sm-10">
+								<input type="password" class="form-control" id="inputConfirmedPwd" @bind="@ConfirmPwd">
+							</div>
+						</div>
+						<button type="button" class="btn @(DisableChangePassword?"btn-secondary":"btn-danger")" disabled="@(DisableChangePassword)" @onclick="BtnClickedChangePassword"><BIcon icon="bi-floppy" /> Save</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</Authorized>
+</AuthorizeView>
 
 @code {
     private const string PAGE_TITLE = "Profile";

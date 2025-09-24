@@ -21,6 +21,13 @@ public class MenuBootstrapper
 					Label = "Applications",
 					Icon = "cil-apps",
 					Url = DemoUIGlobals.ROUTE_APPLICATIONS,
+				},
+				new Sidebar.SidebarItem
+				{
+					Id = "upload_single",
+					Label = "Upload File - Single",
+					Icon = "cil-cloud-upload",
+					Url = DemoUIGlobals.ROUTE_UPLOAD_SINGLE,
 				}
 			],
 		});
