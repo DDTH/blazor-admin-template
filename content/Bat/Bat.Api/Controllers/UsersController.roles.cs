@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Bat.Shared.Api;
+using Bat.Shared.Global;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -84,7 +85,7 @@ public partial class UsersController
 
 		// verify if the claims are valid
 		var uniqueClaims = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
-		var invalidClaim = uniqueClaims.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		var invalidClaim = uniqueClaims.Where(c => !GlobalRegistry.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
 		if (invalidClaim != null)
 		{
 			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");
@@ -157,7 +158,7 @@ public partial class UsersController
 
 		// verify if the claims are valid
 		var uniqueClaimsNew = (req.Claims?.Distinct() ?? []).Select(c => new Claim(c.Type, c.Value)).ToList();
-		var invalidClaim = uniqueClaimsNew.Where(c => !BuiltinClaims.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
+		var invalidClaim = uniqueClaimsNew.Where(c => !GlobalRegistry.ALL_CLAIMS.Contains(c, ClaimEqualityComparer.INSTANCE)).First();
 		if (invalidClaim != null)
 		{
 			return ResponseNoData(400, $"Claim '{invalidClaim.Type}:{invalidClaim.Value}' is not valid.");

@@ -18,6 +18,5 @@ public class DbContextBootstrapper
 		const string confKey = "Databases:Identity";
 		logger.LogInformation("Configuring DbContext service {confKey}...", confKey);
 		DbBootstrapHelper.ConfigureDbContext<IIdentityRepository, IdentityDbContextRepository>(appBuilder, confKey, logger);
-		appBuilder.Services.AddHostedService<IdentityInitializer>();
 	}
 }

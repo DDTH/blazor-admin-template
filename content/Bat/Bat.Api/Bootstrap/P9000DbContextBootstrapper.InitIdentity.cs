@@ -6,8 +6,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using Bat.Shared.Api;
+using Bat.Shared.Global;
+using Bat.Shared.Bootstrap;
 
 namespace Bat.Api.Bootstrap;
+
+/// <summary>
+/// Built-in bootstrapper that initializes identity data.
+/// </summary>
+[Bootstrapper(Priority = 9000)]
+public class DbContextInitIdentityBootstrapper
+{
+	public static void ConfigureBuilder(WebApplicationBuilder appBuilder)
+	{
+		appBuilder.Services.AddHostedService<IdentityInitializer>();
+	}
+}
 
 sealed class IdentityInitializer(
 	IConfiguration appConfig,
@@ -70,19 +84,22 @@ sealed class IdentityInitializer(
 			role.NormalizedName = lookupNormalizer.NormalizeName(role.Name);
 
 			// create the role
+			logger.LogInformation("-- Creating role '{roleName}'...", role.Name);
 			var result = await dbContext.CreateIfNotExistsAsync(role, cancellationToken: cancellationToken);
 			if (result != IdentityResult.Success)
 			{
 				throw new InvalidOperationException(result.ToString());
 			}
 			role = await dbContext.GetRoleByNameAsync(role.Name, cancellationToken: cancellationToken)
-				?? throw new InvalidOperationException($"Role '{role.Name}' is not found after creation.");
+				?? throw new InvalidOperationException($"Role '{role.Name}' not found after creation.");
 
 			// add claims to the role
-			var seedClaims = r.Claims?.Select(IdentityClaim.CreateFrom).Where(c => c != null && BuiltinClaims.ClaimExists((IdentityClaim)c!)) ?? [];
+			var seedClaims = r.Claims?.Select(IdentityClaim.CreateFrom).Where(c => c != null && GlobalRegistry.ClaimExists((IdentityClaim)c!)) ?? [];
+			logger.LogInformation("-- Adding {count} claims to role '{roleName}'...", seedClaims.Count(), role.Name);
 			foreach (var c in seedClaims)
 			{
 				var iclaim = (IdentityClaim)c!;
+				logger.LogInformation("---- Adding claim '{claimType}:{claimValue}' to role '{roleName}'...", iclaim.Type, iclaim.Value, role.Name);
 				var resultClaim = await dbContext.AddClaimIfNotExistsAsync(role, new Claim(iclaim.Type, iclaim.Value), cancellationToken: cancellationToken);
 				if (resultClaim != IdentityResult.Success)
 				{
@@ -156,8 +173,10 @@ sealed class IdentityInitializer(
 
 			// add roles to the user
 			var userRoles = u.Roles?.Where(r => !string.IsNullOrEmpty(r)).Select(r => dbContext.GetRoleByNameAsync(r).Result).Where(r => r != null) ?? [];
+			logger.LogInformation("-- Adding {count} roles to user '{userName}'...", userRoles.Count(), user.UserName);
 			foreach (var r in userRoles)
 			{
+				logger.LogInformation("---- Adding role '{roleName}' to user '{userName}'...", r!.Name, user.UserName);
 				var resultRole = await dbContext.AddToRoleIfNotExistsAsync(user, r!, cancellationToken: cancellationToken);
 				if (resultRole != IdentityResult.Success)
 				{
@@ -166,10 +185,12 @@ sealed class IdentityInitializer(
 			}
 
 			// add claims to the user
-			var seedClaims = u.Claims?.Select(IdentityClaim.CreateFrom).Where(c => c != null && BuiltinClaims.ClaimExists((IdentityClaim)c!)) ?? [];
+			var seedClaims = u.Claims?.Select(IdentityClaim.CreateFrom).Where(c => c != null && GlobalRegistry.ClaimExists((IdentityClaim)c!)) ?? [];
+			logger.LogInformation("-- Adding {count} claims to user '{userName}'...", seedClaims.Count(), user.UserName);
 			foreach (var c in seedClaims)
 			{
 				var iclaim = (IdentityClaim)c!;
+				logger.LogInformation("---- Adding claim '{claimType}:{claimValue}' to user '{userName}'...", iclaim.Type, iclaim.Value, user.UserName);
 				var resultClaim = await dbContext.AddClaimIfNotExistsAsync(user, new Claim(iclaim.Type, iclaim.Value), cancellationToken: cancellationToken);
 				if (resultClaim != IdentityResult.Success)
 				{

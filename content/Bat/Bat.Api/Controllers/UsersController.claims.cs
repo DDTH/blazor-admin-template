@@ -1,4 +1,5 @@
 ﻿using Bat.Shared.Api;
+using Bat.Shared.Global;
 using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace Bat.Api.Controllers;
 
 public partial class UsersController
 {
-	private static readonly ObjectResult ResponseAllClaims = ResponseOk(BuiltinClaims.ALL_CLAIMS.Select(c => new ClaimResp
+	private static readonly ObjectResult ResponseAllClaims = ResponseOk(GlobalRegistry.ALL_CLAIMS.Select(c => new ClaimResp
 	{
 		ClaimType = c.Type,
 		ClaimValue = c.Value

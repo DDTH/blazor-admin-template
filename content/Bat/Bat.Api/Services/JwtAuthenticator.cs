@@ -43,7 +43,8 @@ public sealed class SampleJwtAuthenticator(
 
 		// add roles
 		var userRoles = user.Roles ?? await identityRepo.GetRolesAsync(user, RoleFetchOptions.DEFAULT.FetchClaims());
-		authClaims.AddRange(userRoles.Select(role => new Claim(claimTypeRole, role.Name!)));
+		// authClaims.AddRange(userRoles.Select(role => new Claim(claimTypeRole, role.Name!)));
+		authClaims.AddRange(userRoles.Select(role => new Claim(claimTypeRole, role.Id!)));
 
 		// add claims
 		userRoles.ToList().ForEach(role =>
