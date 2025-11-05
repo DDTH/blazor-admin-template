@@ -1,10 +1,10 @@
 ﻿@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
 @using Bat.Blazor.Demo.App.Shared
-@using Bat.Demo.Shared.Identity
+@using Bat.Shared.Identity
 @using Microsoft.AspNetCore.Components.WebAssembly
 
-@attribute [Route(DemoUIGlobals.ROUTE_APPLICATIONS)]
+@attribute [Route(DemoUIGlobals.ROUTE_UPLOAD_SINGLE)]
 @inherits BaseComponent
 
 <SectionContent SectionId="MainLayout.Breadcrumb">
@@ -16,7 +16,8 @@
     </li>
 </SectionContent>
 
-<AuthorizeView Policy="@DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER">
+@*
+<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER">
     <Authorized>
 		<PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
 		<div class="container-lg px-4">
@@ -38,7 +39,7 @@
 					}
 					@if (!HideUI)
 					{
-						<AuthorizeView Policy="@DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
 							<ChildContent Context="context1">
 								<button class="btn btn-primary btn-sm mb-3" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New App</button>
 							</ChildContent>
@@ -104,7 +105,7 @@
                     }
 					@if (!HideUI)
 					{
-						<AuthorizeView Policy="@DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+						<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
 							<ChildContent Context="context2">
 								<button class="btn btn-primary btn-sm float-end" @onclick="BtnClickAdd"><CIcon icon="cil-plus" /> Add New App</button>
 							</ChildContent>
@@ -211,7 +212,8 @@
 		</CModal>
     </Authorized>
 </AuthorizeView>
+*@
 
 @code {
-    private const string PAGE_TITLE = "Applications";
+    private const string PAGE_TITLE = "Upload file (single)";
 }

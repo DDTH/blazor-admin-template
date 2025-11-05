@@ -1,7 +1,7 @@
 ﻿@using Bat.Blazor.App.Layout
 @using Bat.Blazor.App.Shared
 @using Bat.Blazor.Demo.App.Shared
-@using Bat.Shared.Identity
+@using Bat.Demo.Shared.Identity
 
 @attribute [Route(DemoUIGlobals.ROUTE_APPLICATIONS_ADD)]
 @inherits BaseComponent
@@ -18,7 +18,7 @@
     </li>
 </SectionContent>
 
-<AuthorizeView Policy="@BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
+<AuthorizeView Policy="@DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM">
     <Authorized>
         <PageTitle>@PAGE_TITLE | @AppInfo?.Name v@(AppInfo?.Version)</PageTitle>
         <div class="container-lg px-4">
