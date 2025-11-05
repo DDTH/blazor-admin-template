@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Identity;
 
 namespace Bat.Shared.Identity;
 
@@ -29,140 +28,63 @@ public struct IdentityClaim
 
 public sealed class BuiltinClaims
 {
-	private const string CLAIM_PREFIX = "#";
+	public const string CLAIM_PREFIX = "#";
+	public const string ROLE_PREFIX = "role";
+	public const string PERMISSION_PREFIX = "perm";
 
 	/// <summary>
 	/// Claim to mark a user/role as a global administrator.
 	/// </summary>
-	public static readonly Claim CLAIM_ROLE_GLOBAL_ADMIN = new($"{CLAIM_PREFIX}role", "global-admin");
+	public static readonly Claim CLAIM_ROLE_GLOBAL_ADMIN = new($"{CLAIM_PREFIX}{ROLE_PREFIX}", "global-admin");
 
 	/// <summary>
 	/// Claim to mark a user/role as an user manager.
 	/// </summary>
-	public static readonly Claim CLAIM_ROLE_USER_MANAGER = new($"{CLAIM_PREFIX}role", "user-manager");
-
-	/// <summary>
-	/// Claim to mark a user/role as an application manager.
-	/// </summary>
-	public static readonly Claim CLAIM_ROLE_APPLICATION_MANAGER = new($"{CLAIM_PREFIX}role", "application-manager");
-
-	/// <summary>
-	/// Permission to create a new application.
-	/// </summary>
-	public static readonly Claim CLAIM_PERM_CREATE_APPLICATION = new($"{CLAIM_PREFIX}perm", "create-application");
-
-	/// <summary>
-	/// Permission to delete an application.
-	/// </summary>
-	public static readonly Claim CLAIM_PERM_DELETE_APPLICATION = new($"{CLAIM_PREFIX}perm", "delete-application");
-
-	/// <summary>
-	/// Permission to modify an application.
-	/// </summary>
-	public static readonly Claim CLAIM_PERM_MODIFY_APPLICATION = new($"{CLAIM_PREFIX}perm", "modify-application");
+	public static readonly Claim CLAIM_ROLE_USER_MANAGER = new($"{CLAIM_PREFIX}{ROLE_PREFIX}", "user-manager");
 
 	/// <summary>
 	/// Permission to create a new user account.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_CREATE_USER = new($"{CLAIM_PREFIX}perm", "create-user");
+	public static readonly Claim CLAIM_PERM_CREATE_USER = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "user-create");
 
 	/// <summary>
 	/// Permission to delete a user account.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_DELETE_USER = new($"{CLAIM_PREFIX}perm", "delete-user");
+	public static readonly Claim CLAIM_PERM_DELETE_USER = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "user-delete");
 
 	/// <summary>
 	/// Permission to modify a user account.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_MODIFY_USER = new($"{CLAIM_PREFIX}perm", "modify-user");
+	public static readonly Claim CLAIM_PERM_MODIFY_USER = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "user-modify");
 
 	/// <summary>
 	/// Permission to create a new role.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_CREATE_ROLE = new($"{CLAIM_PREFIX}perm", "create-role");
+	public static readonly Claim CLAIM_PERM_CREATE_ROLE = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "role-create");
 
 	/// <summary>
 	/// Permission to delete a role.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_DELETE_ROLE = new($"{CLAIM_PREFIX}perm", "delete-role");
+	public static readonly Claim CLAIM_PERM_DELETE_ROLE = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "role-delete");
 
 	/// <summary>
 	/// Permission to modify a role.
 	/// </summary>
-	public static readonly Claim CLAIM_PERM_MODIFY_ROLE = new($"{CLAIM_PREFIX}perm", "modify-role");
+	public static readonly Claim CLAIM_PERM_MODIFY_ROLE = new($"{CLAIM_PREFIX}{PERMISSION_PREFIX}", "role-modify");
 
-	private static readonly IEnumerable<Claim> ALL_CLAIMS_ROLES = new Claim[]
-	{
+	public static readonly IEnumerable<Claim> ALL_CLAIMS = [
 		CLAIM_ROLE_GLOBAL_ADMIN,
-		CLAIM_ROLE_APPLICATION_MANAGER,
 		CLAIM_ROLE_USER_MANAGER,
-	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
-
-	private static readonly IEnumerable<Claim> ALL_CLAIMS_PERMS = new Claim[]
-	{
-		CLAIM_PERM_CREATE_APPLICATION,
-		CLAIM_PERM_DELETE_APPLICATION,
-		CLAIM_PERM_MODIFY_APPLICATION,
 		CLAIM_PERM_CREATE_USER,
 		CLAIM_PERM_DELETE_USER,
 		CLAIM_PERM_MODIFY_USER,
-	}.OrderBy(c => c.Type).ThenBy(c => c.Value);
-
-	public static readonly IEnumerable<Claim> ALL_CLAIMS = ALL_CLAIMS_ROLES.Concat(ALL_CLAIMS_PERMS);
-
-	/// <summary>
-	/// Convenience method to check if a claim exists/is valid.
-	/// </summary>
-	/// <param name="type"></param>
-	/// <param name="value"></param>
-	/// <returns></returns>
-	public static bool ClaimExists(string type, string value)
-	{
-		return ALL_CLAIMS.Any(c => c.Type.Equals(type, Globals.StringComparison) && c.Value.Equals(value, Globals.StringComparison));
-	}
-
-	/// <summary>
-	/// Convenience method to check if a claim exists/is valid.
-	/// </summary>
-	/// <param name="claim"></param>
-	/// <returns></returns>
-	public static bool ClaimExists(Claim claim)
-	{
-		return ALL_CLAIMS.Contains(claim, ClaimEqualityComparer.INSTANCE);
-	}
-
-	/// <summary>
-	/// Convenience method to check if a claim exists/is valid.
-	/// </summary>
-	/// <param name="claim"></param>
-	/// <returns></returns>
-	public static bool ClaimExists(IdentityClaim claim)
-	{
-		return ClaimExists(claim.Type, claim.Value);
-	}
-
-	/// <summary>
-	/// Convenience method to check if a claim exists/is valid.
-	/// </summary>
-	/// <param name="claim"></param>
-	/// <returns></returns>
-	public static bool ClaimExists(IdentityRoleClaim<string> claim)
-	{
-		return ClaimExists(claim.ClaimType??string.Empty, claim.ClaimValue??string.Empty);
-	}
-
-	/// <summary>
-	/// Convenience method to check if a claim exists/is valid.
-	/// </summary>
-	/// <param name="claim"></param>
-	/// <returns></returns>
-	public static bool ClaimExists(IdentityUserClaim<string> claim)
-	{
-		return ClaimExists(claim.ClaimType??string.Empty, claim.ClaimValue??string.Empty);
-	}
+		CLAIM_PERM_CREATE_ROLE,
+		CLAIM_PERM_DELETE_ROLE,
+		CLAIM_PERM_MODIFY_ROLE,
+	];
 }
 
-public class ClaimEqualityComparer : IEqualityComparer<Claim>
+public sealed class ClaimEqualityComparer : IEqualityComparer<Claim>
 {
 	public static readonly ClaimEqualityComparer INSTANCE = new();
 
@@ -170,11 +92,27 @@ public class ClaimEqualityComparer : IEqualityComparer<Claim>
 	{
 		if (x == null && y == null) return true;
 		if (x == null || y == null) return false;
-		return x.Type.Equals(y.Type, Globals.StringComparison) && x.Value.Equals(y.Value, Globals.StringComparison);
+		return x.Type.Equals(y.Type, StringComparison.OrdinalIgnoreCase) && x.Value.Equals(y.Value, StringComparison.OrdinalIgnoreCase);
 	}
 
 	public int GetHashCode(Claim obj)
 	{
 		return HashCode.Combine(obj.Type, obj.Value);
+	}
+}
+
+public sealed class ClaimComparer : IComparer<Claim>
+{
+	public static readonly ClaimComparer INSTANCE = new();
+
+	public int Compare(Claim? x, Claim? y)
+	{
+		if (x == null && y == null) return 0;
+		if (x == null) return -1;
+		if (y == null) return 1;
+
+		var typeComparison = string.Compare(x.Type, y.Type, StringComparison.OrdinalIgnoreCase);
+		if (typeComparison != 0) return typeComparison;
+		return string.Compare(x.Value, y.Value, StringComparison.OrdinalIgnoreCase);
 	}
 }

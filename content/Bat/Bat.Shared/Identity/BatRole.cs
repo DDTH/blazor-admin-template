@@ -14,7 +14,7 @@ public sealed class BatRole : IdentityRole
 	public void Touch() => ConcurrencyStamp = Guid.NewGuid().ToString();
 
 	public override bool Equals(object? obj) => obj is BatRole other
-		&& (ReferenceEquals(this, other) || Id.Equals(other.Id, Globals.StringComparison));
+		&& (ReferenceEquals(this, other) || Id.Equals(other.Id, StringComparison.Ordinal));
 
-	public override int GetHashCode() => Id.GetHashCode(Globals.StringComparison);
+	public override int GetHashCode() => Id.GetHashCode(StringComparison.Ordinal);
 }
