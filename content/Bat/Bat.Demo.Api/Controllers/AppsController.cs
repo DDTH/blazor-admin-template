@@ -1,16 +1,16 @@
 ﻿using System.Security.Cryptography;
 using Bat.Demo.Shared.Api;
+using Bat.Demo.Shared.Identity;
 using Bat.Demo.Shared.Models;
 using Bat.Shared.Api;
 using Bat.Shared.Api.Controller;
 using Bat.Shared.Api.Services;
-using Bat.Shared.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bat.Demo.Api.Controllers;
 
-[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER)]
+[Authorize(Policy = DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_APPLICATION_MANAGER)]
 public partial class AppsController : ApiBaseController
 {
 	private readonly IAuthenticator? Authenticator;
@@ -70,7 +70,7 @@ public partial class AppsController : ApiBaseController
 	/// <param name="req"></param>
 	/// <returns></returns>
 	[HttpPost(IDemoApiClient.API_ENDPOINT_APPS)]
-	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM)]
+	[Authorize(Policy = DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_CREATE_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> CreateApp([FromBody] CreateOrUpdateAppReq req)
 	{
 		var jwtToken = GetAuthToken();
@@ -119,7 +119,7 @@ public partial class AppsController : ApiBaseController
 	/// <param name="req"></param>
 	/// <returns></returns>
 	[HttpPut(IDemoApiClient.API_ENDPOINT_APPS_ID)]
-	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
+	[Authorize(Policy = DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> UpdateApp([FromRoute] string id, [FromBody] CreateOrUpdateAppReq req)
 	{
 		var jwtToken = GetAuthToken();
@@ -169,7 +169,7 @@ public partial class AppsController : ApiBaseController
 	/// <param name="id"></param>
 	/// <returns></returns>
 	[HttpDelete(IDemoApiClient.API_ENDPOINT_APPS_ID)]
-	[Authorize(Policy = BuiltinPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
+	[Authorize(Policy = DemoPolicies.POLICY_NAME_ADMIN_ROLE_OR_MODIFY_APP_PERM)]
 	public async Task<ActionResult<ApiResp<AppResp>>> DeleteApp([FromRoute] string id)
 	{
 		var jwtToken = GetAuthToken();
